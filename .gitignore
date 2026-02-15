@@ -1,0 +1,36 @@
+# Archivos compilados de Java
+*.class
+*.jar
+*.war
+target/
+build/
+dist/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.eclipse/
+.project
+.classpath
+.settings/
+nbproject/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Configuración con contraseñas
+config.properties
+database.properties
+
+# Logs
+*.log
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
