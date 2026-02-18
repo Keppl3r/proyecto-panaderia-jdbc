@@ -1,0 +1,50 @@
+/* Estilos para Pantojarte Panadería */
+
+.root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Estilo para los botones principales */
+.button {
+    -fx-cursor: hand;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.button:hover {
+    -fx-opacity: 0.9;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.button:pressed {
+    -fx-opacity: 0.8;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* Estilo para las tarjetas */
+.card {
+    -fx-background-color: linear-gradient(to bottom, #f4c430, #e6b422);
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 5);
+}
+
+.card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 15, 0, 0, 7);
+}
+
+/* Etiquetas de título */
+.title-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3a2a1a;
+}
+
+/* Etiquetas de subtítulo */
+.subtitle-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4a3a2a;
+}
+
+
