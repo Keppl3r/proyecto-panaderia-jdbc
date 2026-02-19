@@ -41,7 +41,7 @@ public class ProductoDAO implements IProductoDAO {
                 p.setNombre(rs.getString("NOMBRE"));
                 p.setTipo(rs.getString("TIPO"));
                 p.setDescripcion(rs.getString("DESCRIPCION"));
-                p.setPrecio(rs.getFloat("PRECIO"));
+                p.setPrecio(rs.getDouble("PRECIO"));
                 p.setDisponible(rs.getBoolean("DISPONIBLE"));
                 productos.add(p);
             }
@@ -71,7 +71,7 @@ public class ProductoDAO implements IProductoDAO {
                     producto.setNombre(rs.getString("NOMBRE"));
                     producto.setTipo(rs.getString("TIPO"));
                     producto.setDescripcion(rs.getString("DESCRIPCION"));
-                    producto.setPrecio(rs.getFloat("PRECIO"));
+                    producto.setPrecio(rs.getDouble("PRECIO"));
                     producto.setDisponible(rs.getBoolean("DISPONIBLE"));
                     return producto;
                 }

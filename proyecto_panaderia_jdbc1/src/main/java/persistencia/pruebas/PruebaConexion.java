@@ -17,6 +17,16 @@ import persistencia.dominio.Producto;
 public class PruebaConexion {
      public static void main(String[] args) {
              try {
+                 
+                 Producto producto=new Producto();  
+                 Producto concha = new Producto(
+    1,                          // idProducto (int)
+    "Concha de Vainilla",       // nombre (String)
+    "DULCE",                    // tipo (String)
+    "Pan dulce tradicional",    // descripcion (String)
+    15.50,                     // precio (double)
+    true                        // disponible (boolean)
+);
                  IConexionBD conexion = new ConexionBD();
                  System.out.println("Conexion creada exitosamente");
 
@@ -27,6 +37,7 @@ public class PruebaConexion {
 
                  for (Producto p : productos) {
                      System.out.println("  - " + p.getNombre() + " ($" + p.getPrecio() + ")");
+System.out.println(concha.toString());
                  }
 
              } catch (Exception e) {
