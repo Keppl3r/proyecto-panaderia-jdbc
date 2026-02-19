@@ -28,7 +28,7 @@ private final String CADENA_CONEXION = "jdbc:mysql://localhost:3306/panaderia";
     /**
      * Contraseña asociada al usuario de la base de datos.
      */
-    private final String CONTRASENIA = "jazminbaldenegro";
+    private final String CONTRASENIA = "root";
 
     /**
      * Crea y retorna una conexión activa con la base de datos.
