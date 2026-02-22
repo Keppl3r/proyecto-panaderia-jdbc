@@ -15,19 +15,17 @@ public class PedidoProgramado extends Pedido {
         super();
     }
 
-    public PedidoProgramado(Integer idCupon, Cupon cupon, Cliente cliente, int numPedido, Timestamp fechaEntrega) {
-        super(cliente, numPedido, fechaEntrega);
+    public PedidoProgramado(Integer idUsuario, int numPedido, Timestamp fechaEntrega, Integer idCupon) {
+        super(idUsuario, numPedido, fechaEntrega);
         this.idCupon = idCupon;
-        this.cupon = cupon;
     }
 
-    public PedidoProgramado(Integer idCupon, Cupon cupon, int idPedido, Cliente cliente, int numPedido, EstadoPedido estado, Timestamp fechaRegistro, Timestamp fechaEntrega, Double total) {
-        super(idPedido, cliente, numPedido, estado, fechaRegistro, fechaEntrega, total);
+    public PedidoProgramado(int idPedido, Integer idUsuario, int numPedido, EstadoPedido estado,
+            Timestamp fechaRegistro, Timestamp fechaEntrega, Double total, Integer idCupon) {
+        super(idPedido, idUsuario, numPedido, estado, fechaRegistro, fechaEntrega, total);
         this.idCupon = idCupon;
-        this.cupon = cupon;
     }
-    
-   
+
     // Getters y Setters específicos
     public Integer getIdCupon() {
         return idCupon;

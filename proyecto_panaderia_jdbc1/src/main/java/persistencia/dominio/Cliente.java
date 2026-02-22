@@ -1,49 +1,57 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package persistencia.dominio;
 
 import java.sql.Date;
+import java.util.List;
 
 /**
- *
- * @author Jazmin
+ * Entidad que representa un cliente - HEREDA DE USUARIO Solo para CU Pedido
+ * Programado
  */
-public class Cliente {
-    private int idCliente;
+public class Cliente extends Usuario {
+
     private String nombres;
     private String apellidoPaterno;
     private String apellidoMaterno;
+    private Date fechaNacimiento;
+    private String estado;
     private String calle;
     private String numero;
     private String colonia;
-    private Date fechaNacimiento;
-    private Usuario usuario;
+    private List<Telefono> telefonos; // Mantener por relación con cliente
 
     public Cliente() {
+        super();
     }
 
-    public Cliente(int idCliente, String nombres, String apellidoPaterno, String apellidoMaterno, String calle, String numero, String colonia, Date fechaNacimiento, Usuario usuario) {
-        this.idCliente = idCliente;
+    public Cliente(String username, String password, String nombres, String apellidoPaterno,
+            String apellidoMaterno, Date fechaNacimiento, String estado,
+            String calle, String numero, String colonia) {
+        super(username, password, "CLIENTE");
         this.nombres = nombres;
         this.apellidoPaterno = apellidoPaterno;
         this.apellidoMaterno = apellidoMaterno;
+        this.fechaNacimiento = fechaNacimiento;
+        this.estado = estado;
         this.calle = calle;
         this.numero = numero;
         this.colonia = colonia;
+    }
+
+    public Cliente(int idUsuario, String username, String password, String nombres,
+            String apellidoPaterno, String apellidoMaterno, Date fechaNacimiento,
+            String estado, String calle, String numero, String colonia) {
+        super(idUsuario, username, password, "CLIENTE");
+        this.nombres = nombres;
+        this.apellidoPaterno = apellidoPaterno;
+        this.apellidoMaterno = apellidoMaterno;
         this.fechaNacimiento = fechaNacimiento;
-        this.usuario = usuario;
+        this.estado = estado;
+        this.calle = calle;
+        this.numero = numero;
+        this.colonia = colonia;
     }
 
-    public int getIdCliente() {
-        return idCliente;
-    }
-
-    public void setIdCliente(int idCliente) {
-        this.idCliente = idCliente;
-    }
-
+    // Getters y Setters
     public String getNombres() {
         return nombres;
     }
@@ -66,6 +74,22 @@ public class Cliente {
 
     public void setApellidoMaterno(String apellidoMaterno) {
         this.apellidoMaterno = apellidoMaterno;
+    }
+
+    public Date getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(Date fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     public String getCalle() {
@@ -92,27 +116,21 @@ public class Cliente {
         this.colonia = colonia;
     }
 
-    public Date getFechaNacimiento() {
-        return fechaNacimiento;
+    public List<Telefono> getTelefonos() {
+        return telefonos;
     }
 
-    public void setFechaNacimiento(Date fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
+    public void setTelefonos(List<Telefono> telefonos) {
+        this.telefonos = telefonos;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public String getNombreCompleto() {
+        return nombres + " " + apellidoPaterno + " " + apellidoMaterno;
     }
 
     @Override
     public String toString() {
-        return "Cliente{" + "idCliente=" + idCliente + ", nombres=" + nombres + ", apellidoPaterno=" + apellidoPaterno + ", apellidoMaterno=" + apellidoMaterno + ", calle=" + calle + ", numero=" + numero + ", colonia=" + colonia + ", fechaNacimiento=" + fechaNacimiento + ", usuario=" + usuario + '}';
+        return "Cliente{idUsuario=" + getIdUsuario() + ", nombres='" + nombres
+                + "', apellidoPaterno='" + apellidoPaterno + "', estado='" + estado + "'}";
     }
-    
-    
-    
 }

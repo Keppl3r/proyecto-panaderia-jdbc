@@ -9,6 +9,7 @@ import java.util.List;
 public class Pedido {
 
     private int idPedido;
+    private Integer idUsuario;
     private int numPedido;
     private EstadoPedido estado;
     private Timestamp fechaRegistro;
@@ -19,7 +20,7 @@ public class Pedido {
     private List<DetallePedido> detalles;
 
     public enum EstadoPedido {
-        PENDIENTE, LISTO, ENTREGADO, CANCELADO, NO_RECLAMADO
+        PENDIENTE, EN_PREPARACION, LISTO, ENTREGADO, CANCELADO, NO_RECLAMADO
     }
 
     public Pedido() {
@@ -28,16 +29,17 @@ public class Pedido {
         this.total = 0.0;
     }
 
-    public Pedido(Cliente cliente, int numPedido, Timestamp fechaEntrega) {
+    public Pedido(Integer idUsuario, int numPedido, Timestamp fechaEntrega) {
         this();
-        this.cliente = cliente;
+        this.idUsuario = idUsuario;
         this.numPedido = numPedido;
         this.fechaEntrega = fechaEntrega;
     }
 
-    public Pedido(int idPedido, Cliente cliente, int numPedido, EstadoPedido estado,
+    public Pedido(int idPedido, Integer idUsuario, int numPedido, EstadoPedido estado,
             Timestamp fechaRegistro, Timestamp fechaEntrega, Double total) {
         this.idPedido = idPedido;
+        this.idUsuario = idUsuario;
         this.numPedido = numPedido;
         this.estado = estado;
         this.fechaRegistro = fechaRegistro;
@@ -54,12 +56,12 @@ public class Pedido {
         this.idPedido = idPedido;
     }
 
-    public Cliente getcliente() {
-        return cliente;
+    public Integer getIdUsuario() {
+        return idUsuario;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setIdUsuario(Integer idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public int getNumPedido() {
@@ -106,7 +108,13 @@ public class Pedido {
         return cliente;
     }
 
-   
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+        if (cliente != null) {
+            this.idUsuario = cliente.getIdUsuario(); // CORREGIDO
+        }
+    }
+
     public List<DetallePedido> getDetalles() {
         return detalles;
     }

@@ -2,7 +2,6 @@ package persistencia.DAOs;
 
 import java.sql.*;
 import persistencia.conexion.IConexionBD;
-import persistencia.dominio.Cliente;
 import persistencia.dominio.PedidoProgramado;
 import persistencia.dominio.DetallePedido;
 import persistencia.excepciones.PersistenciaException;
@@ -23,13 +22,12 @@ public class PedidoProgramadoDAO implements IPedidoProgramadoDAO {
             try {
                 // Insertar PEDIDO
                 String sqlPedido = """
-                         INSERT INTO PEDIDOS (ID_CLIENTE, NUM_PEDIDO, ESTADO, FECHA_REGISTRO, FECHA_ENTREGA, TOTAL)
+                         INSERT INTO PEDIDOS (ID_USUARIO, NUM_PEDIDO, ESTADO, FECHA_REGISTRO, FECHA_ENTREGA, TOTAL)
                          VALUES (?, ?, 'PENDIENTE', CURRENT_TIMESTAMP, ?, ?)
                      """;
 
                 try (PreparedStatement ps = conn.prepareStatement(sqlPedido, Statement.RETURN_GENERATED_KEYS)) {
-                    Cliente cliente = pedido.getCliente();
-                    ps.setInt(1, cliente.getIdCliente());
+                    ps.setInt(1, pedido.getIdUsuario());
                     ps.setInt(2, pedido.getNumPedido());
                     ps.setTimestamp(3, pedido.getFechaEntrega());
                     ps.setDouble(4, pedido.getTotal());

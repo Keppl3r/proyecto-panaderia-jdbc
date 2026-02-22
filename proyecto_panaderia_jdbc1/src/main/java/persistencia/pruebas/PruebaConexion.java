@@ -19,14 +19,7 @@ public class PruebaConexion {
              try {
                  
                  Producto producto=new Producto();  
-                 Producto concha = new Producto(
-    1,                          // idProducto (int)
-    "Concha de Vainilla",       // nombre (String)
-    "DULCE",                    // tipo (String)
-    "Pan dulce tradicional",    // descripcion (String)
-    15.50,                     // precio (double)
-    true                        // disponible (boolean)
-);
+                 Producto concha = new Producto(1,"Concha de Vainilla",  "DULCE","Pan dulce tradicional",15.50,true);
                  IConexionBD conexion = new ConexionBD();
                  System.out.println("Conexion creada exitosamente");
 
@@ -42,7 +35,7 @@ System.out.println(concha.toString());
 
              } catch (Exception e) {
                  System.out.println("Error: " + e.getMessage());
-                 e.printStackTrace();
+                 
              }
          }
 }

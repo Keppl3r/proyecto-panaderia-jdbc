@@ -1,12 +1,3 @@
-<<<<<<< Updated upstream
-module com.mycompany.proyecto_panaderia_jdbc1 {
-    requires javafx.controls;
-    requires javafx.fxml;
-  requires java.sql;
-    opens com.mycompany.proyecto_panaderia_jdbc1 to javafx.fxml;
-    exports com.mycompany.proyecto_panaderia_jdbc1;
-}
-=======
  module com.mycompany.proyecto_panaderia_jdbc1 {
          requires javafx.controls;
          requires javafx.fxml;
@@ -23,4 +14,3 @@ module com.mycompany.proyecto_panaderia_jdbc1 {
          exports negocio.BOs;
          exports negocio.excepciones;
      }
->>>>>>> Stashed changes

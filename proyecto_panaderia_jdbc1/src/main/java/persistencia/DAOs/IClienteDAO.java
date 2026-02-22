@@ -7,6 +7,6 @@
       * DAO para Cliente - SOLO PARA PEDIDO PROGRAMADO
       */
      public interface IClienteDAO {
-         Cliente buscarPorId(int idCliente) throws PersistenciaException;
+         Cliente buscarPorId(int idUsuario) throws PersistenciaException;
          boolean existeClienteActivo(int idUsuario) throws PersistenciaException;
      }

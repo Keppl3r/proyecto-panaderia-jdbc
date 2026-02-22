@@ -72,9 +72,10 @@ public class PruebaClienteDAO {
             Cliente cliente = clienteDAO.buscarPorId(1);
             if (cliente != null) {
                 System.out.println("Cliente encontrado:");
-                System.out.println("  ID: " + cliente.getIdCliente());
+                System.out.println("  ID: " + cliente.getIdUsuario());
                 System.out.println("  Nombre: " + cliente.getNombres());
                 System.out.println("  Apellido P: " + cliente.getApellidoPaterno());
+                System.out.println("  Estado: " + cliente.getEstado());
                 System.out.println("  Username: " + cliente.getUsername());
             } else {
                 System.out.println("buscarPorId(1) retorno NULL");

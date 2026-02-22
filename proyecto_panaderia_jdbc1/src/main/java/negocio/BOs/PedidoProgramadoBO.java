@@ -7,7 +7,6 @@
      import negocio.excepciones.NegocioException;
      import persistencia.DAOs.IPedidoProgramadoDAO;
      import persistencia.DAOs.IProductoDAO;
-import persistencia.dominio.Cliente;
      import persistencia.dominio.PedidoProgramado;
      import persistencia.dominio.DetallePedido;
      import persistencia.dominio.Producto;
@@ -49,8 +48,7 @@ import persistencia.dominio.Cliente;
 
               
                  PedidoProgramado pedido = new PedidoProgramado();
-                 Cliente cliente =clienteBO.buscarClientePorId(idCliente);
-                 pedido.setCliente(cliente);
+                 pedido.setIdUsuario(idCliente);
                  pedido.setNumPedido(pedidoDAO.generarNumPedido());
                  pedido.setFechaEntrega(fechaEntrega);
                  pedido.setIdCupon(idCupon);
