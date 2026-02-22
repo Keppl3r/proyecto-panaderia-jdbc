@@ -19,9 +19,30 @@ public class Pedido {
     private Cliente cliente;
     private List<DetallePedido> detalles;
 
-    public enum EstadoPedido {
-        PENDIENTE, EN_PREPARACION, LISTO, ENTREGADO, CANCELADO, NO_RECLAMADO
+   public enum EstadoPedido {
+    PENDIENTE, LISTO, ENTREGADO, CANCELADO, NO_ENTREGADO;
+    
+    /**
+     * Switch que ayuda a recibir la descripción del estado
+     * @return estado
+     */
+    public String getDescripcion() {
+        switch(this) {
+            case PENDIENTE:
+                return "Pendiente";
+            case LISTO:
+                return "Listo";
+            case ENTREGADO:
+                return "Entregado";
+            case CANCELADO:
+                return "Cancelado";
+            case NO_ENTREGADO:
+                return "No Entregado";
+            default:
+                return name();
+        }
     }
+}
 
     public Pedido() {
         this.fechaRegistro = new Timestamp(System.currentTimeMillis());

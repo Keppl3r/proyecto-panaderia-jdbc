@@ -8,6 +8,5 @@
 
      public interface IPedidoProgramadoBO {
 
-         PedidoProgramado programarPedido(int idCliente, List<DetallePedido> detalles,
-                                        Timestamp fechaEntrega, Integer idCupon) throws NegocioException;
+       PedidoProgramado programarPedido(negocio.DTOs.PedidoProgramadoNuevoDTO pedidoDTO) throws NegocioException;
      }

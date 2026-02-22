@@ -15,6 +15,6 @@ import persistencia.dominio.PedidoExpress;
  */
 public interface IPedidoExpressBO {
     
-    public PedidoExpress programarPedidoExpress(List<DetallePedido> detalles) throws NegocioException;
+    PedidoExpress crearPedidoExpress(negocio.DTOs.PedidoExpressNuevoDTO pedidoDTO) throws NegocioException;
     
 }

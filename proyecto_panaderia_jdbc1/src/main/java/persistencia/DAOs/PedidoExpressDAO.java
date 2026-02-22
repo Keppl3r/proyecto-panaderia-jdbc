@@ -23,56 +23,53 @@ import persistencia.excepciones.PersistenciaException;
  *
  * @author Jazmin
  */
-public class PedidoExpressDAO implements IPedidoExpressDAO{
+public class PedidoExpressDAO implements IPedidoExpressDAO {
+
     private IConexionBD conexion;
 
     public PedidoExpressDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
-    
-    
 
     @Override
-    
+
     public PedidoExpress crear(PedidoExpress pedido) throws PersistenciaException {
-         try (Connection conn = conexion.crearConexion()) {
+        try (Connection conn = conexion.crearConexion()) {
             conn.setAutoCommit(false);
 
             try {
-               //insetar pedido express
                 String sqlPedido = """
-                         INSERT INTO PEDIDOS_EXPRESS (ID_PEDIDO, FOLIO, PIN, TIEMPO_LIMITE)
-                                         VALUES (?, ?, ?, ?)
-                     """;
+         INSERT INTO PEDIDOS_EXPRESS (ID_PEDIDO, FOLIO, PIN)
+                         VALUES (?, ?, ?)
+     """;
 
                 try (PreparedStatement ps = conn.prepareStatement(sqlPedido)) {
                     ps.setInt(1, pedido.getIdPedido());
                     ps.setString(2, pedido.getFolio());
-                     ps.setString(3, pedido.getPin());
-                    ps.setTimestamp(4, new Timestamp(pedido.getTiempoLimite().getTime()));
-                    
+                    ps.setString(3, pedido.getPin());
+
                     ps.executeUpdate();
-                }   
-                     // Insertar detalles
-                    if (pedido.getDetalles() != null && !pedido.getDetalles().isEmpty()) {
-                        String sqlDetalle = """
+                }
+               
+                if (pedido.getDetalles() != null && !pedido.getDetalles().isEmpty()) {
+                    String sqlDetalle = """
                              INSERT INTO DETALLE_PEDIDOS (ID_PEDIDO, ID_PRODUCTO, CANTIDAD, PRECIO, SUBTOTAL, NOTAS)
                              VALUES (?, ?, ?, ?, ?, ?)
                          """;
-                        
-                        try (PreparedStatement ps = conn.prepareStatement(sqlDetalle)) {
-                            for (DetallePedido detalle : pedido.getDetalles()) {
-                                ps.setInt(1, pedido.getIdPedido());
-                                ps.setInt(2, detalle.getIdProducto());
-                                ps.setInt(3, detalle.getCantidad());
-                                ps.setDouble(4, detalle.getPrecio());
-                                ps.setDouble(5, detalle.getSubtotal());
-                                ps.setString(6, detalle.getNotas());
-                                ps.addBatch();
-                            }
-                            ps.executeBatch();
+
+                    try (PreparedStatement ps = conn.prepareStatement(sqlDetalle)) {
+                        for (DetallePedido detalle : pedido.getDetalles()) {
+                            ps.setInt(1, pedido.getIdPedido());
+                            ps.setInt(2, detalle.getIdProducto());
+                            ps.setInt(3, detalle.getCantidad());
+                            ps.setDouble(4, detalle.getPrecio());
+                            ps.setDouble(5, detalle.getSubtotal());
+                            ps.setString(6, detalle.getNotas());
+                            ps.addBatch();
                         }
+                        ps.executeBatch();
                     }
+                }
                 conn.commit();
                 return pedido;
 
@@ -85,13 +82,12 @@ public class PedidoExpressDAO implements IPedidoExpressDAO{
             throw new PersistenciaException("Error al crear pedido Express", ex);
         }
     }
+
     @Override
     public int generarNumPedido() throws PersistenciaException {
         String sql = "SELECT COALESCE(MAX(ID_PEDIDO),0) FROM PEDIDOS_EXPRESS";
 
-        try (Connection conn = conexion.crearConexion(); 
-                PreparedStatement ps = conn.prepareStatement(sql); 
-                ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = conexion.crearConexion(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             if (rs.next()) {
                 int maximoActual = rs.getInt(1);
