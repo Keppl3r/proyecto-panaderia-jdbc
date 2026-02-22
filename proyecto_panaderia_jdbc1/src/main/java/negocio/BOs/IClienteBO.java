@@ -1,12 +1,15 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package negocio.BOs;
 
-     import negocio.excepciones.NegocioException;
-import persistencia.dominio.Cliente;
-
-     /**
-      * BO para Cliente - SOLO PARA PEDIDO PROGRAMADO
-      */
-     public interface IClienteBO {
-        public boolean existeCliente(int idCliente) throws NegocioException;
-        public Cliente buscarClientePorId(int idCliente) throws NegocioException;
-     }
+/**
+ *
+ * @author 
+ */
+public interface IClienteBO {
+    
+    
+    
+}

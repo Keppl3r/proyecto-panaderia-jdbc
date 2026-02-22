@@ -1,39 +1,39 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package persistencia.dominio;
 
 import java.sql.Date;
-import java.util.List;
 
 /**
- * Entidad que representa un cliente - HEREDA DE USUARIO Solo para CU Pedido
- * Programado
+ *
+ * @author Jazmin
  */
-public class Cliente extends Empleado {
+public class Cliente {
     private int idCliente;
     private String nombres;
     private String apellidoPaterno;
     private String apellidoMaterno;
-    private Date fechaNacimiento;
-    private String estado;
     private String calle;
     private String numero;
     private String colonia;
-    private List<Telefono> telefonos; // Mantener por relación con cliente
+    private Date fechaNacimiento;
+    private Usuario usuario;
 
     public Cliente() {
-        super();
     }
 
-    public Cliente(int idCliente, String nombres, String apellidoPaterno,
-            String apellidoMaterno, Date fechaNacimiento,
-            String calle, String numero, String colonia) {
+    public Cliente(int idCliente, String nombres, String apellidoPaterno, String apellidoMaterno, String calle, String numero, String colonia, Date fechaNacimiento, Usuario usuario) {
         this.idCliente = idCliente;
         this.nombres = nombres;
         this.apellidoPaterno = apellidoPaterno;
         this.apellidoMaterno = apellidoMaterno;
-        this.fechaNacimiento = fechaNacimiento;
         this.calle = calle;
         this.numero = numero;
         this.colonia = colonia;
+        this.fechaNacimiento = fechaNacimiento;
+        this.usuario = usuario;
     }
 
     public int getIdCliente() {
@@ -43,9 +43,7 @@ public class Cliente extends Empleado {
     public void setIdCliente(int idCliente) {
         this.idCliente = idCliente;
     }
-    
 
-    // Getters y Setters
     public String getNombres() {
         return nombres;
     }
@@ -70,15 +68,6 @@ public class Cliente extends Empleado {
         this.apellidoMaterno = apellidoMaterno;
     }
 
-    public Date getFechaNacimiento() {
-        return fechaNacimiento;
-    }
-
-    public void setFechaNacimiento(Date fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
-    }
-
-  
     public String getCalle() {
         return calle;
     }
@@ -103,21 +92,27 @@ public class Cliente extends Empleado {
         this.colonia = colonia;
     }
 
-    public List<Telefono> getTelefonos() {
-        return telefonos;
+    public Date getFechaNacimiento() {
+        return fechaNacimiento;
     }
 
-    public void setTelefonos(List<Telefono> telefonos) {
-        this.telefonos = telefonos;
+    public void setFechaNacimiento(Date fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
     }
 
-    public String getNombreCompleto() {
-        return nombres + " " + apellidoPaterno + " " + apellidoMaterno;
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     @Override
     public String toString() {
-        return "Cliente{idCliente=" + idCliente + ", nombres='" + nombres
-                + "', apellidoPaterno='" + apellidoPaterno + "', estado='" + estado + "'}";
+        return "Cliente{" + "idCliente=" + idCliente + ", nombres=" + nombres + ", apellidoPaterno=" + apellidoPaterno + ", apellidoMaterno=" + apellidoMaterno + ", calle=" + calle + ", numero=" + numero + ", colonia=" + colonia + ", fechaNacimiento=" + fechaNacimiento + ", usuario=" + usuario + '}';
     }
+    
+    
+    
 }
