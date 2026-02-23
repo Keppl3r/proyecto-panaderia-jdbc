@@ -13,7 +13,10 @@ public class FabricaBOs {
     }
 
     public static IClienteBO obtenerClienteBO() {
-        return new ClienteBO(FabricaDAOs.obtenerClienteDAO());
+        return new ClienteBO(
+                FabricaDAOs.obtenerClienteDAO(),
+                FabricaDAOs.obtenerUsuarioDAO(),
+                FabricaDAOs.obtenerTelefonoDAO());
     }
 
     public static IProductoBO obtenerProductoBO() {
@@ -24,7 +27,9 @@ public class FabricaBOs {
         return new PedidoProgramadoBO(
                 FabricaDAOs.obtenerPedidoProgramadoDAO(),
                 FabricaDAOs.obtenerProductoDAO(),
-                obtenerClienteBO());
+                obtenerClienteBO(),
+                FabricaDAOs.obtenerPedidoDAO(),
+                FabricaDAOs.obtenerCuponDAO());
     }
 
     public static IPedidoExpressBO obtenerPedidoExpressBO() {

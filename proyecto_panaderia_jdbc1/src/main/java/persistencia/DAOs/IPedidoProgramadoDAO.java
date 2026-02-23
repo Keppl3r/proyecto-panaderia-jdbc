@@ -1,16 +1,16 @@
- package persistencia.DAOs;
+package persistencia.DAOs;
 
-     import java.sql.Timestamp;
-     import java.util.List;
-     import persistencia.dominio.PedidoProgramado;
-     import persistencia.excepciones.PersistenciaException;
+import java.sql.Timestamp;
+import persistencia.dominio.PedidoProgramado;
+import persistencia.excepciones.PersistenciaException;
 
-     /**
-      * DAO para PedidoProgramado - SOLO CASO DE USO
-      */
-     public interface IPedidoProgramadoDAO {
+/**
+ * @author Jazmin
+ */
+public interface IPedidoProgramadoDAO {
+    PedidoProgramado crear(PedidoProgramado pedido) throws PersistenciaException;
 
-         PedidoProgramado crear(PedidoProgramado pedido) throws PersistenciaException;
-         int generarNumPedido() throws PersistenciaException;
-         boolean validarFechaEntrega(Timestamp fechaEntrega) throws PersistenciaException;
-     }
+    int generarNumPedido() throws PersistenciaException;
+
+    boolean validarFechaEntrega(Timestamp fechaEntrega) throws PersistenciaException;
+}
