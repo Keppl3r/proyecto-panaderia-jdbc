@@ -23,11 +23,10 @@ public class PedidoDAO implements IPedidoDAO {
     public boolean cambiarEstado(int idPedido, String nuevoEstado) throws PersistenciaException {
         String sql = "UPDATE PEDIDOS SET ESTADO = ? WHERE ID_PEDIDO = ?";
         try (Connection conn = conexion.crearConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, nuevoEstado);
             ps.setInt(2, idPedido);
             return ps.executeUpdate() > 0;
-            // El trigger TRG_REGISTRAR_HISTORIAL inserta automáticamente en HISTORIAL_PEDIDOS
         } catch (SQLException ex) {
             throw new PersistenciaException("Error al cambiar estado del pedido", ex);
         }
@@ -37,10 +36,11 @@ public class PedidoDAO implements IPedidoDAO {
     public int contarPedidosActivos(int idCliente) throws PersistenciaException {
         String sql = "SELECT COUNT(*) FROM PEDIDOS WHERE ID_USUARIO = ? AND ESTADO IN ('PENDIENTE', 'LISTO')";
         try (Connection conn = conexion.crearConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idCliente);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getInt(1);
+                if (rs.next())
+                    return rs.getInt(1);
             }
         } catch (SQLException ex) {
             throw new PersistenciaException("Error al contar pedidos activos", ex);
@@ -51,21 +51,21 @@ public class PedidoDAO implements IPedidoDAO {
     @Override
     public List<Pedido> buscarPorTelefono(String telefono) throws PersistenciaException {
         String sql = """
-            SELECT p.* FROM PEDIDOS p
-            INNER JOIN TELEFONOS t ON p.ID_USUARIO = t.ID_USUARIO
-            WHERE t.NUMERO = ?
-            ORDER BY p.FECHA_REGISTRO DESC
-        """;
+                    SELECT p.* FROM PEDIDOS p
+                    INNER JOIN TELEFONOS t ON p.ID_USUARIO = t.ID_USUARIO
+                    WHERE t.NUMERO = ?
+                    ORDER BY p.FECHA_REGISTRO DESC
+                """;
         return ejecutarBusqueda(sql, telefono);
     }
 
     @Override
     public List<Pedido> buscarPorFolio(String folio) throws PersistenciaException {
         String sql = """
-            SELECT p.* FROM PEDIDOS p
-            INNER JOIN PEDIDOS_EXPRESS pe ON p.ID_PEDIDO = pe.ID_PEDIDO
-            WHERE pe.FOLIO = ?
-        """;
+                    SELECT p.* FROM PEDIDOS p
+                    INNER JOIN PEDIDOS_EXPRESS pe ON p.ID_PEDIDO = pe.ID_PEDIDO
+                    WHERE pe.FOLIO = ?
+                """;
         return ejecutarBusqueda(sql, folio);
     }
 
@@ -74,11 +74,12 @@ public class PedidoDAO implements IPedidoDAO {
         String sql = "SELECT * FROM PEDIDOS WHERE FECHA_REGISTRO BETWEEN ? AND ? ORDER BY FECHA_REGISTRO DESC";
         List<Pedido> pedidos = new ArrayList<>();
         try (Connection conn = conexion.crearConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setTimestamp(1, inicio);
             ps.setTimestamp(2, fin);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) pedidos.add(extraerPedido(rs));
+                while (rs.next())
+                    pedidos.add(extraerPedido(rs));
             }
         } catch (SQLException ex) {
             throw new PersistenciaException("Error al buscar por rango de fechas", ex);
@@ -91,9 +92,10 @@ public class PedidoDAO implements IPedidoDAO {
         String sql = "SELECT * FROM PEDIDOS WHERE ESTADO IN ('PENDIENTE', 'LISTO') ORDER BY FECHA_REGISTRO ASC";
         List<Pedido> pedidos = new ArrayList<>();
         try (Connection conn = conexion.crearConexion();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) pedidos.add(extraerPedido(rs));
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next())
+                pedidos.add(extraerPedido(rs));
         } catch (SQLException ex) {
             throw new PersistenciaException("Error al obtener pedidos pendientes", ex);
         }
@@ -105,10 +107,11 @@ public class PedidoDAO implements IPedidoDAO {
         String sql = "SELECT * FROM PEDIDOS WHERE ID_USUARIO = ? ORDER BY FECHA_REGISTRO DESC";
         List<Pedido> pedidos = new ArrayList<>();
         try (Connection conn = conexion.crearConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idCliente);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) pedidos.add(extraerPedido(rs));
+                while (rs.next())
+                    pedidos.add(extraerPedido(rs));
             }
         } catch (SQLException ex) {
             throw new PersistenciaException("Error al obtener historial", ex);
@@ -120,10 +123,11 @@ public class PedidoDAO implements IPedidoDAO {
     public Pedido obtenerPorId(int idPedido) throws PersistenciaException {
         String sql = "SELECT * FROM PEDIDOS WHERE ID_PEDIDO = ?";
         try (Connection conn = conexion.crearConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idPedido);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return extraerPedido(rs);
+                if (rs.next())
+                    return extraerPedido(rs);
             }
         } catch (SQLException ex) {
             throw new PersistenciaException("Error al obtener pedido por ID", ex);
@@ -136,10 +140,11 @@ public class PedidoDAO implements IPedidoDAO {
     private List<Pedido> ejecutarBusqueda(String sql, String parametro) throws PersistenciaException {
         List<Pedido> pedidos = new ArrayList<>();
         try (Connection conn = conexion.crearConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, parametro);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) pedidos.add(extraerPedido(rs));
+                while (rs.next())
+                    pedidos.add(extraerPedido(rs));
             }
         } catch (SQLException ex) {
             throw new PersistenciaException("Error en búsqueda de pedidos", ex);

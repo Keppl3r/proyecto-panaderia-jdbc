@@ -39,7 +39,6 @@ public class PedidoExpressBO implements IPedidoExpressBO {
                 throw new NegocioException("El pedido debe tener al menos un producto");
             }
 
-            // Validar productos y calcular precios
             for (DetallePedido d : pedidoDTO.getDetalles()) {
                 Producto producto = productoDAO.obtenerPorId(d.getIdProducto());
                 if (producto == null || !producto.isDisponible()) {
@@ -49,25 +48,20 @@ public class PedidoExpressBO implements IPedidoExpressBO {
                 d.calcularSubtotal();
             }
 
-            // Armar el pedido
             PedidoExpress pedido = new PedidoExpress();
             pedido.setDetalles(pedidoDTO.getDetalles());
             pedido.setNumPedido(pedidoDAO.generarNumPedido());
             pedido.calcularTotal();
 
-            // Folio consecutivo (basado en numPedido)
             pedido.setFolio(String.valueOf(pedido.getNumPedido()));
 
-            // Generar PIN de 8 dígitos
             String pinTextoPlano = String.valueOf(10000000 + new SecureRandom().nextInt(90000000));
 
-            // Guardar encriptado en BD, texto plano para mostrar al usuario
             pedido.setPin(EncriptadorPIN.encriptar(pinTextoPlano));
             pedido.setPinTextoPlano(pinTextoPlano);
 
-            // Persistir
             PedidoExpress creado = pedidoDAO.crear(pedido);
-            creado.setPinTextoPlano(pinTextoPlano); // Mantener para la pantalla
+            creado.setPinTextoPlano(pinTextoPlano);
 
             LOG.info("Pedido Express creado - Folio: " + creado.getFolio());
             return creado;

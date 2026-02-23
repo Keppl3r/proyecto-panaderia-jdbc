@@ -68,7 +68,7 @@ public class Pedido {
         this.total = total;
     }
 
-    // Getters y Setters
+  
     public int getIdPedido() {
         return idPedido;
     }
@@ -132,7 +132,7 @@ public class Pedido {
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
         if (cliente != null) {
-            this.idUsuario = cliente.getIdUsuario(); // CORREGIDO
+            this.idUsuario = cliente.getIdUsuario(); 
         }
     }
 
@@ -144,7 +144,7 @@ public class Pedido {
         this.detalles = detalles;
     }
 
-    // Métodos de negocio necesarios para el CU
+    
     public void calcularTotal() {
         this.total = 0.0;
 

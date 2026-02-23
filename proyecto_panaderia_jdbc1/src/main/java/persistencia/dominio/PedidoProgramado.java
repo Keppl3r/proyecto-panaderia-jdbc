@@ -49,43 +49,27 @@ public class PedidoProgramado extends Pedido {
     // Métodos de negocio específicos
     public Double calcularDescuento() {
         if (cupon != null && cupon.estaVigente()) {
-            Double descuento = 
-                    (getTotal()*cupon.getPorcentajeDescuento())
-                    /100.0;
-                   
+            Double descuento = (getTotal() * cupon.getPorcentajeDescuento())
+                    / 100.0;
+
             return descuento;
         }
         return 0.0;
     }
 
     public Double calcularTotalConDescuento() {
-        return getTotal()-(calcularDescuento());
+        return getTotal() - (calcularDescuento());
     }
 
     public boolean tieneCupon() {
-        if(idCupon != null && cupon != null) return true;
+        if (idCupon != null && cupon != null)
+            return true;
         return false;
     }
 
     public boolean cuponEsValido() {
         return tieneCupon() && cupon.estaVigente();
     }
-/**
- * PENDIENTE
- */
-//    // Validaciones específicas de pedido programado
-//    public boolean puedeSerModificado() {
-//        Timestamp ahora = new Timestamp(System.currentTimeMillis());
-//        // Se puede modificar si faltan más de 2 horas para la entrega
-//        long dosHorasEnMs = 2 * 60 * 60 * 1000;
-//        return getFechaEntrega().getTime() - ahora.getTime() > dosHorasEnMs;
-//    }
-//
-//    public long horasParaEntrega() {
-//        Timestamp ahora = new Timestamp(System.currentTimeMillis());
-//        long diferencia = getFechaEntrega().getTime() - ahora.getTime();
-//        return diferencia / (60 * 60 * 1000); // Convertir a horas
-//    }
 
     @Override
     public String toString() {

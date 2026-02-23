@@ -1,12 +1,9 @@
- package negocio.BOs;
+package negocio.BOs;
 
-     import java.sql.Timestamp;
-     import java.util.List;
-     import persistencia.dominio.PedidoProgramado;
-     import persistencia.dominio.DetallePedido;
-     import negocio.excepciones.NegocioException;
+import negocio.DTOs.PedidoProgramadoNuevoDTO;
+import negocio.excepciones.NegocioException;
+import persistencia.dominio.PedidoProgramado;
 
-     public interface IPedidoProgramadoBO {
-
-       PedidoProgramado programarPedido(negocio.DTOs.PedidoProgramadoNuevoDTO pedidoDTO) throws NegocioException;
-     }
+public interface IPedidoProgramadoBO {
+  PedidoProgramado programarPedido(PedidoProgramadoNuevoDTO pedidoDTO) throws NegocioException;
+}
