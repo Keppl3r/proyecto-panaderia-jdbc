@@ -4,5 +4,5 @@ Sistema de gestión para panadería - Proyecto de Bases de Datos Avanzadas
 
 ## Integrantes
 - Kevin A. Mendoza   
-
-
+- Cristian E. Devora
+- Jazmin Baldenegro
