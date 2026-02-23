@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.mycompany.proyecto_panaderia_jdbc1.PedidoConfirmadoController"
+      prefWidth="820.0" prefHeight="560.0"
+      alignment="CENTER"
+      style="-fx-background-color: #f5e6d3; -fx-padding: 40;">
+
+    <!-- Tarjeta central blanca -->
+    <VBox alignment="CENTER" spacing="22.0" maxWidth="600.0"
+          style="-fx-background-color: white; -fx-background-radius: 18;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.13), 12, 0, 0, 4);
+                 -fx-padding: 44 48 40 48;">
+
+        <!-- Título -->
+        <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
+               text="Pedido registrado"/>
+        <Label style="-fx-font-size: 14px; -fx-text-fill: #6b5644;"
+               text="Tu pedido fue registrado correctamente"/>
+
+        <!-- Caja de info del pedido -->
+        <VBox spacing="0.0" maxWidth="400.0"
+              style="-fx-border-color: #d8c8a8; -fx-border-radius: 12;
+                     -fx-background-radius: 12; -fx-border-width: 1.5;">
+
+            <!-- Fila número -->
+            <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-padding: 16 20;">
+                <Label style="-fx-font-size: 14px; -fx-text-fill: #4a3a2a; -fx-font-weight: bold;"
+                       text="Número de pedido"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblNumeroPedido"
+                       style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
+                       text="#00124"/>
+            </HBox>
+
+            <Separator/>
+
+            <!-- Fila estado -->
+            <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-padding: 16 20;">
+                <Label style="-fx-font-size: 14px; -fx-text-fill: #4a3a2a; -fx-font-weight: bold;"
+                       text="Estado actual:"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblEstadoPedido"
+                       style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #4a3a2a;
+                              -fx-background-color: #f4c430; -fx-background-radius: 20;
+                              -fx-padding: 5 18;"
+                       text="Pendiente"/>
+            </HBox>
+        </VBox>
+
+        <!-- Timer (solo Express) -->
+        <VBox fx:id="vboxTimer" alignment="CENTER" spacing="6.0" visible="false" managed="false">
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #6b5644;"
+                   text="Tiempo estimado para recoger tu pedido:"/>
+            <Label fx:id="lblTimer"
+                   style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #e87722;
+                          -fx-background-color: #fff3e0; -fx-background-radius: 10;
+                          -fx-padding: 8 24;"
+                   text="20:00"/>
+        </VBox>
+
+        <!-- Mensaje informativo (solo Programado) -->
+        <VBox fx:id="vboxMensaje" alignment="CENTER" spacing="4.0">
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #4a3a2a; -fx-text-alignment: center;"
+                   text="Tu pedido ha sido registrado y será preparado en breve."
+                   wrapText="true" maxWidth="480.0"/>
+            <HBox alignment="CENTER" spacing="4.0">
+                <Label style="-fx-font-size: 13px; -fx-text-fill: #4a3a2a;"
+                       text="Podrás consultar su avance en la sección"/>
+                <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #e87722;"
+                       text="Mis Pedidos"/>
+            </HBox>
+        </VBox>
+
+        <!-- Botones -->
+        <HBox alignment="CENTER" spacing="20.0">
+            <!-- Solo visible en modo Programado -->
+            <Button fx:id="btnVerPedidos" onAction="#handleVerPedidos"
+                    text="Ver mis pedidos"
+                    style="-fx-background-color: #3a2a1a; -fx-text-fill: white;
+                           -fx-font-size: 14px; -fx-font-weight: bold;
+                           -fx-background-radius: 25; -fx-cursor: hand;
+                           -fx-padding: 11 24;"/>
+            <Button onAction="#handleVolverInicio"
+                    text="Volver al inicio"
+                    style="-fx-background-color: #f4c430; -fx-text-fill: #3a2a1a;
+                           -fx-font-size: 14px; -fx-font-weight: bold;
+                           -fx-background-radius: 25; -fx-cursor: hand;
+                           -fx-padding: 11 24;"/>
+        </HBox>
+
+    </VBox>
+</VBox>

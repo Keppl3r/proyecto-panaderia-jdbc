@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.mycompany.proyecto_panaderia_jdbc1.CarritoController"
+      prefWidth="820.0" prefHeight="560.0"
+      style="-fx-background-color: #f5e6d3; -fx-padding: 28 28 28 28;" spacing="20.0">
+
+    <!-- ===== PANEL IZQUIERDO (blanco) ===== -->
+    <VBox prefWidth="440.0"
+          style="-fx-background-color: white; -fx-background-radius: 15;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 8, 0, 0, 3);
+                 -fx-padding: 22;" spacing="10.0">
+
+        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
+               text="Carrito de compras"/>
+
+        <!-- Lista de ítems (se rellena desde el controlador) -->
+        <ScrollPane fitToWidth="true" prefHeight="195.0"
+                    style="-fx-background-color: transparent; -fx-background: transparent;
+                           -fx-border-color: transparent;">
+            <VBox fx:id="vboxItems" spacing="10.0">
+                <padding><Insets right="4.0"/></padding>
+            </VBox>
+        </ScrollPane>
+
+        <Separator/>
+
+        <!-- Sección cupón (solo modo Programado) -->
+        <VBox fx:id="vboxCupon" spacing="8.0" visible="false" managed="false">
+            <TextField fx:id="txtCupon"
+                       promptText="Ingresa tu código de descuento"
+                       style="-fx-background-radius: 8; -fx-padding: 8;
+                              -fx-border-color: #d0c0a0; -fx-border-radius: 8;
+                              -fx-font-size: 12px;"/>
+            <Button onAction="#handleAplicarCupon" text="Aplicar"
+                    style="-fx-background-color: transparent;
+                           -fx-border-color: #6b5644; -fx-border-radius: 20;
+                           -fx-background-radius: 20; -fx-text-fill: #6b5644;
+                           -fx-font-size: 12px; -fx-cursor: hand; -fx-padding: 5 18;"/>
+        </VBox>
+
+        <Separator fx:id="sepCupon" visible="false" managed="false"/>
+
+        <!-- Totales -->
+        <VBox spacing="6.0">
+            <HBox spacing="4.0">
+                <Label style="-fx-font-size: 13px; -fx-text-fill: #6b5644;" text="Subtotal : "/>
+                <Label fx:id="lblSubtotal"
+                       style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
+                       text="$0.00"/>
+            </HBox>
+            <HBox spacing="4.0">
+                <Label style="-fx-font-size: 13px; -fx-text-fill: #6b5644;" text="Descuento: "/>
+                <Label fx:id="lblDescuento"
+                       style="-fx-font-size: 13px; -fx-text-fill: #e05a5a;" text="- $0.00"/>
+            </HBox>
+            <HBox spacing="4.0">
+                <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
+                       text="Total: "/>
+                <Label fx:id="lblTotal"
+                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
+                       text="$0.00"/>
+            </HBox>
+        </VBox>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <Button onAction="#handleVolver" text="Volver"
+                style="-fx-background-color: transparent;
+                       -fx-border-color: #6b5644; -fx-border-radius: 20;
+                       -fx-background-radius: 20; -fx-text-fill: #6b5644;
+                       -fx-font-size: 13px; -fx-cursor: hand; -fx-padding: 7 22;"/>
+    </VBox>
+
+    <!-- ===== PANEL DERECHO (amarillo) ===== -->
+    <VBox HBox.hgrow="ALWAYS"
+          style="-fx-background-color: #f4c430; -fx-background-radius: 15;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 8, 0, 0, 3);
+                 -fx-padding: 22;" spacing="14.0">
+
+        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;"
+               text="Confirmar pedido"/>
+
+        <!-- Métodos de pago -->
+        <Button fx:id="btnTarjeta" onAction="#handleSeleccionarTarjeta" prefWidth="240.0"
+                style="-fx-background-color: white; -fx-background-radius: 10;
+                       -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;
+                       -fx-cursor: hand; -fx-padding: 10 16;" text="💳  Tarjeta"/>
+
+        <Button fx:id="btnEfectivo" onAction="#handleSeleccionarEfectivo" prefWidth="240.0"
+                style="-fx-background-color: white; -fx-background-radius: 10;
+                       -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;
+                       -fx-cursor: hand; -fx-padding: 10 16;" text="🪙  Efectivo"/>
+
+        <!-- Caja de resumen -->
+        <VBox spacing="5.0"
+              style="-fx-background-color: rgba(255,255,255,0.45); -fx-background-radius: 10;
+                     -fx-padding: 12;">
+            <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #4a3a2a;"
+                   text="Resumen del pedido"/>
+            <VBox fx:id="vboxResumen" spacing="2.0"/>
+
+            <!-- Tipo de pedido -->
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Label style="-fx-font-size: 11px; -fx-text-fill: #4a3a2a;"
+                       text="Tipo de pedido:"/>
+                <CheckBox fx:id="chkProgramado" text="Programado"
+                          style="-fx-font-size: 11px; -fx-text-fill: #3a2a1a;" disable="true"/>
+                <CheckBox fx:id="chkExpress" text="Express"
+                          style="-fx-font-size: 11px; -fx-text-fill: #3a2a1a;" disable="true"/>
+            </HBox>
+
+            <HBox spacing="4.0">
+                <Label style="-fx-font-size: 11px; -fx-text-fill: #4a3a2a;"
+                       text="Lugar de entrega: "/>
+                <Label style="-fx-font-size: 11px; -fx-text-fill: #4a3a2a;" text="Sucursal"/>
+            </HBox>
+            <HBox spacing="4.0">
+                <Label style="-fx-font-size: 11px; -fx-text-fill: #4a3a2a;" text="Teléfono: "/>
+                <Label fx:id="lblTelResumen"
+                       style="-fx-font-size: 11px; -fx-text-fill: #4a3a2a;"
+                       text="6442896547"/>
+            </HBox>
+            <HBox spacing="4.0">
+                <Label style="-fx-font-size: 11px; -fx-text-fill: #4a3a2a;"
+                       text="Total a pagar: "/>
+                <Label fx:id="lblTotalResumen"
+                       style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
+                       text="$0.00"/>
+            </HBox>
+        </VBox>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <Button onAction="#handleConfirmar" prefWidth="240.0" text="Confirmar"
+                style="-fx-background-color: #3a2a1a; -fx-text-fill: white;
+                       -fx-font-size: 15px; -fx-font-weight: bold;
+                       -fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 12 0;"/>
+    </VBox>
+
+</HBox>

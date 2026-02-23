@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.mycompany.proyecto_panaderia_jdbc1.CatalogoController"
+      prefWidth="800.0" prefHeight="600.0"
+      style="-fx-background-color: #fdf5e6;">
+
+    <!-- Barra superior (blanca) -->
+    <HBox alignment="CENTER_LEFT" spacing="10.0"
+          style="-fx-background-color: white; -fx-padding: 10 20 10 20;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 6, 0, 0, 2);">
+        <ImageView fitHeight="38.0" fitWidth="38.0" preserveRatio="true">
+            <image>
+                <Image url="@logo_2.png"/>
+            </image>
+        </ImageView>
+        <Label style="-fx-font-family: 'Segoe Script'; -fx-font-size: 22px;
+                      -fx-text-fill: #5a4a3a; -fx-font-weight: bold;" text="Pantojarte"/>
+        <Label style="-fx-font-size: 17px; -fx-text-fill: #8b7355;" text="Panaderia"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnCarrito" onAction="#handleCarrito"
+                style="-fx-background-color: #f4c430; -fx-background-radius: 50;
+                       -fx-padding: 7 12; -fx-cursor: hand;">
+            <graphic>
+                <Label text="🛒" style="-fx-font-size: 18px;"/>
+            </graphic>
+        </Button>
+    </HBox>
+
+    <!-- Área de contenido amarillo -->
+    <VBox VBox.vgrow="ALWAYS"
+          style="-fx-background-color: #f4c430; -fx-padding: 18 20 10 20;" spacing="14.0">
+
+        <!-- Fila: tabs + título -->
+        <HBox alignment="CENTER_LEFT" spacing="20.0">
+            <HBox spacing="2.0"
+                  style="-fx-background-color: white; -fx-background-radius: 20; -fx-padding: 5 14;">
+                <Button fx:id="btnTabInicio" onAction="#handleTabInicio"
+                        style="-fx-background-color: transparent; -fx-text-fill: #6b5644;
+                               -fx-font-size: 13px; -fx-cursor: hand; -fx-padding: 3 8;"
+                        text="Inicio"/>
+                <Label text="|" style="-fx-text-fill: #bbb; -fx-padding: 0 4;"/>
+                <Button fx:id="btnTabPan" onAction="#handleTabPan"
+                        style="-fx-background-color: transparent; -fx-text-fill: #6b5644;
+                               -fx-font-size: 13px; -fx-cursor: hand; -fx-padding: 3 8;"
+                        text="Pan"/>
+                <Label text="|" style="-fx-text-fill: #bbb; -fx-padding: 0 4;"/>
+                <Button fx:id="btnTabPasteles" onAction="#handleTabPasteles"
+                        style="-fx-background-color: transparent; -fx-text-fill: #e87722;
+                               -fx-font-size: 13px; -fx-font-weight: bold;
+                               -fx-cursor: hand; -fx-padding: 3 8;"
+                        text="Pasteles"/>
+            </HBox>
+            <Label style="-fx-font-size: 19px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
+                   text="Bienvenido a nuestro catálogo"/>
+        </HBox>
+
+        <!-- ScrollPane con grid de productos -->
+        <ScrollPane fx:id="scrollProductos" VBox.vgrow="ALWAYS" fitToWidth="true"
+                    style="-fx-background-color: transparent; -fx-background: transparent;
+                           -fx-border-color: transparent;">
+            <GridPane fx:id="gridProductos" hgap="14.0" vgap="14.0"
+                      style="-fx-background-color: transparent;">
+                <padding>
+                    <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                </padding>
+            </GridPane>
+        </ScrollPane>
+
+    </VBox>
+
+    <!-- Barra inferior -->
+    <HBox alignment="CENTER_LEFT" style="-fx-background-color: #fdf5e6; -fx-padding: 10 20;">
+        <Button onAction="#handleRegresar"
+                style="-fx-background-color: #6b5644; -fx-text-fill: white;
+                       -fx-font-size: 13px; -fx-background-radius: 20;
+                       -fx-padding: 8 22; -fx-cursor: hand;" text="← Regresar"/>
+    </HBox>
+
+</VBox>

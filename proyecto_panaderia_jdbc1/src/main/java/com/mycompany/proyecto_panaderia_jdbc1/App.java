@@ -7,13 +7,35 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * JavaFX App
- */
 public class App extends Application {
 
     private static Scene scene;
+
+    /** true = entró por Pedido Express (sin login), false = usuario con sesión iniciada */
+    public static boolean modoExpress = false;
+
+    public record ItemCarrito(String nombre, String descripcion, double precio, int cantidad) {}
+
+    public static final List<ItemCarrito> carrito = new ArrayList<>();
+
+    public static void agregarAlCarrito(String nombre, String descripcion, double precio) {
+        for (int i = 0; i < carrito.size(); i++) {
+            if (carrito.get(i).nombre().equals(nombre)) {
+                ItemCarrito actual = carrito.get(i);
+                carrito.set(i, new ItemCarrito(actual.nombre(), actual.descripcion(),
+                        actual.precio(), actual.cantidad() + 1));
+                return;
+            }
+        }
+        carrito.add(new ItemCarrito(nombre, descripcion, precio, 1));
+    }
+
+    public static void limpiarCarrito() {
+        carrito.clear();
+    }
 
     @Override
     public void start(Stage stage) throws IOException {

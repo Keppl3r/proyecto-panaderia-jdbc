@@ -19,17 +19,18 @@ public class MainPanaderiaController {
 
     @FXML
     private void handleVerCatalogo() {
-        System.out.println("Ver Catálogo presionado");
-        
-        // Aquí puedes implementar la navegación al catálogo
-        // Por ejemplo: App.setRoot("catalogo");
-        
-        // Por ahora mostramos un mensaje
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Pedido Express");
-        alert.setHeaderText("Ver Catálogo");
-        alert.setContentText("Mostrando productos disponibles para entrega inmediata...");
-        alert.showAndWait();
+        App.modoExpress = true;
+        App.limpiarCarrito();
+        try {
+            App.setRoot("catalogo");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error al cargar pantalla");
+            alert.setContentText("No se pudo cargar el catálogo.");
+            alert.showAndWait();
+        }
     }
 
     @FXML

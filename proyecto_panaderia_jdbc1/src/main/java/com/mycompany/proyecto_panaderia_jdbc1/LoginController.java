@@ -44,15 +44,12 @@ public class LoginController {
 
         // Simulación de validación (reemplazar con lógica real de BD)
         if (validarCredenciales(nombre, password)) {
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Inicio de Sesión Exitoso");
-            alert.setHeaderText("¡Bienvenido!");
-            alert.setContentText("Has iniciado sesión correctamente, " + nombre + ".");
-            alert.showAndWait();
-
-            // Aquí podrías navegar a la pantalla principal del usuario autenticado
-            // Por ejemplo: App.setRoot("dashboard");
-            
+            BienvenidaController.setNombreUsuario(nombre);
+            try {
+                App.setRoot("bienvenida");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         } else {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error de autenticación");
