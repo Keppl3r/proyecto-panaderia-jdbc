@@ -1,17 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package negocio.BOs;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Base64;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import negocio.DTOs.PedidoExpressNuevoDTO;
+import negocio.encriptacion.EncriptadorPIN;
 import negocio.excepciones.NegocioException;
 import persistencia.DAOs.IPedidoExpressDAO;
 import persistencia.DAOs.IProductoDAO;
@@ -21,14 +15,14 @@ import persistencia.dominio.Producto;
 import persistencia.excepciones.PersistenciaException;
 
 /**
- *
  * @author Jazmin
+ * @author Adrian Mendoza
  */
 public class PedidoExpressBO implements IPedidoExpressBO {
 
     private IPedidoExpressDAO pedidoDAO;
     private IProductoDAO productoDAO;
-    private static final Logger LOG = Logger.getLogger(PedidoProgramadoBO.class.getName());
+    private static final Logger LOG = Logger.getLogger(PedidoExpressBO.class.getName());
 
     public PedidoExpressBO(IPedidoExpressDAO pedidoDAO, IProductoDAO productoDAO) {
         this.pedidoDAO = pedidoDAO;
@@ -36,59 +30,51 @@ public class PedidoExpressBO implements IPedidoExpressBO {
     }
 
     @Override
-    public PedidoExpress crearPedidoExpress(negocio.DTOs.PedidoExpressNuevoDTO pedidoDTO) throws NegocioException {
+    public PedidoExpress crearPedidoExpress(PedidoExpressNuevoDTO pedidoDTO) throws NegocioException {
         try {
-
             if (pedidoDTO == null) {
                 throw new NegocioException("El DTO del pedido no puede ser nulo");
             }
-
             if (pedidoDTO.getDetalles() == null || pedidoDTO.getDetalles().isEmpty()) {
                 throw new NegocioException("El pedido debe tener al menos un producto");
             }
 
-            List<DetallePedido> detalles = pedidoDTO.getDetalles();
-
-            for (DetallePedido d : detalles) {
-                try {
-                    Producto producto = productoDAO.obtenerPorId(d.getIdProducto());
-                    if (producto == null || !producto.isDisponible()) {
-                        throw new NegocioException("Producto no disponible: " + d.getIdProducto());
-                    }
-                    d.setPrecio(producto.getPrecio());
-                    d.calcularSubtotal();
-                } catch (PersistenciaException ex) {
-                    LOG.log(Level.SEVERE, "Error al obtener producto", ex);
-                    throw new NegocioException("Producto no encontrado", ex);
+            // Validar productos y calcular precios
+            for (DetallePedido d : pedidoDTO.getDetalles()) {
+                Producto producto = productoDAO.obtenerPorId(d.getIdProducto());
+                if (producto == null || !producto.isDisponible()) {
+                    throw new NegocioException("Producto no disponible: " + d.getIdProducto());
                 }
+                d.setPrecio(producto.getPrecio());
+                d.calcularSubtotal();
             }
 
-            PedidoExpress pedidoExpress = new PedidoExpress();
-            pedidoExpress.setDetalles(detalles);
-            pedidoExpress.setIdPedido(pedidoDAO.generarNumPedido());
+            // Armar el pedido
+            PedidoExpress pedido = new PedidoExpress();
+            pedido.setDetalles(pedidoDTO.getDetalles());
+            pedido.setNumPedido(pedidoDAO.generarNumPedido());
+            pedido.calcularTotal();
 
-            String folio = String.valueOf(pedidoDAO.generarNumPedido());
-            pedidoExpress.setFolio(folio);
+            // Folio consecutivo (basado en numPedido)
+            pedido.setFolio(String.valueOf(pedido.getNumPedido()));
 
-            SecureRandom secureR = new SecureRandom();
-            int pin = 10000000 + secureR.nextInt(90000000);
+            // Generar PIN de 8 dígitos
+            String pinTextoPlano = String.valueOf(10000000 + new SecureRandom().nextInt(90000000));
 
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(String.valueOf(pin).getBytes("UTF-8"));
-            String pinSeguro = Base64.getEncoder().encodeToString(hash);
-            pedidoExpress.setPin(pinSeguro);
+            // Guardar encriptado en BD, texto plano para mostrar al usuario
+            pedido.setPin(EncriptadorPIN.encriptar(pinTextoPlano));
+            pedido.setPinTextoPlano(pinTextoPlano);
 
-            PedidoExpress pedido = pedidoDAO.crear(pedidoExpress);
-            LOG.info("Pedido Express creado: " + pedido.toString());
-            return pedido;
+            // Persistir
+            PedidoExpress creado = pedidoDAO.crear(pedido);
+            creado.setPinTextoPlano(pinTextoPlano); // Mantener para la pantalla
 
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
-            LOG.log(Level.SEVERE, "Error al generar PIN seguro", ex);
-            throw new NegocioException("No se pudo generar un PIN seguro", ex);
+            LOG.info("Pedido Express creado - Folio: " + creado.getFolio());
+            return creado;
+
         } catch (PersistenciaException ex) {
             LOG.log(Level.SEVERE, "Error al crear pedido Express", ex);
             throw new NegocioException("No se pudo crear el pedido Express", ex);
         }
     }
-
 }

@@ -25,6 +25,7 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>8.3.0</version>
         </dependency>
+        <!-- SHA-256 se maneja con java.security.MessageDigest (built-in) -->
     </dependencies>
     <build>
         <plugins>
