@@ -20,8 +20,12 @@ public class Pedido {
     private List<DetallePedido> detalles;
 
     public enum EstadoPedido {
-        PENDIENTE, EN_PREPARACION, LISTO, ENTREGADO, CANCELADO, NO_RECLAMADO
-    }
+    PENDIENTE,
+    LISTO,
+    ENTREGADO,
+    CANCELADO,
+    NO_ENTREGADO 
+}
 
     public Pedido() {
         this.fechaRegistro = new Timestamp(System.currentTimeMillis());

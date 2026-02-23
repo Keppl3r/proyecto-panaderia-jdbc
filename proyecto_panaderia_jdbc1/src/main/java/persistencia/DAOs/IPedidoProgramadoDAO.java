@@ -13,4 +13,10 @@
          PedidoProgramado crear(PedidoProgramado pedido) throws PersistenciaException;
          int generarNumPedido() throws PersistenciaException;
          boolean validarFechaEntrega(Timestamp fechaEntrega) throws PersistenciaException;
+         
+    public List<PedidoProgramado> obtenerPorTelefono(String telefono) throws PersistenciaException;
+
+    public List<PedidoProgramado> obtenerPorRangoFechas(Timestamp inicio, Timestamp fin) throws PersistenciaException;
+
+   
      }

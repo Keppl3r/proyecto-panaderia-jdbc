@@ -5,6 +5,7 @@
 package negocio.BOs;
 
 import java.util.List;
+import negocio.DTOs.PedidoExpressNuevoDTO;
 import negocio.excepciones.NegocioException;
 import persistencia.dominio.DetallePedido;
 import persistencia.dominio.PedidoExpress;
@@ -15,6 +16,6 @@ import persistencia.dominio.PedidoExpress;
  */
 public interface IPedidoExpressBO {
     
-    public PedidoExpress programarPedidoExpress(List<DetallePedido> detalles) throws NegocioException;
+    public PedidoExpress crearPedidoExpress(PedidoExpressNuevoDTO pedidoDTO) throws NegocioException;
     
 }

@@ -4,6 +4,8 @@
  */
 package persistencia.DAOs;
 
+import java.sql.Timestamp;
+import java.util.List;
 import persistencia.dominio.PedidoExpress;
 import persistencia.excepciones.PersistenciaException;
 
@@ -12,9 +14,15 @@ import persistencia.excepciones.PersistenciaException;
  * @author Jazmin
  */
 public interface IPedidoExpressDAO {
-    
-    
+
     public PedidoExpress crear(PedidoExpress pedido) throws PersistenciaException;
-    public int generarNumPedido()throws PersistenciaException;
-    
+
+    public int generarNumPedido() throws PersistenciaException;
+
+    public PedidoExpress obtenerPorFolio(String folio) throws PersistenciaException;
+
+    public List<PedidoExpress> obtenerPorTelefono(String telefono) throws PersistenciaException;
+
+    public List<PedidoExpress> obtenerPorRangoFechas(Timestamp inicio, Timestamp fin) throws PersistenciaException;
+
 }

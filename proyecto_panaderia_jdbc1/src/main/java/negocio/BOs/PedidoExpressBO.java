@@ -27,7 +27,7 @@ import persistencia.excepciones.PersistenciaException;
  */
 public class PedidoExpressBO implements IPedidoExpressBO {
 
-    private IPedidoExpressDAO pedidoDAO;
+   private IPedidoExpressDAO pedidoDAO;
     private IProductoDAO productoDAO;
     private static final Logger LOG = Logger.getLogger(PedidoProgramadoBO.class.getName());
 
@@ -37,9 +37,19 @@ public class PedidoExpressBO implements IPedidoExpressBO {
     }
 
     @Override
-    public PedidoExpress programarPedidoExpress(List<DetallePedido> detalles) throws NegocioException {
-
+    public PedidoExpress crearPedidoExpress(negocio.DTOs.PedidoExpressNuevoDTO pedidoDTO) throws NegocioException {
         try {
+
+            if (pedidoDTO == null) {
+                throw new NegocioException("El DTO del pedido no puede ser nulo");
+            }
+
+            if (pedidoDTO.getDetalles() == null || pedidoDTO.getDetalles().isEmpty()) {
+                throw new NegocioException("El pedido debe tener al menos un producto");
+            }
+
+            List<DetallePedido> detalles = pedidoDTO.getDetalles();
+
             for (DetallePedido d : detalles) {
                 try {
                     Producto producto = productoDAO.obtenerPorId(d.getIdProducto());
@@ -49,37 +59,37 @@ public class PedidoExpressBO implements IPedidoExpressBO {
                     d.setPrecio(producto.getPrecio());
                     d.calcularSubtotal();
                 } catch (PersistenciaException ex) {
-                    Logger.getLogger(PedidoExpressBO.class.getName()).log(Level.SEVERE, null, ex);
+                    LOG.log(Level.SEVERE, "Error al obtener producto", ex);
+                    throw new NegocioException("Producto no encontrado", ex);
                 }
             }
 
             PedidoExpress pedidoExpress = new PedidoExpress();
             pedidoExpress.setDetalles(detalles);
             pedidoExpress.setIdPedido(pedidoDAO.generarNumPedido());
-            //folio consecutivo
+
             String folio = String.valueOf(pedidoDAO.generarNumPedido());
             pedidoExpress.setFolio(folio);
-            //pin aleatorio y de 8 digitos
+
             SecureRandom secureR = new SecureRandom();
             int pin = 10000000 + secureR.nextInt(90000000);
 
-            //Convierte el PIN en un hash seguro usando SHA-256
-            //Lo codifica en Base64 para poder guardarlo en la base de datos.
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(String.valueOf(pin).getBytes("UTF-8"));
             String pinSeguro = Base64.getEncoder().encodeToString(hash);
             pedidoExpress.setPin(pinSeguro);
-            
+
             PedidoExpress pedido = pedidoDAO.crear(pedidoExpress);
+            LOG.info("Pedido Express creado: " + pedido.toString());
             return pedido;
+
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
-           LOG.log(Level.SEVERE, "Error al generar Pin seguro", ex);
-             throw new NegocioException("No se pudo generar un Pin seguro");
-       
+            LOG.log(Level.SEVERE, "Error al generar PIN seguro", ex);
+            throw new NegocioException("No se pudo generar un PIN seguro", ex);
         } catch (PersistenciaException ex) {
-             LOG.log(Level.SEVERE, "Error al crear pedido Express", ex);
-             throw new NegocioException("No se pudo crear el pedido Express");
+            LOG.log(Level.SEVERE, "Error al crear pedido Express", ex);
+            throw new NegocioException("No se pudo crear el pedido Express", ex);
         }
     }
 
-    }
+}

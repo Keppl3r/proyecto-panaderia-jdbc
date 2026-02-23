@@ -1,9 +1,14 @@
 package persistencia.DAOs;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import persistencia.conexion.IConexionBD;
 import persistencia.dominio.PedidoProgramado;
 import persistencia.dominio.DetallePedido;
+import persistencia.dominio.Pedido.EstadoPedido;
 import persistencia.excepciones.PersistenciaException;
 
 public class PedidoProgramadoDAO implements IPedidoProgramadoDAO {
@@ -109,5 +114,121 @@ public class PedidoProgramadoDAO implements IPedidoProgramadoDAO {
         return fechaEntrega.getTime() > (ahora.getTime() + dosHoras);
     }
 
-    
+   @Override
+public List<PedidoProgramado> obtenerPorTelefono(String telefono) throws PersistenciaException {
+    String sql = """
+        SELECT p.ID_PEDIDO, p.NUM_PEDIDO, p.ESTADO, p.FECHA_ENTREGA, p.TOTAL,
+               pp.ID_CUPON,
+               d.ID_PRODUCTO, d.CANTIDAD, d.PRECIO, d.SUBTOTAL, d.NOTAS
+        FROM PEDIDOS p
+        JOIN CLIENTES c ON p.ID_USUARIO = c.ID_USUARIO
+        JOIN TELEFONOS t ON c.ID_USUARIO = t.ID_USUARIO
+        LEFT JOIN PEDIDOS_PROGRAMADOS pp ON p.ID_PEDIDO = pp.ID_PEDIDO
+        LEFT JOIN DETALLE_PEDIDOS d ON p.ID_PEDIDO = d.ID_PEDIDO
+        WHERE t.NUMERO = ?
+        ORDER BY p.FECHA_REGISTRO
+    """;
+
+    try (Connection conn = conexion.crearConexion();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setString(1, telefono);
+        try (ResultSet rs = ps.executeQuery()) {
+
+            Map<Integer, PedidoProgramado> mapaPedidos = new HashMap<>();
+
+            while (rs.next()) {
+                int idPedido = rs.getInt("ID_PEDIDO");
+                PedidoProgramado pedido = mapaPedidos.get(idPedido);
+
+                if (pedido == null) {
+                    pedido = new PedidoProgramado();
+                    pedido.setIdPedido(idPedido);
+                    pedido.setNumPedido(rs.getInt("NUM_PEDIDO"));
+                    pedido.setEstado(EstadoPedido.valueOf(rs.getString("ESTADO")));
+                    pedido.setFechaEntrega(rs.getTimestamp("FECHA_ENTREGA"));
+                    pedido.setTotal(rs.getDouble("TOTAL"));
+                    pedido.setIdCupon(rs.getObject("ID_CUPON", Integer.class));
+                    pedido.setDetalles(new ArrayList<>());
+                    mapaPedidos.put(idPedido, pedido);
+                }
+
+                int idProducto = rs.getInt("ID_PRODUCTO");
+                if (!rs.wasNull()) {
+                    DetallePedido detalle = new DetallePedido();
+                    detalle.setIdProducto(idProducto);
+                    detalle.setCantidad(rs.getInt("CANTIDAD"));
+                    detalle.setPrecio(rs.getDouble("PRECIO"));
+                    detalle.setSubtotal(rs.getDouble("SUBTOTAL"));
+                    detalle.setNotas(rs.getString("NOTAS"));
+                    pedido.getDetalles().add(detalle);
+                }
+            }
+
+            return new ArrayList<>(mapaPedidos.values());
+        }
+
+    } catch (SQLException ex) {
+        throw new PersistenciaException("Error al obtener pedidos por teléfono", ex);
+    }
+}
+
+@Override
+public List<PedidoProgramado> obtenerPorRangoFechas(Timestamp inicio, Timestamp fin) throws PersistenciaException {
+    String sql = """
+        SELECT p.ID_PEDIDO, p.NUM_PEDIDO, p.ESTADO, p.FECHA_ENTREGA, p.TOTAL,
+               pp.ID_CUPON,
+               d.ID_PRODUCTO, d.CANTIDAD, d.PRECIO, d.SUBTOTAL, d.NOTAS
+        FROM PEDIDOS p
+        LEFT JOIN PEDIDOS_PROGRAMADOS pp ON p.ID_PEDIDO = pp.ID_PEDIDO
+        LEFT JOIN DETALLE_PEDIDOS d ON p.ID_PEDIDO = d.ID_PEDIDO
+        WHERE p.FECHA_REGISTRO BETWEEN ? AND ?
+        ORDER BY p.FECHA_REGISTRO
+    """;
+
+    try (Connection conn = conexion.crearConexion();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setTimestamp(1, inicio);
+        ps.setTimestamp(2, fin);
+
+        try (ResultSet rs = ps.executeQuery()) {
+
+            Map<Integer, PedidoProgramado> mapaPedidos = new HashMap<>();
+
+            while (rs.next()) {
+                int idPedido = rs.getInt("ID_PEDIDO");
+                PedidoProgramado pedido = mapaPedidos.get(idPedido);
+
+                if (pedido == null) {
+                    pedido = new PedidoProgramado();
+                    pedido.setIdPedido(idPedido);
+                    pedido.setNumPedido(rs.getInt("NUM_PEDIDO"));
+                    pedido.setEstado(EstadoPedido.valueOf(rs.getString("ESTADO")));
+                    pedido.setFechaEntrega(rs.getTimestamp("FECHA_ENTREGA"));
+                    pedido.setTotal(rs.getDouble("TOTAL"));
+                    pedido.setIdCupon(rs.getObject("ID_CUPON", Integer.class));
+                    pedido.setDetalles(new ArrayList<>());
+                    mapaPedidos.put(idPedido, pedido);
+                }
+
+                int idProducto = rs.getInt("ID_PRODUCTO");
+                if (!rs.wasNull()) {
+                    DetallePedido detalle = new DetallePedido();
+                    detalle.setIdProducto(idProducto);
+                    detalle.setCantidad(rs.getInt("CANTIDAD"));
+                    detalle.setPrecio(rs.getDouble("PRECIO"));
+                    detalle.setSubtotal(rs.getDouble("SUBTOTAL"));
+                    detalle.setNotas(rs.getString("NOTAS"));
+                    pedido.getDetalles().add(detalle);
+                }
+            }
+
+            return new ArrayList<>(mapaPedidos.values());
+        }
+
+    } catch (SQLException ex) {
+        throw new PersistenciaException("Error al obtener pedidos por rango de fechas", ex);
+    }
+}
 }

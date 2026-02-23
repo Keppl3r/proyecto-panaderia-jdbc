@@ -10,4 +10,5 @@
 
          PedidoProgramado programarPedido(int idCliente, List<DetallePedido> detalles,
                                         Timestamp fechaEntrega, Integer idCupon) throws NegocioException;
+     
      }
