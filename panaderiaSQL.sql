@@ -1,8 +1,7 @@
--- ============================================================
--- SCRIPT COMPLETO - PANADERÍA
--- Bases de Datos Avanzadas - ITSON
+-- PANADERÍA
+-- Bases de Datos Avanzadas 
 -- Integrantes: Kevin A. Mendoza, Cristian E. Devora, Jazmin Baldenegro
--- ============================================================
+
 
 DROP DATABASE IF EXISTS panaderia;
 CREATE DATABASE panaderia;
@@ -285,7 +284,7 @@ INSERT INTO PRODUCTOS(NOMBRE, TIPO, DESCRIPCION, PRECIO, DISPONIBLE) VALUES
 INSERT INTO CUPONES(PORCENTAJE_DESCUENTO, FECHA_INICIO, FECHA_FIN, VIGENCIA, NUMERO_USOS, MAXIMO_USOS) VALUES
 (10.00, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), TRUE,  0, 50),    -- 10% descuento, 50 usos máx
 (15.00, NOW(), DATE_ADD(NOW(), INTERVAL 15 DAY), TRUE,  0, 20),    -- 15% descuento, 20 usos máx
-(20.00, '2025-01-01', '2025-12-31',              FALSE, 10, 10),   -- Cupón expirado (para probar validación)
+(20.00, '2025-01-01', '2025-12-31',              FALSE, 10, 10),   -- Cupón expirado para probar validación
 (5.00,  NOW(), DATE_ADD(NOW(), INTERVAL 60 DAY), TRUE,  0, NULL);  -- 5% descuento, usos ilimitados
 
 
