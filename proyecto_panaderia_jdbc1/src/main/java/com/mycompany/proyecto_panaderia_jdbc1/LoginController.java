@@ -42,34 +42,23 @@ public class LoginController {
         System.out.println("Usuario: " + nombre);
         System.out.println("Contraseña: " + password);
 
-        // Simulación de validación (reemplazar con lógica real de BD)
-        if (validarCredenciales(nombre, password)) {
-            BienvenidaController.setNombreUsuario(nombre);
-            try {
+        try {
+            if ("ana".equalsIgnoreCase(nombre) && "123456".equals(password)) {
+                App.setRoot("menu_empleado");
+            } else if ("juan".equalsIgnoreCase(nombre) && "123456".equals(password)) {
+                BienvenidaController.setNombreUsuario(nombre);
                 App.setRoot("bienvenida");
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            } else {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error de autenticación");
+                alert.setHeaderText("Credenciales incorrectas");
+                alert.setContentText("El nombre de usuario o la contraseña son incorrectos.\nPor favor, intente nuevamente.");
+                alert.showAndWait();
+                txtPassword.clear();
             }
-        } else {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error de autenticación");
-            alert.setHeaderText("Credenciales incorrectas");
-            alert.setContentText("El nombre de usuario o la contraseña son incorrectos.\nPor favor, intente nuevamente.");
-            alert.showAndWait();
-            
-            // Limpiar el campo de contraseña
-            txtPassword.clear();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
-    }
-
-    /**
-     * Método temporal para validar credenciales
-     * Reemplazar con consulta a base de datos
-     */
-    private boolean validarCredenciales(String nombre, String password) {
-        // Simulación simple - REEMPLAZAR CON CONSULTA A BD
-        // Por ahora acepta cualquier usuario con contraseña "123456"
-        return password.equals("123456");
     }
 
     @FXML

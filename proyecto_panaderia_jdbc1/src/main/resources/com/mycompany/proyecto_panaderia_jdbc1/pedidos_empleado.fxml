@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.mycompany.proyecto_panaderia_jdbc1.PedidosEmpleadoController"
+      prefWidth="700.0" prefHeight="600.0"
+      style="-fx-background-color: linear-gradient(to bottom, #f4c430, #f9d85a);">
+
+    <padding>
+        <Insets top="22.0" left="26.0" right="26.0" bottom="18.0"/>
+    </padding>
+
+    <!-- Título dinámico -->
+    <Label fx:id="lblTitulo"
+           style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;
+                  -fx-padding: 0 0 14 0; -fx-alignment: CENTER;"
+           prefWidth="648.0" text="Entrega Pedidos"/>
+
+    <!-- Lista de pedidos -->
+    <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true"
+                style="-fx-background-color: transparent; -fx-background: transparent;
+                       -fx-border-color: transparent;">
+        <VBox fx:id="vboxPedidos" spacing="14.0">
+            <padding><Insets top="4.0" right="4.0" bottom="4.0"/></padding>
+        </VBox>
+    </ScrollPane>
+
+    <!-- Botón Volver -->
+    <HBox alignment="CENTER" style="-fx-padding: 14 0 0 0;">
+        <Button onAction="#handleVolver" text="Volver"
+                style="-fx-background-color: #f39c12; -fx-text-fill: white;
+                       -fx-font-size: 13px; -fx-font-weight: bold;
+                       -fx-background-radius: 25; -fx-cursor: hand;
+                       -fx-padding: 8 30;"/>
+    </HBox>
+
+</VBox>

@@ -19,8 +19,8 @@
         <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
                text="Carrito de compras"/>
 
-        <!-- Lista de ítems (se rellena desde el controlador) -->
-        <ScrollPane fitToWidth="true" prefHeight="195.0"
+        <!-- Lista de ítems (rellena desde controlador) -->
+        <ScrollPane fitToWidth="true" prefHeight="200.0"
                     style="-fx-background-color: transparent; -fx-background: transparent;
                            -fx-border-color: transparent;">
             <VBox fx:id="vboxItems" spacing="10.0">
@@ -30,8 +30,8 @@
 
         <Separator/>
 
-        <!-- Sección cupón (solo modo Programado) -->
-        <VBox fx:id="vboxCupon" spacing="8.0" visible="false" managed="false">
+        <!-- Sección cupón — visibilidad controlada desde Java -->
+        <VBox fx:id="vboxCupon" spacing="8.0">
             <TextField fx:id="txtCupon"
                        promptText="Ingresa tu código de descuento"
                        style="-fx-background-radius: 8; -fx-padding: 8;
@@ -44,27 +44,25 @@
                            -fx-font-size: 12px; -fx-cursor: hand; -fx-padding: 5 18;"/>
         </VBox>
 
-        <Separator fx:id="sepCupon" visible="false" managed="false"/>
-
         <!-- Totales -->
         <VBox spacing="6.0">
             <HBox spacing="4.0">
                 <Label style="-fx-font-size: 13px; -fx-text-fill: #6b5644;" text="Subtotal : "/>
                 <Label fx:id="lblSubtotal"
                        style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
-                       text="$0.00"/>
+                       text="0.00"/>
             </HBox>
             <HBox spacing="4.0">
                 <Label style="-fx-font-size: 13px; -fx-text-fill: #6b5644;" text="Descuento: "/>
                 <Label fx:id="lblDescuento"
-                       style="-fx-font-size: 13px; -fx-text-fill: #e05a5a;" text="- $0.00"/>
+                       style="-fx-font-size: 13px; -fx-text-fill: #e05a5a;" text="- 0.00"/>
             </HBox>
             <HBox spacing="4.0">
                 <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
                        text="Total: "/>
                 <Label fx:id="lblTotal"
                        style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
-                       text="$0.00"/>
+                       text="0.00"/>
             </HBox>
         </VBox>
 
@@ -90,12 +88,12 @@
         <Button fx:id="btnTarjeta" onAction="#handleSeleccionarTarjeta" prefWidth="240.0"
                 style="-fx-background-color: white; -fx-background-radius: 10;
                        -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;
-                       -fx-cursor: hand; -fx-padding: 10 16;" text="💳  Tarjeta"/>
+                       -fx-cursor: hand; -fx-padding: 10 16;" text="Tarjeta"/>
 
         <Button fx:id="btnEfectivo" onAction="#handleSeleccionarEfectivo" prefWidth="240.0"
                 style="-fx-background-color: white; -fx-background-radius: 10;
                        -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;
-                       -fx-cursor: hand; -fx-padding: 10 16;" text="🪙  Efectivo"/>
+                       -fx-cursor: hand; -fx-padding: 10 16;" text="Efectivo"/>
 
         <!-- Caja de resumen -->
         <VBox spacing="5.0"
@@ -105,14 +103,13 @@
                    text="Resumen del pedido"/>
             <VBox fx:id="vboxResumen" spacing="2.0"/>
 
-            <!-- Tipo de pedido -->
             <HBox spacing="10.0" alignment="CENTER_LEFT">
                 <Label style="-fx-font-size: 11px; -fx-text-fill: #4a3a2a;"
                        text="Tipo de pedido:"/>
                 <CheckBox fx:id="chkProgramado" text="Programado"
-                          style="-fx-font-size: 11px; -fx-text-fill: #3a2a1a;" disable="true"/>
+                          style="-fx-font-size: 11px; -fx-text-fill: #3a2a1a;"/>
                 <CheckBox fx:id="chkExpress" text="Express"
-                          style="-fx-font-size: 11px; -fx-text-fill: #3a2a1a;" disable="true"/>
+                          style="-fx-font-size: 11px; -fx-text-fill: #3a2a1a;"/>
             </HBox>
 
             <HBox spacing="4.0">
@@ -121,17 +118,11 @@
                 <Label style="-fx-font-size: 11px; -fx-text-fill: #4a3a2a;" text="Sucursal"/>
             </HBox>
             <HBox spacing="4.0">
-                <Label style="-fx-font-size: 11px; -fx-text-fill: #4a3a2a;" text="Teléfono: "/>
-                <Label fx:id="lblTelResumen"
-                       style="-fx-font-size: 11px; -fx-text-fill: #4a3a2a;"
-                       text="6442896547"/>
-            </HBox>
-            <HBox spacing="4.0">
                 <Label style="-fx-font-size: 11px; -fx-text-fill: #4a3a2a;"
                        text="Total a pagar: "/>
                 <Label fx:id="lblTotalResumen"
                        style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
-                       text="$0.00"/>
+                       text="0.00"/>
             </HBox>
         </VBox>
 

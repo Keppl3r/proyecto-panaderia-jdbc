@@ -174,11 +174,12 @@ public class CatalogoController {
         }
         try {
             App.setRoot("carrito");
-        } catch (IOException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error");
+            alert.setTitle("Error al abrir carrito");
             alert.setHeaderText(null);
-            alert.setContentText("No se pudo abrir el carrito.");
+            alert.setContentText("Detalle: " + e.getMessage());
             alert.showAndWait();
         }
     }

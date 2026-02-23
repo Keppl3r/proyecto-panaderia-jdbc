@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.mycompany.proyecto_panaderia_jdbc1.InventarioController"
+      prefWidth="700.0" prefHeight="560.0"
+      style="-fx-background-color: linear-gradient(to bottom, #f4c430, #f9e080);">
+
+    <padding>
+        <Insets top="28.0" left="32.0" right="32.0" bottom="22.0"/>
+    </padding>
+
+    <!-- Título -->
+    <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;
+                  -fx-alignment: CENTER; -fx-padding: 0 0 18 0;"
+           prefWidth="636.0" text="Gestión de inventario"/>
+
+    <!-- Buscador -->
+    <VBox spacing="6.0" style="-fx-padding: 0 0 14 0;">
+        <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
+               text="Buscar producto"/>
+        <TextField fx:id="txtBuscar" prefWidth="270.0"
+                   style="-fx-background-color: white; -fx-background-radius: 6;
+                          -fx-border-radius: 6; -fx-border-color: #ccc;
+                          -fx-padding: 7; -fx-font-size: 13px;"/>
+    </VBox>
+
+    <!-- Lista de productos -->
+    <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true"
+                style="-fx-background-color: transparent; -fx-background: transparent;
+                       -fx-border-color: transparent;">
+        <VBox fx:id="vboxProductos" spacing="10.0">
+            <padding><Insets right="4.0" bottom="4.0"/></padding>
+        </VBox>
+    </ScrollPane>
+
+    <!-- Botón Inicio -->
+    <HBox alignment="CENTER" style="-fx-padding: 14 0 0 0;">
+        <Button onAction="#handleInicio" text="Inicio"
+                style="-fx-background-color: #f39c12; -fx-text-fill: white;
+                       -fx-font-size: 13px; -fx-font-weight: bold;
+                       -fx-background-radius: 25; -fx-cursor: hand;
+                       -fx-padding: 8 30;"/>
+    </HBox>
+
+</VBox>

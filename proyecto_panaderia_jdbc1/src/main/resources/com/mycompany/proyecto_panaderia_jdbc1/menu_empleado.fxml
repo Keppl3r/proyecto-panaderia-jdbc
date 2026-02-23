@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.mycompany.proyecto_panaderia_jdbc1.MenuEmpleadoController"
+      prefWidth="700.0" prefHeight="560.0"
+      alignment="CENTER" spacing="0.0"
+      style="-fx-background-color: linear-gradient(to bottom, #f4c430, #f9d85a);">
+
+    <padding>
+        <Insets top="50.0" left="60.0" right="60.0" bottom="40.0"/>
+    </padding>
+
+    <!-- Título -->
+    <Label style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
+           text="Menu Empleado"/>
+
+    <Region prefHeight="50.0"/>
+
+    <!-- Botones de navegación -->
+    <VBox alignment="CENTER" spacing="16.0">
+
+        <Button onAction="#handleCocina" prefWidth="260.0" prefHeight="46.0"
+                style="-fx-background-color: #f39c12; -fx-text-fill: white;
+                       -fx-font-size: 15px; -fx-font-weight: bold;
+                       -fx-background-radius: 30; -fx-cursor: hand;">
+            <graphic>
+                <HBox prefWidth="220.0" alignment="CENTER_LEFT" spacing="0.0">
+                    <Label text="Cocina" style="-fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
+                    <Label text=" ›" style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+                </HBox>
+            </graphic>
+        </Button>
+
+        <Button onAction="#handleCajaEntregas" prefWidth="260.0" prefHeight="46.0"
+                style="-fx-background-color: #f39c12; -fx-text-fill: white;
+                       -fx-font-size: 15px; -fx-font-weight: bold;
+                       -fx-background-radius: 30; -fx-cursor: hand;">
+            <graphic>
+                <HBox prefWidth="220.0" alignment="CENTER_LEFT" spacing="0.0">
+                    <Label text="Caja y Entregas" style="-fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
+                    <Label text=" ›" style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+                </HBox>
+            </graphic>
+        </Button>
+
+        <Button onAction="#handleHistorialPedidos" prefWidth="260.0" prefHeight="46.0"
+                style="-fx-background-color: #f39c12; -fx-text-fill: white;
+                       -fx-font-size: 15px; -fx-font-weight: bold;
+                       -fx-background-radius: 30; -fx-cursor: hand;">
+            <graphic>
+                <HBox prefWidth="220.0" alignment="CENTER_LEFT" spacing="0.0">
+                    <Label text="Historial Pedidos" style="-fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
+                    <Label text=" ›" style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+                </HBox>
+            </graphic>
+        </Button>
+
+        <Button onAction="#handleInventario" prefWidth="260.0" prefHeight="46.0"
+                style="-fx-background-color: #f39c12; -fx-text-fill: white;
+                       -fx-font-size: 15px; -fx-font-weight: bold;
+                       -fx-background-radius: 30; -fx-cursor: hand;">
+            <graphic>
+                <HBox prefWidth="220.0" alignment="CENTER_LEFT" spacing="0.0">
+                    <Label text="Inventario" style="-fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
+                    <Label text=" ›" style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+                </HBox>
+            </graphic>
+        </Button>
+
+    </VBox>
+
+    <Region prefHeight="40.0"/>
+
+    <!-- Botón Salir -->
+    <Button onAction="#handleSalir" text="Salir"
+            style="-fx-background-color: #f39c12; -fx-text-fill: white;
+                   -fx-font-size: 13px; -fx-font-weight: bold;
+                   -fx-background-radius: 25; -fx-cursor: hand;
+                   -fx-padding: 7 30;"/>
+
+</VBox>
