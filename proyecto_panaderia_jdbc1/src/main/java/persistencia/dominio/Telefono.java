@@ -1,13 +1,15 @@
 package persistencia.dominio;
 
+
 /**
  * Entidad de dominio que representa un número telefónico asociado a un usuario.
  * <p>
  * Esta clase permite la multiafiliación de contactos para un mismo cliente, 
  * utilizando etiquetas descriptivas para diferenciar entre distintos tipos 
- * de líneas (ej. "Móvil", "Casa", "Trabajo").
+ * de líneas 
  * </p>
  * @author Jazmin
+ * @author Adrian Mendoza
  */
 public class Telefono {
 

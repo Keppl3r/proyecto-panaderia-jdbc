@@ -4,6 +4,10 @@
  */
 package negocio.DTOs;
 
+import java.sql.Timestamp;
+import java.util.List;
+import persistencia.dominio.DetallePedido;
+
 /**
  * Data Transfer Object para la planificación de Pedidos Programados.
  * <p>
@@ -16,24 +20,25 @@ package negocio.DTOs;
 public class PedidoProgramadoNuevoDTO {
 
     private int idCliente;
-    private java.sql.Timestamp fechaEntrega;
+    private Timestamp fechaEntrega;
     private Integer idCupon;
-    private java.util.List<persistencia.dominio.DetallePedido> detalles;
+    private List<DetallePedido> detalles;
 
     /**
      * Constructor por defecto.
+     * Útil para frameworks de serialización y vinculación de datos en la UI.
      */
     public PedidoProgramadoNuevoDTO() {
     }
 
     /**
      * Constructor completo para inicializar todos los campos del pedido.
-     * * @param idCliente    Identificador del cliente que realiza la reserva.
+     * @param idCliente    Identificador del cliente que realiza la reserva.
      * @param fechaEntrega Fecha y hora pactada para la recolección.
      * @param idCupon      ID del cupón a aplicar (puede ser null).
-     * @param detalles     Lista de productos y cantidades.
+     * @param detalles     Lista de productos y cantidades que componen la orden.
      */
-    public PedidoProgramadoNuevoDTO(int idCliente,java.sql.Timestamp fechaEntrega,Integer idCupon,java.util.List<persistencia.dominio.DetallePedido> detalles) {
+    public PedidoProgramadoNuevoDTO(int idCliente, Timestamp fechaEntrega, Integer idCupon, List<DetallePedido> detalles) {
         this.idCliente = idCliente;
         this.fechaEntrega = fechaEntrega;
         this.idCupon = idCupon;
@@ -47,6 +52,7 @@ public class PedidoProgramadoNuevoDTO {
     public int getIdCliente() {
         return idCliente;
     }
+
     /**
      * Asigna el cliente al pedido. 
      * <p>Esta relación es obligatoria para la trazabilidad de pedidos programados.</p>
@@ -55,21 +61,25 @@ public class PedidoProgramadoNuevoDTO {
     public void setIdCliente(int idCliente) {
         this.idCliente = idCliente;
     }
+
     /**
      * Recupera la fecha y hora pactada para la recolección del pedido.
-     * @return Objeto {@link java.sql.Timestamp} con la precisión de entrega.
+     * @return Objeto {@link Timestamp} con la precisión de entrega.
      */
-    public java.sql.Timestamp getFechaEntrega() {
+    public Timestamp getFechaEntrega() {
         return fechaEntrega;
     }
+
     /**
      * Establece el momento en que el cliente recogerá sus productos.
-     * <p>El BO validará que este valor sea al menos 2 horas mayor a la hora actual.</p>
+     * <p>Importante: La capa de negocio (BO) validará que este valor sea 
+     * al menos 2 horas mayor a la hora actual del sistema.</p>
      * @param fechaEntrega Estampa de tiempo para la planificación de producción.
      */
-    public void setFechaEntrega(java.sql.Timestamp fechaEntrega) {
+    public void setFechaEntrega(Timestamp fechaEntrega) {
         this.fechaEntrega = fechaEntrega;
     }
+
     /**
      * Obtiene el ID del cupón de descuento aplicado, si existe.
      * @return El ID del cupón o {@code null} si el pedido se procesa a precio regular.
@@ -77,27 +87,32 @@ public class PedidoProgramadoNuevoDTO {
     public Integer getIdCupon() {
         return idCupon;
     }
+
     /**
      * Asigna un cupón promocional al pedido.
-     * <p>Se utiliza la clase {@link Integer} para permitir valores nulos en compras sin promoción.</p>
+     * <p>Se utiliza la clase {@link Integer} envolvente para permitir 
+     * valores nulos en compras sin promoción activa.</p>
      * @param idCupon Identificador del beneficio comercial.
      */
     public void setIdCupon(Integer idCupon) {
         this.idCupon = idCupon;
     }
+
     /**
      * Recupera la lista de productos y cantidades que componen la orden.
-     * @return Lista de {@link persistencia.dominio.DetallePedido}.
+     * @return Lista de {@link DetallePedido}.
      */
-    public java.util.List<persistencia.dominio.DetallePedido> getDetalles() {
+    public List<DetallePedido> getDetalles() {
         return detalles;
     }
+
     /**
      * Define los artículos seleccionados por el cliente.
-     * <p>Esta lista será procesada por el BO para calcular totales y validar stock futuro.</p>
+     * <p>Esta lista será procesada por el BO para calcular totales y 
+     * validar la disponibilidad de stock para la fecha futura.</p>
      * @param detalles Colección de productos para la orden.
      */
-    public void setDetalles(java.util.List<persistencia.dominio.DetallePedido> detalles) {
+    public void setDetalles(List<DetallePedido> detalles) {
         this.detalles = detalles;
     }
 }

@@ -9,7 +9,8 @@ import java.sql.Timestamp;
  * los porcentajes de reducción de precio y las restricciones temporales
  * de uso mediante marcas de tiempo (timestamps).
  * </p>
- * * @author Jazmin
+ * @author Jazmin
+ * @author Adrian Mendoza
  */
 public class Cupon {
 
@@ -20,7 +21,7 @@ public class Cupon {
     private boolean vigencia;
     private int numeroUsos;
 
-   /**
+    /**
      * Constructor por defecto. 
      * Crea una instancia de Cupon sin inicializar sus atributos.
      */
@@ -29,7 +30,7 @@ public class Cupon {
 
     /**
      * Constructor completo para la creación o recuperación de cupones.
-     * * @param idCupon Identificador único del cupón en la base de datos.
+     * @param idCupon Identificador único del cupón en la base de datos.
      * @param porcentajeDescuento Valor decimal del descuento (ej. 0.15 para 15%).
      * @param fechaInicio Marca de tiempo que indica cuándo empieza a ser válido el cupón.
      * @param fechaFin Marca de tiempo que indica el límite de validez del cupón.
@@ -114,7 +115,7 @@ public class Cupon {
      * 2. Que la fecha actual sea igual o posterior a la {@code fechaInicio}.
      * 3. Que la fecha actual sea anterior a la {@code fechaFin}.
      * </p>
-     * * @return {@code true} si cumple con todas las condiciones de tiempo y estado; 
+     * @return {@code true} si cumple con todas las condiciones de tiempo y estado; 
      * {@code false} en caso contrario.
      */
     public boolean estaVigente() {
@@ -137,11 +138,11 @@ public class Cupon {
 
     /**
      * Genera una representación textual del cupón.
-     * * @return String con ID, porcentaje y estado de vigencia.
+     * @return String con ID, porcentaje y estado de vigencia.
      */
     @Override
     public String toString() {
-        return "Cupon{idCupon=" + idCupon + ", porcentajeDescuento=" + porcentajeDescuento +
+        return "Cupon{idCupon=" + idCupon + ", porcentajeDescuento=" + (porcentajeDescuento * 100) +
                 "%, vigencia=" + vigencia + "}";
     }
 }

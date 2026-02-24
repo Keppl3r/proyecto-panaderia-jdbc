@@ -1,8 +1,5 @@
 package persistencia.dominio;
 
-
-
-
 /**
  * Entidad de dominio que representa un artículo del catálogo de la panadería.
  * <p>

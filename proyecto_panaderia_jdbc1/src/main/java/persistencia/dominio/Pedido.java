@@ -3,9 +3,6 @@ package persistencia.dominio;
 import java.sql.Timestamp;
 import java.util.List;
 
-import java.sql.Timestamp;
-import java.util.List;
-
 /**
  * Entidad de dominio que representa la estructura base de un Pedido.
  * <p>
@@ -13,7 +10,7 @@ import java.util.List;
  * el control de estados, cálculos de totales y la gestión de fechas de registro
  * y entrega. Sirve como base para especializaciones como pedidos express o programados.
  * </p>
- * * @author Jazmin
+ * @author Jazmin
  * @author Adrian Mendoza
  */
 public class Pedido {
@@ -39,14 +36,14 @@ public class Pedido {
          * @return Cadena de texto con la descripción formateada del estado.
          */
         public String getDescripcion() {
-            switch(this) {
-                case PENDIENTE: return "Pendiente";
-                case LISTO: return "Listo";
-                case ENTREGADO: return "Entregado";
-                case CANCELADO: return "Cancelado";
-                case NO_ENTREGADO: return "No Entregado";
-                default: return name();
-            }
+            return switch (this) {
+                case PENDIENTE -> "Pendiente";
+                case LISTO -> "Listo";
+                case ENTREGADO -> "Entregado";
+                case CANCELADO -> "Cancelado";
+                case NO_ENTREGADO -> "No Entregado";
+                default -> name();
+            };
         }
     }
 
@@ -176,7 +173,7 @@ public class Pedido {
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
         if (cliente != null) {
-            this.idUsuario = cliente.getIdUsuario(); 
+            this.idUsuario = cliente.getIdUsuario();
         }
     }
 
@@ -200,7 +197,9 @@ public class Pedido {
         this.total = 0.0;
         if (detalles != null && !detalles.isEmpty()) {
             for (DetallePedido detalle : detalles) {
-                this.total += detalle.getSubtotal();
+                if (detalle.getSubtotal() != null) {
+                    this.total += detalle.getSubtotal();
+                }
             }
         }
     }

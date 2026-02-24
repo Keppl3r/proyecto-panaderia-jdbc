@@ -9,7 +9,14 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import java.io.IOException;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Optional;
+import negocio.BOs.IClienteBO;
+import negocio.excepciones.NegocioException;
+import negocio.fabrica.FabricaBOs;
+import persistencia.dominio.Cliente;
 
 /**
  * Controlador para la edición del perfil de usuario. Gestiona la carga de datos
@@ -18,35 +25,16 @@ import java.util.Optional;
  */
 public class EditarPerfilController {
 
-    @FXML
-    private TextField txtNombreCompleto;
-
-    @FXML
-    private DatePicker dateFechaNacimiento;
-
-    @FXML
-    private TextField txtEdad;
-
-    @FXML
-    private TextField txtCalle;
-
-    @FXML
-    private TextField txtNumero;
-
-    @FXML
-    private TextField txtColonia;
-
-    @FXML
-    private TextField txtTelefonoCasa;
-
-    @FXML
-    private TextField txtTelefonoTrabajo;
-
-    @FXML
-    private PasswordField txtContrasena;
-
-    @FXML
-    private CheckBox chkMostrarContrasena;
+    @FXML private TextField txtNombreCompleto;
+    @FXML private DatePicker dateFechaNacimiento;
+    @FXML private TextField txtEdad;
+    @FXML private TextField txtCalle;
+    @FXML private TextField txtNumero;
+    @FXML private TextField txtColonia;
+    @FXML private TextField txtTelefonoCasa;
+    @FXML private TextField txtTelefonoTrabajo;
+    @FXML private PasswordField txtContrasena;
+    @FXML private CheckBox chkMostrarContrasena;
 
     private String contrasenaTexto = "";
 
@@ -65,7 +53,7 @@ public class EditarPerfilController {
      * nacimiento y concatena el nombre completo para su visualización.
      */
     private void cargarDatosCliente() {
-        persistencia.dominio.Cliente cliente = SesionActual.getCliente();
+        Cliente cliente = SesionActual.getCliente();
         if (cliente == null) {
             txtNombreCompleto.setText("Sin sesión");
             return;
@@ -77,8 +65,9 @@ public class EditarPerfilController {
         txtNombreCompleto.setText(nombreCompleto.trim());
 
         if (cliente.getFechaNacimiento() != null) {
-            dateFechaNacimiento.setValue(cliente.getFechaNacimiento().toLocalDate());
-            int edad = java.time.LocalDate.now().getYear() - cliente.getFechaNacimiento().toLocalDate().getYear();
+            LocalDate fechaNac = cliente.getFechaNacimiento().toLocalDate();
+            dateFechaNacimiento.setValue(fechaNac);
+            int edad = Period.between(fechaNac, LocalDate.now()).getYears();
             txtEdad.setText(String.valueOf(edad));
         }
 
@@ -93,6 +82,10 @@ public class EditarPerfilController {
         }
     }
 
+    /**
+     * Lógica para alternar la visibilidad de la contraseña. Nota: En esta
+     * versión se captura el texto para una posible transición a TextField.
+     */
     @FXML
     private void handleMostrarContrasena() {
         if (chkMostrarContrasena.isSelected()) {
@@ -101,8 +94,7 @@ public class EditarPerfilController {
     }
 
     /**
-     * Lógica para alternar la visibilidad de la contraseña. Nota: En esta
-     * versión se captura el texto para una posible transición a TextField.
+     * Muestra un aviso sobre la funcionalidad de agregar teléfonos adicionales.
      */
     @FXML
     private void handleAnadirTelefono() {
@@ -121,11 +113,7 @@ public class EditarPerfilController {
     @FXML
     private void handleConfirmarCambios() {
         if (txtNombreCompleto.getText().isBlank()) {
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Campo requerido");
-            alert.setHeaderText(null);
-            alert.setContentText("El nombre completo es obligatorio.");
-            alert.showAndWait();
+            mostrarAlerta(AlertType.WARNING, "Campo requerido", "El nombre completo es obligatorio.");
             return;
         }
 
@@ -134,6 +122,7 @@ public class EditarPerfilController {
         confirm.setHeaderText(null);
         confirm.setContentText("¿Deseas guardar los cambios realizados?");
 
+        // Estilización de botones de confirmación
         javafx.scene.control.Button btnAceptar = (javafx.scene.control.Button) confirm.getDialogPane().lookupButton(ButtonType.OK);
         btnAceptar.setText("Aceptar");
         btnAceptar.setStyle("-fx-background-color: #3a2a1a; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;");
@@ -144,16 +133,38 @@ public class EditarPerfilController {
 
         Optional<ButtonType> result = confirm.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            Alert exito = new Alert(AlertType.INFORMATION);
-            exito.setTitle("Cambios guardados");
-            exito.setHeaderText(null);
-            exito.setContentText("Tu perfil ha sido actualizado correctamente.");
-            exito.showAndWait();
-
             try {
+                Cliente cliente = SesionActual.getCliente();
+                if (cliente == null) {
+                    mostrarAlerta(AlertType.ERROR, "Error", "No hay sesión activa.");
+                    return;
+                }
+
+                // Parseo simple del nombre completo
+                String[] partes = txtNombreCompleto.getText().trim().split("\\s+");
+                cliente.setNombres(partes.length > 0 ? partes[0] : "");
+                cliente.setApellidoPaterno(partes.length > 1 ? partes[1] : "");
+                cliente.setApellidoMaterno(partes.length > 2 ? partes[2] : "");
+
+                if (dateFechaNacimiento.getValue() != null) {
+                    cliente.setFechaNacimiento(Date.valueOf(dateFechaNacimiento.getValue()));
+                }
+                cliente.setCalle(txtCalle.getText().trim());
+                cliente.setNumero(txtNumero.getText().trim());
+                cliente.setColonia(txtColonia.getText().trim());
+
+                IClienteBO clienteBO = FabricaBOs.obtenerClienteBO();
+                clienteBO.actualizarCliente(cliente);
+
+                mostrarAlerta(AlertType.INFORMATION, "Cambios guardados",
+                        "Tu perfil ha sido actualizado correctamente.");
+
                 App.setRoot("bienvenida");
-            } catch (IOException e) {
-                e.printStackTrace();
+
+            } catch (NegocioException ex) {
+                mostrarAlerta(AlertType.ERROR, "Error al guardar", ex.getMessage());
+            } catch (IOException ex) {
+                mostrarAlerta(AlertType.ERROR, "Error", "No se pudo cargar la pantalla.");
             }
         }
     }
@@ -167,10 +178,9 @@ public class EditarPerfilController {
         Alert confirm = new Alert(AlertType.CONFIRMATION);
         confirm.setTitle("Desactivar cuenta");
         confirm.setHeaderText("¿Estás seguro?");
-        confirm.setContentText("Esta acción desactivará tu cuenta. Podrás reactivarla iniciando sesión nuevamente.");
+        confirm.setContentText("Tu cuenta será desactivada. ¿Deseas continuar?");
 
-        javafx.scene.control.Button btnAceptar
-                = (javafx.scene.control.Button) confirm.getDialogPane().lookupButton(ButtonType.OK);
+        javafx.scene.control.Button btnAceptar = (javafx.scene.control.Button) confirm.getDialogPane().lookupButton(ButtonType.OK);
         btnAceptar.setText("Desactivar");
         btnAceptar.setStyle("-fx-background-color: #e05a8a; -fx-text-fill: white;"
                 + " -fx-font-weight: bold; -fx-background-radius: 6;");
@@ -178,10 +188,37 @@ public class EditarPerfilController {
         Optional<ButtonType> result = confirm.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
+                Cliente cliente = SesionActual.getCliente();
+                if (cliente == null) {
+                    mostrarAlerta(AlertType.ERROR, "Error", "No hay sesión activa.");
+                    return;
+                }
+
+                IClienteBO clienteBO = FabricaBOs.obtenerClienteBO();
+                clienteBO.desactivarCliente(cliente.getIdUsuario());
+
+                SesionActual.cerrarSesion();
                 App.setRoot("main_panaderia");
-            } catch (IOException e) {
-                e.printStackTrace();
+
+            } catch (NegocioException ex) {
+                mostrarAlerta(AlertType.ERROR, "Error al desactivar", ex.getMessage());
+            } catch (IOException ex) {
+                mostrarAlerta(AlertType.ERROR, "Error", "No se pudo cargar la pantalla principal.");
             }
         }
+    }
+
+    /**
+     * Despliega una alerta genérica configurable.
+     * @param tipo Tipo de alerta (Error, Warning, Info).
+     * @param titulo Título de la ventana.
+     * @param contenido Mensaje detallado.
+     */
+    private void mostrarAlerta(AlertType tipo, String titulo, String contenido) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(contenido);
+        alert.showAndWait();
     }
 }

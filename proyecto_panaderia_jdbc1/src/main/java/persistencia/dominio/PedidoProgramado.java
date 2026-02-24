@@ -9,6 +9,7 @@ import java.sql.Timestamp;
  * promocional mediante un {@link Cupon}. Gestiona la lógica de aplicación de 
  * descuentos y la validación de vigencia de los mismos sobre el total del pedido.
  * </p>
+ * @author Adrian Mendoza
  */
 public class PedidoProgramado extends Pedido {
 
@@ -84,7 +85,7 @@ public class PedidoProgramado extends Pedido {
      * El descuento solo se calcula si el objeto cupon no es nulo y cumple 
      * con los criterios de vigencia temporal y administrativa.
      * </p>
-     * * @return El monto del descuento calculado; {@code 0.0} si el cupón no es válido.
+     * @return El monto del descuento calculado; {@code 0.0} si el cupón no es válido.
      */
     public Double calcularDescuento() {
         if (cupon != null && cupon.estaVigente()) {

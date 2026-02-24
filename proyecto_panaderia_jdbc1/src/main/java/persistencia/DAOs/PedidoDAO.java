@@ -206,8 +206,6 @@ public class PedidoDAO implements IPedidoDAO {
         return pedidos;
     }
 
-    // --- Métodos auxiliares ---
-
     private List<Pedido> ejecutarBusqueda(String sql, String parametro) throws PersistenciaException {
         List<Pedido> pedidos = new ArrayList<>();
         try (Connection conn = conexion.crearConexion();

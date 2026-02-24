@@ -1,7 +1,5 @@
 package persistencia.dominio;
 
-
-
 /**
  * Entidad de dominio que representa una línea de artículo dentro de un pedido.
  * <p>
@@ -10,6 +8,7 @@ package persistencia.dominio;
  * en el momento exacto de la transacción para evitar inconsistencias por cambios 
  * futuros en el catálogo.
  * </p>
+ * @author Adrian Mendoza
  */
 public class DetallePedido {
 
@@ -20,10 +19,10 @@ public class DetallePedido {
     private Double precio;
     private Double subtotal;
     private String notas;
-   private Producto producto;
+    private Producto producto;
 
     /**
-     * Constructor por defecto.
+     * Constructor por defecto requerido para frameworks de persistencia.
      */
     public DetallePedido() {
     }
@@ -34,7 +33,7 @@ public class DetallePedido {
      * Este constructor dispara automáticamente el cálculo del subtotal 
      * basado en la cantidad y el precio proporcionados.
      * </p>
-     * * @param idPedido Identificador del pedido padre.
+     * @param idPedido Identificador del pedido padre.
      * @param idProducto Identificador del producto solicitado.
      * @param cantidad Unidades del producto.
      * @param precio Precio unitario pactado para la venta.
@@ -51,7 +50,7 @@ public class DetallePedido {
 
     /**
      * Constructor completo para la reconstrucción de objetos desde la base de datos.
-     * * @param idDetallePedido Identificador único de la línea de detalle.
+     * @param idDetallePedido Identificador único de la línea de detalle.
      * @param idPedido ID del pedido al que pertenece.
      * @param idProducto ID del producto asociado.
      * @param cantidad Cantidad de artículos.
@@ -114,7 +113,9 @@ public class DetallePedido {
     }
 
     /** @return El precio unitario de la línea. */
-    public Double getPrecio() { return precio; }
+    public Double getPrecio() { 
+        return precio; 
+    }
 
     /** * Define el precio y recalcula automáticamente el subtotal.
      * @param precio Valor unitario. 

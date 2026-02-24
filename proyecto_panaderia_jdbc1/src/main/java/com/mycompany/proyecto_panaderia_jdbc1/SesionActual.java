@@ -7,7 +7,8 @@ import persistencia.dominio.Usuario;
  * Almacén de estado persistente para la sesión del usuario.
  * Utiliza el patrón Singleton (vía métodos estáticos) para garantizar que 
  * la información del usuario y su perfil de cliente estén disponibles
- * en todo el ciclo de vida de la aplicación.
+ * en todo el ciclo de vida de la aplicación
+ * @author Adrian Mendoza
  */
 public class SesionActual {
 
@@ -72,11 +73,13 @@ public class SesionActual {
         return usuarioActual != null && usuarioActual.esEmpleado();
     }
 
+
     /**
      * Determina el nombre a mostrar en la barra de navegación o bienvenida.
      * Prioriza el nombre real del cliente sobre el nombre de usuario técnico.
      * @return Cadena con el nombre para mostrar.
      */
+
     public static String getNombreDisplay() {
         if (clienteActual != null) {
             return clienteActual.getNombres();

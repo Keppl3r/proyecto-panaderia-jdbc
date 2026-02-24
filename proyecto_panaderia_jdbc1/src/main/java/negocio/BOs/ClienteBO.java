@@ -93,7 +93,7 @@ public class ClienteBO implements IClienteBO {
         try {
             Cliente cliente = clienteDAO.buscarPorId(idUsuario);
             if (cliente == null) {
-                throw new NegocioException("No se encontró el cliente con ID: " + idUsuario);
+                throw new NegocioException("Cuenta no encontrada o desactivada");
             }
             return cliente;
         } catch (PersistenciaException ex) {
@@ -154,50 +154,55 @@ public class ClienteBO implements IClienteBO {
             throw new NegocioException("Error al registrar cliente", ex);
         }
     }
-    /**
-     * Coordina la lógica de negocio para la actualización de un cliente.
-     * * Este método realiza validaciones previas (integridad del objeto y campos obligatorios),
-     * se encarga de la seguridad mediante el encriptado de la contraseña (solo si esta fue 
-     * proporcionada) y finalmente delega la persistencia a la capa DAO.
-     *
-     * @param cliente El objeto {@code Cliente} con la información a actualizar.
-     * @return {@code true} si la operación fue exitosa.
-     * @throws NegocioException Si el cliente es nulo, si faltan campos obligatorios como 
-     * el nombre, si la base de datos no reporta filas afectadas 
-     * o si ocurre un error en la capa de persistencia.
+
+  /**
+     * Realiza la actualización de los datos personales de un cliente tras validar los campos obligatorios.
+     * <p>
+     * Este método actúa como filtro de integridad; verifica que los atributos esenciales 
+     * (nombres y apellido paterno) no sean nulos ni contengan únicamente espacios en blanco 
+     * antes de delegar la persistencia al DAO.
+     * </p>
+     * * @param cliente El objeto {@link Cliente} con la información actualizada.
+     * @return {@code true} si la operación fue exitosa en la base de datos.
+     * @throws NegocioException Si se violan las reglas de validación o si ocurre un fallo en la capa de datos.
      */
     @Override
     public boolean actualizarCliente(Cliente cliente) throws NegocioException {
-        // Validaciones
-        if (cliente == null) {
-            throw new NegocioException("El cliente no puede ser nulo");
-        }
-
         if (cliente.getNombres() == null || cliente.getNombres().isBlank()) {
             throw new NegocioException("El nombre es obligatorio");
         }
-
+        if (cliente.getApellidoPaterno() == null || cliente.getApellidoPaterno().isBlank()) {
+            throw new NegocioException("El apellido paterno es obligatorio");
+        }
         try {
-            // Encriptar password si fue modificada
-            if (cliente.getPassword() != null && !cliente.getPassword().isBlank()) {
-                cliente.setPassword(EncriptadorPIN.encriptar(cliente.getPassword()));
-            }
-
-            // Llamar al DAO para actualizar en BD
-            boolean actualizado = clienteDAO.actualizar(cliente);
-
-            if (actualizado) {
-                LOG.info("Cliente actualizado: " + cliente.getUsername());
-            } else {
-                throw new NegocioException("No se pudo actualizar el cliente");
-            }
-
-            return actualizado;
-
+            return clienteDAO.actualizar(cliente);
         } catch (PersistenciaException ex) {
             LOG.log(Level.SEVERE, "Error al actualizar cliente", ex);
-            throw new NegocioException("Error al actualizar cliente: " + ex.getMessage());
+            throw new NegocioException("Error al actualizar los datos del cliente", ex);
         }
     }
-
+    /**
+     * Gestiona la baja lógica de un cliente en el sistema.
+     * <p>
+     * Valida que el identificador sea un valor positivo coherente con la base de datos.
+     * Al desactivar, el cliente pierde acceso a funciones de inicio de sesión y pedidos, 
+     * pero su historial se mantiene intacto para fines de auditoría.
+     * </p>
+     * * @param idUsuario Identificador único del cliente a desactivar.
+     * @return {@code true} si el cliente fue encontrado y marcado como inactivo.
+     * @throws NegocioException Si el ID es inválido o ocurre un error durante el proceso de desactivación.
+     */
+    @Override
+    public boolean desactivarCliente(int idUsuario) throws NegocioException {
+        if (idUsuario <= 0) {
+            throw new NegocioException("ID de cliente inválido");
+        }
+        try {
+            return clienteDAO.desactivar(idUsuario);
+        } catch (PersistenciaException ex) {
+            LOG.log(Level.SEVERE, "Error al desactivar cliente", ex);
+            throw new NegocioException("Error al desactivar la cuenta", ex);
+        }
+    }
 }
+

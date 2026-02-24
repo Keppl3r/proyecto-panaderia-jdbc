@@ -66,11 +66,11 @@ public class BienvenidaController {
      */
     @FXML
     private void handleCarrito() {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Carrito");
-        alert.setHeaderText("Carrito de compras");
-        alert.setContentText("Tu carrito está vacío por el momento.");
-        alert.showAndWait();
+        try {
+            App.setRoot("carrito");
+        } catch (IOException e) {
+            mostrarError("No se pudo abrir el carrito.");
+        }
     }
     /**
      * Método alternativo para navegar al perfil (duplicado funcional de handleMiPerfil).

@@ -1,5 +1,6 @@
 package com.mycompany.proyecto_panaderia_jdbc1;
 
+
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -23,34 +24,35 @@ import negocio.DTOs.PedidoExpressNuevoDTO;
 import negocio.DTOs.PedidoProgramadoNuevoDTO;
 import negocio.excepciones.NegocioException;
 import negocio.fabrica.FabricaBOs;
-import persistencia.DAOs.ICuponDAO;
 import persistencia.dominio.Cupon;
 import persistencia.dominio.DetallePedido;
 import persistencia.dominio.PedidoExpress;
 import persistencia.dominio.PedidoProgramado;
-import persistencia.excepciones.PersistenciaException;
-import persistencia.fabrica.FabricaDAOs;
 
 /**
  * Controlador para la gestión del carrito de compras.
  * Permite visualizar productos, modificar cantidades, aplicar cupones de descuento,
  * seleccionar métodos de pago y procesar el pedido final.
+ * * @author Adrian Mendoza
+ * @author Jazmin
+ * @version 1.0
  */
 public class CarritoController {
-    
-     // Elementos de la Interfaz FXML
-    @FXML private VBox      vboxItems; 
-    @FXML private VBox      vboxCupon; 
+
+    // Elementos de la Interfaz FXML
+    @FXML private VBox vboxItems; 
+    @FXML private VBox vboxCupon; 
     @FXML private TextField txtCupon; 
-    @FXML private Label     lblSubtotal; 
-    @FXML private Label     lblDescuento; 
-    @FXML private Label     lblTotal;  
-    @FXML private VBox      vboxResumen; 
-    @FXML private CheckBox  chkProgramado;  
-    @FXML private CheckBox  chkExpress;
-    @FXML private Label     lblTotalResumen;
-    @FXML private Button    btnTarjeta;
-    @FXML private Button    btnEfectivo;
+    @FXML private Label lblSubtotal; 
+    @FXML private Label lblDescuento; 
+    @FXML private Label lblTotal;  
+    @FXML private VBox vboxResumen; 
+    @FXML private CheckBox chkProgramado;  
+    @FXML private CheckBox chkExpress;
+    @FXML private Label lblTotalResumen;
+    @FXML private Button btnTarjeta;
+    @FXML private Button btnEfectivo;
+
     // Estado Interno del Controlador
     private double descuentoAplicado = 0.0;
     private Cupon cuponActivo = null;
@@ -60,8 +62,8 @@ public class CarritoController {
             "-fx-background-color: white; -fx-background-radius: 10;"
             + " -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
             + " -fx-cursor: hand; -fx-padding: 10 16;";
-    private static final String BTN_PAGO_SELEC =
-            "-fx-background-color: #3a2a1a; -fx-background-radius: 10;"
+            
+    private static final String BTN_PAGO_SELEC = "-fx-background-color: #3a2a1a; -fx-background-radius: 10;"
             + " -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;"
             + " -fx-cursor: hand; -fx-padding: 10 16;";
     
@@ -71,17 +73,20 @@ public class CarritoController {
      */
     @FXML
     private void initialize() {
-       
         boolean express = App.modoExpress;
         chkProgramado.setSelected(!express); 
         chkExpress.setSelected(express);
-        vboxCupon.setVisible(!express); // El modo Express no permite cupones según reglas de negocio
+        
+        // El modo Express no permite cupones según reglas de negocio
+        vboxCupon.setVisible(!express); 
         vboxCupon.setManaged(!express);
+        
         btnTarjeta.setStyle(BTN_PAGO_SELEC);
         btnEfectivo.setStyle(BTN_PAGO_NORMAL);
         renderizarItems();
         actualizarTotales();
     }
+
     /**
      * Limpia y reconstruye visualmente la lista de productos en la interfaz
      * basándose en la lista estática del carrito en la clase App.
@@ -97,11 +102,13 @@ public class CarritoController {
             vboxResumen.getChildren().add(resItem);
         }
     }
+
     /**
      * Crea dinámicamente el componente visual (HBox) para un producto.
      * Incluye imagen (emoji), nombre, precio y controles de cantidad/eliminación.
-     * @param item Datos del producto.
+     * * @param item Datos del producto.
      * @param index Posición en la lista para acciones de borrado/edición.
+     * @return El contenedor HBox configurado para la vista.
      */
     private HBox crearFilaItem(App.ItemCarrito item, int index) {
         HBox fila = new HBox(10);
@@ -150,12 +157,16 @@ public class CarritoController {
         fila.getChildren().addAll(icono, info, controles, btnEliminar);
         return fila;
     }
+
     /**
      * Modifica la cantidad de un producto. Si la cantidad llega a 0, 
      * el producto se elimina automáticamente del carrito.
+     * * @param index Índice del producto en la lista.
+     * @param delta Cantidad a sumar o restar (ej: +1 o -1).
      */
     private void cambiarCantidad(int index, int delta) {
-        if (index < 0 || index >= App.carrito.size()) return;
+        if (index < 0 || index >= App.carrito.size())
+            return;
         App.ItemCarrito item = App.carrito.get(index);
         int nueva = item.cantidad() + delta;
         if (nueva <= 0) {
@@ -167,6 +178,7 @@ public class CarritoController {
         renderizarItems();
         actualizarTotales();
     }
+
     /**
      * Realiza los cálculos matemáticos del subtotal, descuento y total final.
      * Actualiza todas las etiquetas de precio en la pantalla.
@@ -180,6 +192,7 @@ public class CarritoController {
         lblTotal.setText(String.format("$%.2f", total));
         lblTotalResumen.setText(String.format("$%.2f", total));
     }
+
     /**
      * Valida el cupón ingresado contra la base de datos usando el DAO.
      * Verifica que el cupón exista y esté vigente.
@@ -201,49 +214,44 @@ public class CarritoController {
         }
 
         try {
-            ICuponDAO cuponDAO = FabricaDAOs.obtenerCuponDAO();
-            Cupon cupon = cuponDAO.buscarPorId(idCupon);
+            IPedidoProgramadoBO pedidoProgramadoBO = FabricaBOs.obtenerPedidoProgramadoBO();
+            Cupon cupon = pedidoProgramadoBO.validarCupon(idCupon);
 
-            if (cupon == null) {
-                mostrarAlerta(AlertType.ERROR, "Cupón no encontrado", "No existe un cupón con ese ID.");
-                descuentoAplicado = 0;
-                cuponActivo = null;
-            } else if (!cupon.estaVigente()) {
-                mostrarAlerta(AlertType.ERROR, "Cupón inválido", "El cupón ya no está vigente o ha expirado.");
-                descuentoAplicado = 0;
-                cuponActivo = null;
-            } else {
-                cuponActivo = cupon;
-                descuentoAplicado = cupon.getPorcentajeDescuento() / 100.0;
-                mostrarAlertaOK(String.format("✅ Cupón válido\nSe aplicó un %.0f%% de descuento.",
-                        cupon.getPorcentajeDescuento()));
-            }
-        } catch (PersistenciaException ex) {
-            ex.printStackTrace();
-            mostrarAlerta(AlertType.ERROR, "Error", "No se pudo validar el cupón: " + ex.getMessage());
+            cuponActivo = cupon;
+            descuentoAplicado = cupon.getPorcentajeDescuento() / 100.0;
+            mostrarAlertaOK(String.format("✅ Cupón válido\nSe aplicó un %.0f%% de descuento.",
+                    cupon.getPorcentajeDescuento()));
+
+        } catch (NegocioException ex) {
+            mostrarAlerta(AlertType.ERROR, "Cupón inválido", ex.getMessage());
             descuentoAplicado = 0;
             cuponActivo = null;
         }
 
         actualizarTotales();
     }
-   /**
+
+    /**
      * Cambia el método de pago a Tarjeta y actualiza el estilo de los botones.
      */
-    @FXML private void handleSeleccionarTarjeta() {
+    @FXML 
+    private void handleSeleccionarTarjeta() {
         metodoPago = "TARJETA";
         btnTarjeta.setStyle(BTN_PAGO_SELEC);
         btnEfectivo.setStyle(BTN_PAGO_NORMAL);
     }
+
     /**
      * Cambia el método de pago a Efectivo y actualiza el estilo de los botones.
      */
-    @FXML private void handleSeleccionarEfectivo() {
+    @FXML 
+    private void handleSeleccionarEfectivo() {
         metodoPago = "EFECTIVO";
         btnEfectivo.setStyle(BTN_PAGO_SELEC);
         btnTarjeta.setStyle(BTN_PAGO_NORMAL);
     }
-     /**
+
+    /**
      * Procesa la confirmación del pedido.
      * Valida que haya productos y delega la creación según el modo (Express o Programado).
      */
@@ -268,9 +276,11 @@ public class CarritoController {
             mostrarAlerta(AlertType.ERROR, "Error al crear pedido", ex.getMessage());
         }
     }
+
     /**
      * Transforma los items del carrito de la interfaz en objetos de transferencia 
      * de datos (DetallePedido) para la capa de negocio.
+     * * @return Lista de detalles lista para persistencia.
      */
     private List<DetallePedido> construirDetalles() {
         List<DetallePedido> detalles = new ArrayList<>();
@@ -282,9 +292,12 @@ public class CarritoController {
         }
         return detalles;
     }
+
     /**
      * Lógica específica para pedidos inmediatos.
      * No requiere sesión de usuario y genera un PIN de seguridad.
+     * * @param detalles Lista de productos seleccionados.
+     * @throws NegocioException Si hay error en la creación del folio o stock.
      */
     private void crearPedidoExpress(List<DetallePedido> detalles) throws NegocioException {
         IPedidoExpressBO bo = FabricaBOs.obtenerPedidoExpressBO();
@@ -294,8 +307,7 @@ public class CarritoController {
         PedidoConfirmadoController.setDatosPedido(
                 "#" + pedido.getNumPedido(),
                 pedido.getEstado().getDescripcion(),
-                true
-        );
+                true);
         PedidoConfirmadoController.setInfoExpress(pedido.getFolio(), pedido.getPinTextoPlano());
 
         App.limpiarCarrito();
@@ -305,9 +317,12 @@ public class CarritoController {
             mostrarAlerta(AlertType.ERROR, "Error", "No se pudo cargar la confirmación.");
         }
     }
+
     /**
      * Lógica para pedidos programados. 
      * Requiere que el usuario esté logueado y establece entrega mínima de 2 horas.
+     * * @param detalles Lista de productos seleccionados.
+     * @throws NegocioException Si el cliente tiene pedidos pendientes o datos inválidos.
      */
     private void crearPedidoProgramado(List<DetallePedido> detalles) throws NegocioException {
         if (!SesionActual.isLogeado() || SesionActual.getCliente() == null) {
@@ -315,8 +330,7 @@ public class CarritoController {
             return;
         }
 
-        // Fecha de entrega: 2 horas desde ahora (mínimo requerido)
-        Timestamp fechaEntrega = new Timestamp(System.currentTimeMillis() + 2L * 60 * 60 * 1000);
+        Timestamp fechaEntrega = new Timestamp(System.currentTimeMillis() + (2L * 60 * 60 * 1000) + (5L * 60 * 1000));
         Integer idCupon = cuponActivo != null ? cuponActivo.getIdCupon() : null;
 
         IPedidoProgramadoBO bo = FabricaBOs.obtenerPedidoProgramadoBO();
@@ -327,8 +341,7 @@ public class CarritoController {
         PedidoConfirmadoController.setDatosPedido(
                 "#" + pedido.getNumPedido(),
                 pedido.getEstado().getDescripcion(),
-                false
-        );
+                false);
         PedidoConfirmadoController.setInfoExpress(null, null);
 
         App.limpiarCarrito();
@@ -338,6 +351,7 @@ public class CarritoController {
             mostrarAlerta(AlertType.ERROR, "Error", "No se pudo cargar la confirmación.");
         }
     }
+
     /**
      * Regresa al usuario a la pantalla del catálogo de productos.
      */
@@ -349,13 +363,12 @@ public class CarritoController {
             mostrarAlerta(AlertType.ERROR, "Error", "No se pudo volver al catálogo.");
         }
     }
+
     /**
      * Despliega una alerta genérica configurable.
-     * Permite reutilizar la lógica de mensajes para diferentes contextos (Error, Confirmación, 
-     * Advertencia o Información) reduciendo la duplicación de código.
-     * * @param tipo      Determina el icono y propósito de la alerta (AlertType).
-     * @param titulo    Texto que aparecerá en la barra de título de la ventana.
-     * @param contenido Mensaje principal detallado para el usuario.
+     * * @param tipo Determines the icon and purpose (Error, Warning, Info).
+     * @param titulo Texto de la barra de título.
+     * @param contenido Mensaje detallado.
      */
     private void mostrarAlerta(AlertType tipo, String titulo, String contenido) {
         Alert alert = new Alert(tipo);
@@ -364,11 +377,10 @@ public class CarritoController {
         alert.setContentText(contenido);
         alert.showAndWait();
     }
+
     /**
-     * Muestra una alerta de éxito personalizada tras la aplicación de un cupón.
-     * A diferencia de una alerta estándar, este método accede al grafo de nodos (Scene Graph)
-     * del diálogo para estilizar el botón de confirmación con los colores de la marca.
-     * * @param contenido Mensaje de éxito que indica el descuento aplicado.
+     * Muestra una alerta de éxito estilizada tras aplicar un cupón.
+     * * @param contenido Mensaje de éxito.
      */
     private void mostrarAlertaOK(String contenido) {
         Alert alert = new Alert(AlertType.INFORMATION);

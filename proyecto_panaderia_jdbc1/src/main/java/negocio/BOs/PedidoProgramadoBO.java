@@ -138,4 +138,20 @@ public class PedidoProgramadoBO implements IPedidoProgramadoBO {
             throw new NegocioException(ex.getMessage(), ex);
         }
     }
+
+    @Override
+    public Cupon validarCupon(int idCupon) throws NegocioException {
+        try {
+            Cupon cupon = cuponDAO.buscarPorId(idCupon);
+            if (cupon == null) {
+                throw new NegocioException("Cupon no encontrado");
+            }
+            if (!cupon.estaVigente()) {
+                throw new NegocioException("El cupon no esta vigente");
+            }
+            return cupon;
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al validar cupon", ex);
+        }
+    }
 }

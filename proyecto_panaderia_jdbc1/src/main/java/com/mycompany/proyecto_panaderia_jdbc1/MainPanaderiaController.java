@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import java.io.IOException;
+
 /**
  * Controlador de la pantalla de inicio principal (Landing Page).
  * Proporciona el punto de entrada para los flujos de invitado, inicio de sesión 
@@ -22,6 +23,21 @@ public class MainPanaderiaController {
     private Button btnRegistrarse;
     
     /**
+     * Inicializa la vista aplicando efectos visuales dinámicos a los botones.
+     * Se ejecuta automáticamente al cargar el archivo FXML.
+     */
+    @FXML
+    private void initialize() {
+        // Log de confirmación de carga
+        System.out.println("Pantalla principal de Pantojarte Panadería cargada");
+        
+        // Aplicar efectos visuales dinámicos
+        addHoverEffect(btnVerCatalogo);
+        addHoverEffect(btnIniciarSesion);
+        addHoverEffect(btnRegistrarse);
+    }
+
+    /**
      * Configura el acceso como invitado.
      * Activa el 'modoExpress' en la aplicación y limpia el carrito de compras 
      * previo para asegurar una nueva sesión de compra limpia.
@@ -34,62 +50,36 @@ public class MainPanaderiaController {
             App.setRoot("catalogo");
         } catch (IOException e) {
             e.printStackTrace();
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error al cargar pantalla");
-            alert.setContentText("No se pudo cargar el catálogo.");
-            alert.showAndWait();
+            mostrarErrorCarga("catalogo");
         }
     }
+
     /**
      * Redirige al usuario a la pantalla de autenticación.
      */
     @FXML
     private void handleIniciarSesion() {
-        System.out.println("Iniciar Sesión presionado");
-        
         try {
             App.setRoot("login");
         } catch (IOException e) {
             e.printStackTrace();
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error al cargar pantalla");
-            alert.setContentText("No se pudo cargar la pantalla de inicio de sesión.");
-            alert.showAndWait();
+            mostrarErrorCarga("inicio de sesión");
         }
     }
+
     /**
      * Redirige al usuario al formulario de registro.
      */
     @FXML
     private void handleRegistrarse() {
-        System.out.println("Registrarse presionado");
-        
         try {
             App.setRoot("registro");
         } catch (IOException e) {
             e.printStackTrace();
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error al cargar pantalla");
-            alert.setContentText("No se pudo cargar la pantalla de registro.");
-            alert.showAndWait();
+            mostrarErrorCarga("registro");
         }
     }
-    /**
-     * Inicializa la vista aplicando efectos visuales dinámicos a los botones.
-     */
-    @FXML
-    private void initialize() {
-        // Método que se ejecuta automáticamente al cargar el FXML
-        System.out.println("Pantalla principal de Pantojarte Panadería cargada");
-        
-        
-        addHoverEffect(btnVerCatalogo);
-        addHoverEffect(btnIniciarSesion);
-        addHoverEffect(btnRegistrarse);
-    }
+
     /**
      * Implementa efectos visuales dinámicos para mejorar la experiencia de usuario (UX).
      * Utiliza listeners de eventos de ratón para modificar el estilo CSS del botón 
@@ -101,14 +91,26 @@ public class MainPanaderiaController {
      */
     private void addHoverEffect(Button button) {
         String originalStyle = button.getStyle();
-        
+
         button.setOnMouseEntered(e -> {
-            button.setStyle(originalStyle + "; -fx-scale-x: 1.05; -fx-scale-y: 1.05; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 15, 0, 0, 3);");
+            button.setStyle(originalStyle
+                    + "; -fx-scale-x: 1.05; -fx-scale-y: 1.05; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 15, 0, 0, 3);");
         });
-        
+
         button.setOnMouseExited(e -> {
             button.setStyle(originalStyle);
         });
     }
-}
 
+    /**
+     * Método auxiliar para centralizar el despliegue de errores al cambiar de vista.
+     * @param vista El nombre de la vista que falló al cargar para mostrar al usuario.
+     */
+    private void mostrarErrorCarga(String vista) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText("Error al cargar pantalla");
+        alert.setContentText("No se pudo cargar la pantalla de " + vista + ".");
+        alert.showAndWait();
+    }
+}

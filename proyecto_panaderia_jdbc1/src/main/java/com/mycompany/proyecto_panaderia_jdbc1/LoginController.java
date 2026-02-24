@@ -66,7 +66,7 @@ public class LoginController {
             } else {
                 mostrarAlerta(AlertType.ERROR, "Acceso denegado",
                         "Rol no reconocido",
-                        "Tu cuenta no tiene un rol válido. Contacta al administrador.");
+                        "Tu cuenta no tiene un rol valido.");
             }
 
         } catch (NegocioException ex) {

@@ -42,22 +42,30 @@ public interface IClienteBO {
      */
     Cliente obtenerClientePorId(int idUsuario) throws NegocioException;
     /**
-     * Procesa la solicitud de actualización de los datos de un cliente bajo las reglas de negocio.
+     * Coordina la actualización de la información de un cliente existente.
      * <p>
-     * Este método actúa como intermediario entre la vista y la persistencia. Se encarga de:
-     * <ul>
-     * <li>Validar que la información obligatoria del cliente esté completa.</li>
-     * <li>Gestionar la seguridad de la cuenta mediante el cifrado de la nueva contraseña.</li>
-     * <li>Transformar errores técnicos de la base de datos en mensajes comprensibles para el usuario.</li>
-     * </ul>
+     * Este método valida que los campos críticos (nombres y apellido paterno) cumplan 
+     * con las reglas de negocio antes de proceder a la persistencia. Si la validación 
+     * falla, se detiene el proceso para evitar datos inconsistentes.
      * </p>
-     *
-     * @param cliente El objeto {@code Cliente} con los cambios solicitados por el usuario.
-     * @return {@code true} si la operación se realizó con éxito y los datos fueron validados y guardados.
-     * @throws NegocioException Si los datos del cliente son inválidos, si no se encuentra 
-     * la sesión o si ocurre un fallo en el proceso de guardado.
+     * * @param cliente Objeto {@link Cliente} con los datos actualizados.
+     * @return {@code true} si la actualización se realizó con éxito en el sistema.
+     * @throws NegocioException Si los datos obligatorios están ausentes o si ocurre 
+     * un error técnico en la capa de persistencia.
      */
-     public boolean actualizarCliente(Cliente cliente)throws NegocioException;
-    
-  
+    boolean actualizarCliente(Cliente cliente) throws NegocioException;
+    /**
+     * Ejecuta el proceso de baja lógica de un cliente en el sistema.
+     * <p>
+     * Verifica la validez del identificador proporcionado y solicita al DAO el 
+     * cambio de estado del cliente. Este método es preferible a una eliminación 
+     * física para mantener la integridad referencial de pedidos históricos.
+     * </p>
+     * * @param idUsuario Identificador único del usuario/cliente a desactivar.
+     * @return {@code true} si el cliente fue desactivado correctamente.
+     * @throws NegocioException Si el ID es inválido o el servicio de persistencia 
+     * no puede completar la operación.
+     */
+    boolean desactivarCliente(int idUsuario) throws NegocioException;
+
 }
