@@ -6,6 +6,18 @@ import persistencia.conexion.*;
 import persistencia.dominio.*;
 import java.util.List;
 
+/**
+ * Clase de prueba para validar la gestión y disponibilidad del catálogo de productos.
+ * <p>
+ * Esta clase realiza un test de integración sobre la capa de negocio de Productos, 
+ * verificando los siguientes flujos:
+ * <ul>
+ * <li>Recuperación masiva de productos marcados como disponibles en la base de datos.</li>
+ * <li>Validación de la integridad de la lista retornada (conteo de elementos).</li>
+ * <li>Búsqueda específica de un producto por su identificador único (ID).</li>
+ * <li>Manejo de excepciones ante fallos de conexión con el servidor de datos.</li>
+ *
+ */
 public class PruebaProductoBO {
 
     public static void main(String[] args) {

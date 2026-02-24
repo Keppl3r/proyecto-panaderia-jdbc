@@ -4,7 +4,15 @@
      import persistencia.conexion.*;
      import persistencia.dominio.*;
      import java.util.List;
-
+ 
+ /**
+ * Clase de prueba para validar la persistencia y recuperación del catálogo de productos.
+ * <p>
+ * Se enfoca en verificar que la comunicación con la tabla de productos sea correcta, 
+ * asegurando que los métodos de filtrado por disponibilidad y búsqueda por identificador 
+ * mapeen los datos del motor de base de datos a objetos Java de forma íntegra.
+ * </p>
+ */
      public class PruebaProductoDAO {
 
          public static void main(String[] args) {

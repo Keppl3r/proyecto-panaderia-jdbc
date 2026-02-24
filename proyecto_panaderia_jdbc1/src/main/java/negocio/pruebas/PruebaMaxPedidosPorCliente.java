@@ -9,6 +9,22 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+    
+/**
+ * Clase de prueba funcional para validar la restricción de pedidos máximos por cliente.
+ * <p>
+ * El objetivo de esta prueba es asegurar que el sistema respete el límite de 3 pedidos 
+ * programados activos por usuario. La prueba realiza un ciclo de 4 iteraciones:
+ * <ul>
+ * <li>Las primeras 3 iteraciones deberían resultar en la creación exitosa de pedidos.</li>
+ * <li>La 4ta iteración debe ser rechazada por la capa de negocio, lanzando una excepción controlada.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Además, valida la correcta integración del DTO {@code PedidoProgramadoNuevoDTO} y el 
+ * cálculo de tiempos de entrega (configurados a +3 horas en esta prueba).
+ * </p>
+ */
 public class PruebaMaxPedidosPorCliente {
 
     public static void main(String[] args) {

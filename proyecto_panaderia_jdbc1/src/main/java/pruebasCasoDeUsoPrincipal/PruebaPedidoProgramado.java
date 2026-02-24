@@ -9,11 +9,26 @@ import negocio.fabrica.*;
 import persistencia.dominio.*;
 
 /**
- * Caso de uso: Programar un pedido
+ * * Clase de prueba para validar el flujo del Caso de Uso: "Programar Pedido".
+ * <p>
+ * Actúa como un driver de ejecución que simula la interacción de un cliente con el sistema,
+ * desde la selección de productos y configuración de entrega hasta la persistencia final
+ * a través de la capa de lógica de negocio (BO).
+ * </p>
  * @author Adrian Mendoza
  */
 public class PruebaPedidoProgramado {
-    
+        /**
+     * Punto de entrada de la aplicación de prueba.
+     * <p>
+     * Realiza las siguientes etapas:
+     * 1. Inicializa el BO mediante la {@link FabricaBOs}.
+     * 2. Crea una lista de {@link DetallePedido} simulando una selección de carrito.
+     * 3. Configura un {@link PedidoProgramadoNuevoDTO} con datos de tiempo futuro.
+     * 4. Ejecuta la lógica de programación y muestra los resultados por consola.
+     * </p>
+     * * @param args Argumentos de línea de comandos (no utilizados).
+     */
     public static void main(String[] args) {
         System.out.println("Iniciando Caso de Uso: Programar Pedido");
         

@@ -7,7 +7,21 @@ package persistencia.pruebas;
      import persistencia.conexion.*;
      import persistencia.dominio.*;
 /**
- *
+ ** Punto de entrada principal para ejecutar la prueba de integración del flujo de pedidos.
+     * <p>
+     * Este método orquestador simula el comportamiento de la capa de presentación realizando
+     * las siguientes etapas:
+     * </p>
+     * <ul>
+     * <li><b>Inicialización:</b> Obtiene la implementación de la lógica de negocio desde {@link FabricaBOs}.</li>
+     * <li><b>Construcción del Carrito:</b> Instancia una lista de {@link DetallePedido} con productos de prueba.</li>
+     * <li><b>Transferencia de Datos:</b> Configura un {@link PedidoProgramadoNuevoDTO} estableciendo 
+     * un cliente, los detalles y una fecha de entrega programada (3 horas a futuro).</li>
+     * <li><b>Ejecución:</b> Invoca el método {@code programarPedido} y captura la respuesta o posibles errores.</li>
+     * </ul>
+     * * @param args Argumentos de línea de comandos (no utilizados en esta implementación).
+     * @see FabricaBOs#obtenerPedidoProgramadoBO()
+     * @see IPedidoProgramadoBO#programarPedido(PedidoProgramadoNuevoDTO)
  * @author Adrian Mendoza
  */
 public class PruebaClienteDAO {

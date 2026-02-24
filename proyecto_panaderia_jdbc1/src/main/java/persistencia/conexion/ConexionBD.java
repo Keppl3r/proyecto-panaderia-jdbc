@@ -21,7 +21,7 @@ public class ConexionBD implements IConexionBD {
      */
 private final String CADENA_CONEXION = "jdbc:mysql://localhost:3306/panaderia";
     /**
-     * Usuario de la base de datos.
+     * Usuario de la base de datos. 
      */
     private final String USUARIO = "root";
 

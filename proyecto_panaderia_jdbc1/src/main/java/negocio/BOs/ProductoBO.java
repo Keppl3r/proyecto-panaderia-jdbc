@@ -9,17 +9,31 @@ import persistencia.dominio.Producto;
 import persistencia.excepciones.PersistenciaException;
 
 /**
- * BO para Producto
+ * Implementación de la lógica de negocio para la gestión de productos.
+ * <p>
+ * Esta clase actúa como intermediaria entre la capa de persistencia (DAO) 
+ * y la presentación, encargándose de validar IDs, manejar el registro de 
+ * errores (logging) y transformar excepciones técnicas en excepciones de negocio.
+ * </p>
+ * * @author Jazmin
  */
 public class ProductoBO implements IProductoBO {
-
+    
     private IProductoDAO productoDAO;
     private static final Logger LOG = Logger.getLogger(ProductoBO.class.getName());
-
+    
+    /**
+     * Constructor que inyecta la dependencia del DAO de productos.
+     * @param productoDAO Interfaz de acceso a datos para productos.
+     */
     public ProductoBO(IProductoDAO productoDAO) {
         this.productoDAO = productoDAO;
     }
-
+    /**
+     * Obtiene la lista de productos marcados como disponibles para su venta inmediata.
+     * @return {@link List} de {@link Producto} con disponibilidad activa.
+     * @throws NegocioException Si ocurre un error en la capa de datos.
+     */
     @Override
     public List<Producto> obtenerProductoDisponibles() throws NegocioException {
         try {
@@ -29,7 +43,11 @@ public class ProductoBO implements IProductoBO {
             throw new NegocioException("Ocurrió un error al obtener los productos");
         }
     }
-
+    /**
+     * Recupera todos los productos registrados, incluyendo aquellos fuera de inventario.
+     * @return Lista completa de productos del catálogo.
+     * @throws NegocioException Si falla la comunicación con la persistencia.
+     */
     @Override
     public List<Producto> obtenerTodos() throws NegocioException {
         try {
@@ -39,7 +57,13 @@ public class ProductoBO implements IProductoBO {
             throw new NegocioException("Error al obtener los productos");
         }
     }
-
+    /**
+     * Modifica el estado de disponibilidad de un producto específico.
+     * @param idProducto Identificador único del producto.
+     * @param disponible {@code true} para habilitar, {@code false} para deshabilitar.
+     * @return {@code true} si la actualización fue exitosa en la base de datos.
+     * @throws NegocioException Si el producto no existe o hay errores técnicos.
+     */
     @Override
     public boolean actualizarDisponibilidad(int idProducto, boolean disponible) throws NegocioException {
         try {
@@ -49,7 +73,13 @@ public class ProductoBO implements IProductoBO {
             throw new NegocioException("Error al actualizar la disponibilidad");
         }
     }
-
+    /**
+     * Busca un producto por su ID y valida su existencia antes de retornarlo.
+     * @param idProducto Identificador a buscar.
+     * @return El objeto {@link Producto} encontrado.
+     * @throws NegocioException Si el ID es inválido (<= 0), si el producto 
+     * no existe o si hay un error de persistencia.
+     */
     @Override
     public Producto obtenerPorId(int idProducto) throws NegocioException {
         if (idProducto <= 0) {
