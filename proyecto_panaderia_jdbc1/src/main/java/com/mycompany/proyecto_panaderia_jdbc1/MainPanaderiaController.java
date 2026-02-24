@@ -35,8 +35,7 @@ public class MainPanaderiaController {
 
     @FXML
     private void handleIniciarSesion() {
-        System.out.println("Iniciar Sesión presionado");
-        
+
         try {
             App.setRoot("login");
         } catch (IOException e) {
@@ -51,8 +50,7 @@ public class MainPanaderiaController {
 
     @FXML
     private void handleRegistrarse() {
-        System.out.println("Registrarse presionado");
-        
+
         try {
             App.setRoot("registro");
         } catch (IOException e) {
@@ -67,10 +65,6 @@ public class MainPanaderiaController {
 
     @FXML
     private void initialize() {
-        // Método que se ejecuta automáticamente al cargar el FXML
-        System.out.println("Pantalla principal de Pantojarte Panadería cargada");
-        
-        // Aquí puedes agregar efectos hover para los botones
         addHoverEffect(btnVerCatalogo);
         addHoverEffect(btnIniciarSesion);
         addHoverEffect(btnRegistrarse);
@@ -78,14 +72,14 @@ public class MainPanaderiaController {
 
     private void addHoverEffect(Button button) {
         String originalStyle = button.getStyle();
-        
+
         button.setOnMouseEntered(e -> {
-            button.setStyle(originalStyle + "; -fx-scale-x: 1.05; -fx-scale-y: 1.05; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 15, 0, 0, 3);");
+            button.setStyle(originalStyle
+                    + "; -fx-scale-x: 1.05; -fx-scale-y: 1.05; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 15, 0, 0, 3);");
         });
-        
+
         button.setOnMouseExited(e -> {
             button.setStyle(originalStyle);
         });
     }
 }
-

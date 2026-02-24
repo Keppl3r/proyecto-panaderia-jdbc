@@ -3,8 +3,6 @@ package persistencia.dominio;
 import java.util.Objects;
 
 /**
- * Entidad que representa un producto de la panadería.
- *
  * @author Adrian Mendoza
  */
 public class Producto {
@@ -78,9 +76,8 @@ public class Producto {
 
     @Override
     public String toString() {
-        return "Producto{" + "idProducto=" + idProducto + ", nombre=" + nombre + ", tipo=" + tipo + ", descripcion=" + descripcion + ", precio=" + precio + ", disponible=" + disponible + '}';
+        return "Producto{" + "idProducto=" + idProducto + ", nombre=" + nombre + ", tipo=" + tipo + ", descripcion="
+                + descripcion + ", precio=" + precio + ", disponible=" + disponible + '}';
     }
 
-    
-    
 }

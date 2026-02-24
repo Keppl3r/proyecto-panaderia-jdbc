@@ -1,8 +1,7 @@
 package persistencia.dominio;
 
 /**
- * Entidad que representa un teléfono de cliente
- *
+ * @author Adrian Mendoza
  */
 public class Telefono {
 
@@ -11,7 +10,6 @@ public class Telefono {
     private String etiqueta;
     private String numero;
 
-    
     public Telefono() {
     }
 
@@ -28,7 +26,6 @@ public class Telefono {
         this.numero = numero;
     }
 
-    // Getters y Setters
     public int getIdTelefono() {
         return idTelefono;
     }
@@ -60,9 +57,11 @@ public class Telefono {
     public void setNumero(String numero) {
         this.numero = numero;
     }
- public boolean numeroEsValido() {
-             return numero != null && numero.matches("\\d{10}");
-         }
+
+    public boolean numeroEsValido() {
+        return numero != null && numero.matches("\\d{10}");
+    }
+
     @Override
     public String toString() {
         return "Telefono{etiqueta='" + etiqueta + "', numero='" + numero + "'}";

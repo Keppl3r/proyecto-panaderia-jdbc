@@ -23,39 +23,46 @@ import negocio.DTOs.PedidoExpressNuevoDTO;
 import negocio.DTOs.PedidoProgramadoNuevoDTO;
 import negocio.excepciones.NegocioException;
 import negocio.fabrica.FabricaBOs;
-import persistencia.DAOs.ICuponDAO;
 import persistencia.dominio.Cupon;
 import persistencia.dominio.DetallePedido;
 import persistencia.dominio.PedidoExpress;
 import persistencia.dominio.PedidoProgramado;
-import persistencia.excepciones.PersistenciaException;
-import persistencia.fabrica.FabricaDAOs;
 
 public class CarritoController {
 
-    @FXML private VBox      vboxItems;
-    @FXML private VBox      vboxCupon;
-    @FXML private TextField txtCupon;
-    @FXML private Label     lblSubtotal;
-    @FXML private Label     lblDescuento;
-    @FXML private Label     lblTotal;
-    @FXML private VBox      vboxResumen;
-    @FXML private CheckBox  chkProgramado;
-    @FXML private CheckBox  chkExpress;
-    @FXML private Label     lblTotalResumen;
-    @FXML private Button    btnTarjeta;
-    @FXML private Button    btnEfectivo;
+    @FXML
+    private VBox vboxItems;
+    @FXML
+    private VBox vboxCupon;
+    @FXML
+    private TextField txtCupon;
+    @FXML
+    private Label lblSubtotal;
+    @FXML
+    private Label lblDescuento;
+    @FXML
+    private Label lblTotal;
+    @FXML
+    private VBox vboxResumen;
+    @FXML
+    private CheckBox chkProgramado;
+    @FXML
+    private CheckBox chkExpress;
+    @FXML
+    private Label lblTotalResumen;
+    @FXML
+    private Button btnTarjeta;
+    @FXML
+    private Button btnEfectivo;
 
     private double descuentoAplicado = 0.0;
     private Cupon cuponActivo = null;
     private String metodoPago = "TARJETA";
 
-    private static final String BTN_PAGO_NORMAL =
-            "-fx-background-color: white; -fx-background-radius: 10;"
+    private static final String BTN_PAGO_NORMAL = "-fx-background-color: white; -fx-background-radius: 10;"
             + " -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
             + " -fx-cursor: hand; -fx-padding: 10 16;";
-    private static final String BTN_PAGO_SELEC =
-            "-fx-background-color: #3a2a1a; -fx-background-radius: 10;"
+    private static final String BTN_PAGO_SELEC = "-fx-background-color: #3a2a1a; -fx-background-radius: 10;"
             + " -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;"
             + " -fx-cursor: hand; -fx-padding: 10 16;";
 
@@ -133,7 +140,8 @@ public class CarritoController {
     }
 
     private void cambiarCantidad(int index, int delta) {
-        if (index < 0 || index >= App.carrito.size()) return;
+        if (index < 0 || index >= App.carrito.size())
+            return;
         App.ItemCarrito item = App.carrito.get(index);
         int nueva = item.cantidad() + delta;
         if (nueva <= 0) {
@@ -173,26 +181,16 @@ public class CarritoController {
         }
 
         try {
-            ICuponDAO cuponDAO = FabricaDAOs.obtenerCuponDAO();
-            Cupon cupon = cuponDAO.buscarPorId(idCupon);
+            IPedidoProgramadoBO pedidoProgramadoBO = FabricaBOs.obtenerPedidoProgramadoBO();
+            Cupon cupon = pedidoProgramadoBO.validarCupon(idCupon);
 
-            if (cupon == null) {
-                mostrarAlerta(AlertType.ERROR, "Cupón no encontrado", "No existe un cupón con ese ID.");
-                descuentoAplicado = 0;
-                cuponActivo = null;
-            } else if (!cupon.estaVigente()) {
-                mostrarAlerta(AlertType.ERROR, "Cupón inválido", "El cupón ya no está vigente o ha expirado.");
-                descuentoAplicado = 0;
-                cuponActivo = null;
-            } else {
-                cuponActivo = cupon;
-                descuentoAplicado = cupon.getPorcentajeDescuento() / 100.0;
-                mostrarAlertaOK(String.format("✅ Cupón válido\nSe aplicó un %.0f%% de descuento.",
-                        cupon.getPorcentajeDescuento()));
-            }
-        } catch (PersistenciaException ex) {
-            ex.printStackTrace();
-            mostrarAlerta(AlertType.ERROR, "Error", "No se pudo validar el cupón: " + ex.getMessage());
+            cuponActivo = cupon;
+            descuentoAplicado = cupon.getPorcentajeDescuento() / 100.0;
+            mostrarAlertaOK(String.format("✅ Cupón válido\nSe aplicó un %.0f%% de descuento.",
+                    cupon.getPorcentajeDescuento()));
+
+        } catch (NegocioException ex) {
+            mostrarAlerta(AlertType.ERROR, "Cupón inválido", ex.getMessage());
             descuentoAplicado = 0;
             cuponActivo = null;
         }
@@ -200,13 +198,15 @@ public class CarritoController {
         actualizarTotales();
     }
 
-    @FXML private void handleSeleccionarTarjeta() {
+    @FXML
+    private void handleSeleccionarTarjeta() {
         metodoPago = "TARJETA";
         btnTarjeta.setStyle(BTN_PAGO_SELEC);
         btnEfectivo.setStyle(BTN_PAGO_NORMAL);
     }
 
-    @FXML private void handleSeleccionarEfectivo() {
+    @FXML
+    private void handleSeleccionarEfectivo() {
         metodoPago = "EFECTIVO";
         btnEfectivo.setStyle(BTN_PAGO_SELEC);
         btnTarjeta.setStyle(BTN_PAGO_NORMAL);
@@ -253,8 +253,7 @@ public class CarritoController {
         PedidoConfirmadoController.setDatosPedido(
                 "#" + pedido.getNumPedido(),
                 pedido.getEstado().getDescripcion(),
-                true
-        );
+                true);
         PedidoConfirmadoController.setInfoExpress(pedido.getFolio(), pedido.getPinTextoPlano());
 
         App.limpiarCarrito();
@@ -272,7 +271,7 @@ public class CarritoController {
         }
 
         // Fecha de entrega: 2 horas desde ahora (mínimo requerido)
-        Timestamp fechaEntrega = new Timestamp(System.currentTimeMillis() + 2L * 60 * 60 * 1000);
+        Timestamp fechaEntrega = new Timestamp(System.currentTimeMillis() + (2L * 60 * 60 * 1000) + (5L * 60 * 1000));
         Integer idCupon = cuponActivo != null ? cuponActivo.getIdCupon() : null;
 
         IPedidoProgramadoBO bo = FabricaBOs.obtenerPedidoProgramadoBO();
@@ -283,8 +282,7 @@ public class CarritoController {
         PedidoConfirmadoController.setDatosPedido(
                 "#" + pedido.getNumPedido(),
                 pedido.getEstado().getDescripcion(),
-                false
-        );
+                false);
         PedidoConfirmadoController.setInfoExpress(null, null);
 
         App.limpiarCarrito();

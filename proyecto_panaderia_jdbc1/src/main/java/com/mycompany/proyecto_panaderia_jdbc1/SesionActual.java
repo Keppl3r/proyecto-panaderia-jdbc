@@ -4,7 +4,7 @@ import persistencia.dominio.Cliente;
 import persistencia.dominio.Usuario;
 
 /**
- * Clase estática que guarda la sesión del usuario actualmente logueado.
+ * @author Adrian Mendoza
  */
 public class SesionActual {
 
@@ -41,7 +41,6 @@ public class SesionActual {
         return usuarioActual != null && usuarioActual.esEmpleado();
     }
 
-    /** Nombre amigable para mostrar en la UI */
     public static String getNombreDisplay() {
         if (clienteActual != null) {
             return clienteActual.getNombres();

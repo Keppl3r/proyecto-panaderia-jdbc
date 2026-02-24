@@ -3,14 +3,13 @@ package persistencia.dominio;
 import java.sql.Timestamp;
 
 /**
- * Entidad que representa un pedido programado hereda de PEDIDOS
+ * @author Adrian Mendoza
  */
 public class PedidoProgramado extends Pedido {
 
     private Integer idCupon; // opcional
     private Cupon cupon;
 
-    // Constructores
     public PedidoProgramado() {
         super();
     }
@@ -26,7 +25,6 @@ public class PedidoProgramado extends Pedido {
         this.idCupon = idCupon;
     }
 
-    // Getters y Setters específicos
     public Integer getIdCupon() {
         return idCupon;
     }
@@ -46,7 +44,6 @@ public class PedidoProgramado extends Pedido {
         }
     }
 
-    // Métodos de negocio específicos
     public Double calcularDescuento() {
         if (cupon != null && cupon.estaVigente()) {
             Double descuento = (getTotal() * cupon.getPorcentajeDescuento())

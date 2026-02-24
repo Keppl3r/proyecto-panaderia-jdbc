@@ -4,8 +4,7 @@ import java.sql.Date;
 import java.util.List;
 
 /**
- * Entidad que representa un cliente - HEREDA DE USUARIO Solo para CU Pedido
- * Programado
+ * @author Adrian Mendoza
  */
 public class Cliente extends Usuario {
 
@@ -17,7 +16,7 @@ public class Cliente extends Usuario {
     private String calle;
     private String numero;
     private String colonia;
-    private List<Telefono> telefonos; // Mantener por relación con cliente
+    private List<Telefono> telefonos;
 
     public Cliente() {
         super();
@@ -51,7 +50,6 @@ public class Cliente extends Usuario {
         this.colonia = colonia;
     }
 
-    // Getters y Setters
     public String getNombres() {
         return nombres;
     }

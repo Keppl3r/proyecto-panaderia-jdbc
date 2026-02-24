@@ -49,7 +49,7 @@ public class ClienteBO implements IClienteBO {
         try {
             Cliente cliente = clienteDAO.buscarPorId(idUsuario);
             if (cliente == null) {
-                throw new NegocioException("No se encontró el cliente con ID: " + idUsuario);
+                throw new NegocioException("Cuenta no encontrada o desactivada");
             }
             return cliente;
         } catch (PersistenciaException ex) {
@@ -94,6 +94,35 @@ public class ClienteBO implements IClienteBO {
         } catch (PersistenciaException ex) {
             LOG.log(Level.SEVERE, "Error al registrar cliente", ex);
             throw new NegocioException("Error al registrar cliente", ex);
+        }
+    }
+
+    @Override
+    public boolean actualizarCliente(Cliente cliente) throws NegocioException {
+        if (cliente.getNombres() == null || cliente.getNombres().isBlank()) {
+            throw new NegocioException("El nombre es obligatorio");
+        }
+        if (cliente.getApellidoPaterno() == null || cliente.getApellidoPaterno().isBlank()) {
+            throw new NegocioException("El apellido paterno es obligatorio");
+        }
+        try {
+            return clienteDAO.actualizar(cliente);
+        } catch (PersistenciaException ex) {
+            LOG.log(Level.SEVERE, "Error al actualizar cliente", ex);
+            throw new NegocioException("Error al actualizar los datos del cliente", ex);
+        }
+    }
+
+    @Override
+    public boolean desactivarCliente(int idUsuario) throws NegocioException {
+        if (idUsuario <= 0) {
+            throw new NegocioException("ID de cliente inválido");
+        }
+        try {
+            return clienteDAO.desactivar(idUsuario);
+        } catch (PersistenciaException ex) {
+            LOG.log(Level.SEVERE, "Error al desactivar cliente", ex);
+            throw new NegocioException("Error al desactivar la cuenta", ex);
         }
     }
 }

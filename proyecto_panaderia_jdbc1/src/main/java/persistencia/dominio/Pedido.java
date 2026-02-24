@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * Entidad que representa un pedido base
+ * @author Adrian Mendoza
  */
 public class Pedido {
 
@@ -19,30 +19,31 @@ public class Pedido {
     private Cliente cliente;
     private List<DetallePedido> detalles;
 
-   public enum EstadoPedido {
-    PENDIENTE, LISTO, ENTREGADO, CANCELADO, NO_ENTREGADO;
-    
-    /**
-     * Switch que ayuda a recibir la descripción del estado
-     * @return estado
-     */
-    public String getDescripcion() {
-        switch(this) {
-            case PENDIENTE:
-                return "Pendiente";
-            case LISTO:
-                return "Listo";
-            case ENTREGADO:
-                return "Entregado";
-            case CANCELADO:
-                return "Cancelado";
-            case NO_ENTREGADO:
-                return "No Entregado";
-            default:
-                return name();
+    public enum EstadoPedido {
+        PENDIENTE, LISTO, ENTREGADO, CANCELADO, NO_ENTREGADO;
+
+        /**
+         * Switch que ayuda a recibir la descripción del estado
+         * 
+         * @return estado
+         */
+        public String getDescripcion() {
+            switch (this) {
+                case PENDIENTE:
+                    return "Pendiente";
+                case LISTO:
+                    return "Listo";
+                case ENTREGADO:
+                    return "Entregado";
+                case CANCELADO:
+                    return "Cancelado";
+                case NO_ENTREGADO:
+                    return "No Entregado";
+                default:
+                    return name();
+            }
         }
     }
-}
 
     public Pedido() {
         this.fechaRegistro = new Timestamp(System.currentTimeMillis());
@@ -68,7 +69,6 @@ public class Pedido {
         this.total = total;
     }
 
-  
     public int getIdPedido() {
         return idPedido;
     }
@@ -132,7 +132,7 @@ public class Pedido {
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
         if (cliente != null) {
-            this.idUsuario = cliente.getIdUsuario(); 
+            this.idUsuario = cliente.getIdUsuario();
         }
     }
 
@@ -144,7 +144,6 @@ public class Pedido {
         this.detalles = detalles;
     }
 
-    
     public void calcularTotal() {
         this.total = 0.0;
 

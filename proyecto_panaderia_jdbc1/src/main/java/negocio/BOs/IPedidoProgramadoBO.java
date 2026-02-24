@@ -2,8 +2,11 @@ package negocio.BOs;
 
 import negocio.DTOs.PedidoProgramadoNuevoDTO;
 import negocio.excepciones.NegocioException;
+import persistencia.dominio.Cupon;
 import persistencia.dominio.PedidoProgramado;
 
 public interface IPedidoProgramadoBO {
   PedidoProgramado programarPedido(PedidoProgramadoNuevoDTO pedidoDTO) throws NegocioException;
+
+  Cupon validarCupon(int idCupon) throws NegocioException;
 }

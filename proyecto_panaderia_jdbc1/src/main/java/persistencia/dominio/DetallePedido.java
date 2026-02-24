@@ -1,9 +1,7 @@
 package persistencia.dominio;
 
-
-
 /**
- * Entidad que representa el detalle de un pedido
+ * @author Adrian Mendoza
  */
 public class DetallePedido {
 
@@ -17,7 +15,6 @@ public class DetallePedido {
 
     private Producto producto;
 
-    // Constructores
     public DetallePedido() {
     }
 
@@ -41,7 +38,6 @@ public class DetallePedido {
         this.notas = notas;
     }
 
-    // Getters y Setters
     public int getIdDetallePedido() {
         return idDetallePedido;
     }
@@ -113,9 +109,9 @@ public class DetallePedido {
                 this.precio = producto.getPrecio();
             }
         }
-        
+
     }
-    
+
     public void calcularSubtotal() {
         if (precio != null && cantidad > 0) {
             this.subtotal = precio * cantidad;
@@ -126,15 +122,16 @@ public class DetallePedido {
 
     // Validaciones
     public boolean esValido() {
-        if (cantidad > 0 && precio != null && precio > 0) return true;
+        if (cantidad > 0 && precio != null && precio > 0)
+            return true;
         return false;
     }
 
-         @Override
-         public String toString() {
-             return "DetallePedido{idDetallePedido=" + idDetallePedido +
-                    ", cantidad=" + cantidad + ", precio=" + precio +
-                    ", subtotal=" + subtotal + "}";
-         }
+    @Override
+    public String toString() {
+        return "DetallePedido{idDetallePedido=" + idDetallePedido +
+                ", cantidad=" + cantidad + ", precio=" + precio +
+                ", subtotal=" + subtotal + "}";
+    }
 
 }

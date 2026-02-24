@@ -20,14 +20,14 @@ public class PedidoProgramadoNuevoDTO {
     }
 
     // Constructor completo
-    public PedidoProgramadoNuevoDTO(int idCliente,java.sql.Timestamp fechaEntrega,Integer idCupon,java.util.List<persistencia.dominio.DetallePedido> detalles) {
+    public PedidoProgramadoNuevoDTO(int idCliente, java.sql.Timestamp fechaEntrega, Integer idCupon,
+            java.util.List<persistencia.dominio.DetallePedido> detalles) {
         this.idCliente = idCliente;
         this.fechaEntrega = fechaEntrega;
         this.idCupon = idCupon;
         this.detalles = detalles;
     }
 
-    // Getters y Setters
     public int getIdCliente() {
         return idCliente;
     }

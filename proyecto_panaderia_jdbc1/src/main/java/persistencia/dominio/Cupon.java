@@ -3,7 +3,7 @@ package persistencia.dominio;
 import java.sql.Timestamp;
 
 /**
- * Cupón de descuento - SOLO para CU Pedido Programado
+ * @author Adrian Mendoza
  */
 public class Cupon {
 
@@ -27,7 +27,6 @@ public class Cupon {
         this.numeroUsos = numeroUsos;
     }
 
-    // Getters y Setters
     public int getIdCupon() {
         return idCupon;
     }

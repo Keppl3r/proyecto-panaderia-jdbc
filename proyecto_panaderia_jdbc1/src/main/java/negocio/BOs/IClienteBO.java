@@ -12,4 +12,8 @@ public interface IClienteBO {
     Cliente registrarCliente(Cliente cliente) throws NegocioException;
 
     Cliente obtenerClientePorId(int idUsuario) throws NegocioException;
+
+    boolean actualizarCliente(Cliente cliente) throws NegocioException;
+
+    boolean desactivarCliente(int idUsuario) throws NegocioException;
 }

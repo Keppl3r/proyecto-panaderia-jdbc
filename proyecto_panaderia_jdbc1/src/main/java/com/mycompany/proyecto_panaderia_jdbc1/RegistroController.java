@@ -7,79 +7,69 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import java.io.IOException;
-import java.time.LocalDate;
+import java.sql.Date;
+import negocio.BOs.IClienteBO;
+import negocio.excepciones.NegocioException;
+import negocio.fabrica.FabricaBOs;
+import persistencia.dominio.Cliente;
 
 public class RegistroController {
 
     @FXML
     private TextField txtNombres;
-
     @FXML
     private TextField txtApellidoP;
-
     @FXML
     private TextField txtApellidoM;
-
     @FXML
     private TextField txtDomicilio;
-
     @FXML
     private DatePicker dateFechaNacimiento;
-
     @FXML
-    private TextField txtApellidoP2;
-
+    private TextField txtUsername;
     @FXML
-    private TextField txtApellidoM2;
-
+    private TextField txtPassword;
     @FXML
     private Button btnEntrar;
-
     @FXML
     private Button btnVolver;
 
     @FXML
     private void handleEntrar() {
-        // Validar campos
-        if (txtNombres.getText().isEmpty() || 
-            txtApellidoP.getText().isEmpty() || 
-            txtDomicilio.getText().isEmpty() || 
-            dateFechaNacimiento.getValue() == null) {
-            
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Campos incompletos");
-            alert.setHeaderText("Por favor complete los campos obligatorios");
-            alert.setContentText("Nombres, Apellido paterno, Domicilio y Fecha de nacimiento son obligatorios.");
-            alert.showAndWait();
+        if (txtNombres.getText().trim().isEmpty() ||
+                txtApellidoP.getText().trim().isEmpty() ||
+                txtDomicilio.getText().trim().isEmpty() ||
+                dateFechaNacimiento.getValue() == null ||
+                txtUsername.getText().trim().isEmpty() ||
+                txtPassword.getText().trim().isEmpty()) {
+
+            mostrarAlerta(AlertType.WARNING, "Campos incompletos",
+                    "Por favor complete todos los campos obligatorios.");
             return;
         }
 
-        // Aquí implementarías la lógica de registro en la base de datos
-        String nombres = txtNombres.getText();
-        String apellidoP = txtApellidoP.getText();
-        String apellidoM = txtApellidoM.getText();
-        String domicilio = txtDomicilio.getText();
-        LocalDate fechaNacimiento = dateFechaNacimiento.getValue();
-
-        System.out.println("Registro exitoso:");
-        System.out.println("Nombres: " + nombres);
-        System.out.println("Apellido P: " + apellidoP);
-        System.out.println("Apellido M: " + apellidoM);
-        System.out.println("Domicilio: " + domicilio);
-        System.out.println("Fecha de nacimiento: " + fechaNacimiento);
-
-        // Mostrar mensaje de éxito
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Registro Exitoso");
-        alert.setHeaderText("¡Bienvenido a Pantojarte Panadería!");
-        alert.setContentText("Su cuenta ha sido creada exitosamente.\nNombre: " + nombres + " " + apellidoP);
-        alert.showAndWait();
-
-        // Volver a la pantalla principal
         try {
+            Cliente cliente = new Cliente();
+            cliente.setNombres(txtNombres.getText().trim());
+            cliente.setApellidoPaterno(txtApellidoP.getText().trim());
+            cliente.setApellidoMaterno(txtApellidoM.getText().trim());
+            cliente.setCalle(txtDomicilio.getText().trim());
+            cliente.setFechaNacimiento(Date.valueOf(dateFechaNacimiento.getValue()));
+            cliente.setUsername(txtUsername.getText().trim());
+            cliente.setPassword(txtPassword.getText().trim());
+
+            IClienteBO clienteBO = FabricaBOs.obtenerClienteBO();
+            clienteBO.registrarCliente(cliente);
+
+            mostrarAlerta(AlertType.INFORMATION, "Registro Exitoso",
+                    "Cuenta creada correctamente. Usuario: " + cliente.getUsername());
+
             App.setRoot("main_panaderia");
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        } catch (NegocioException ex) {
+            mostrarAlerta(AlertType.ERROR, "Error en registro", ex.getMessage());
+        } catch (IOException ex) {
+            mostrarAlerta(AlertType.ERROR, "Error", "No se pudo cargar la pantalla principal.");
         }
     }
 
@@ -89,29 +79,26 @@ public class RegistroController {
             App.setRoot("main_panaderia");
         } catch (IOException e) {
             e.printStackTrace();
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error al volver");
-            alert.setContentText("No se pudo regresar a la pantalla principal.");
-            alert.showAndWait();
         }
     }
 
     @FXML
     private void initialize() {
-        System.out.println("Pantalla de Registro cargada");
-        
-        // Agregar efectos hover a los botones
         addHoverEffect(btnEntrar);
         addHoverEffect(btnVolver);
-        
-        // Configurar el formato de fecha
         dateFechaNacimiento.setPromptText("dd/mm/aaaa");
+    }
+
+    private void mostrarAlerta(AlertType tipo, String titulo, String contenido) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(contenido);
+        alert.showAndWait();
     }
 
     private void addHoverEffect(Button button) {
         String originalStyle = button.getStyle();
-        
         button.setOnMouseEntered(e -> {
             if (button == btnEntrar) {
                 button.setStyle(originalStyle + "; -fx-scale-x: 1.05; -fx-scale-y: 1.05;");
@@ -119,11 +106,6 @@ public class RegistroController {
                 button.setStyle(originalStyle + "; -fx-text-fill: #8b6f47;");
             }
         });
-        
-        button.setOnMouseExited(e -> {
-            button.setStyle(originalStyle);
-        });
+        button.setOnMouseExited(e -> button.setStyle(originalStyle));
     }
 }
-
-

@@ -12,4 +12,8 @@ public interface IClienteDAO {
     boolean existeClienteActivo(int idUsuario) throws PersistenciaException;
 
     Cliente registrar(Cliente cliente) throws PersistenciaException;
+
+    boolean actualizar(Cliente cliente) throws PersistenciaException;
+
+    boolean desactivar(int idUsuario) throws PersistenciaException;
 }

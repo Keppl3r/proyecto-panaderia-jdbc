@@ -103,6 +103,41 @@ public class ClienteDAO implements IClienteDAO {
         }
     }
 
+    @Override
+    public boolean actualizar(Cliente cliente) throws PersistenciaException {
+        String sql = """
+                    UPDATE CLIENTES SET NOMBRES = ?, APELLIDO_PATERNO = ?, APELLIDO_MATERNO = ?,
+                    FECHA_NACIMIENTO = ?, CALLE = ?, NUMERO = ?, COLONIA = ?
+                    WHERE ID_USUARIO = ? AND ESTADO = 'ACTIVO'
+                """;
+        try (Connection conn = conexion.crearConexion();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, cliente.getNombres());
+            ps.setString(2, cliente.getApellidoPaterno());
+            ps.setString(3, cliente.getApellidoMaterno());
+            ps.setDate(4, cliente.getFechaNacimiento());
+            ps.setString(5, cliente.getCalle());
+            ps.setString(6, cliente.getNumero());
+            ps.setString(7, cliente.getColonia());
+            ps.setInt(8, cliente.getIdUsuario());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error al actualizar cliente", ex);
+        }
+    }
+
+    @Override
+    public boolean desactivar(int idUsuario) throws PersistenciaException {
+        String sql = "UPDATE CLIENTES SET ESTADO = 'INACTIVO' WHERE ID_USUARIO = ? AND ESTADO = 'ACTIVO'";
+        try (Connection conn = conexion.crearConexion();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error al desactivar cliente", ex);
+        }
+    }
+
     private Cliente extraerCliente(ResultSet rs) throws SQLException {
         Cliente cliente = new Cliente();
         cliente.setIdUsuario(rs.getInt("ID_USUARIO"));

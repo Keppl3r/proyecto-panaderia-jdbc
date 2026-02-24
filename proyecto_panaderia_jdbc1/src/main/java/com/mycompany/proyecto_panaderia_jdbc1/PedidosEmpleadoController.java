@@ -22,13 +22,17 @@ import persistencia.dominio.Pedido.EstadoPedido;
 
 public class PedidosEmpleadoController {
 
-    @FXML private Label lblTitulo;
-    @FXML private VBox  vboxPedidos;
+    @FXML
+    private Label lblTitulo;
+    @FXML
+    private VBox vboxPedidos;
 
     private static String modo = "Caja y Entregas";
     private IPedidoBO pedidoBO;
 
-    public static void setModo(String m) { modo = m; }
+    public static void setModo(String m) {
+        modo = m;
+    }
 
     @FXML
     private void initialize() {
@@ -94,16 +98,17 @@ public class PedidosEmpleadoController {
         VBox infoDer = new VBox(4);
         infoDer.setAlignment(Pos.CENTER_RIGHT);
         String fechaStr = p.getFechaRegistro() != null
-                ? p.getFechaRegistro().toLocalDateTime().toLocalDate().toString() : "—";
+                ? p.getFechaRegistro().toLocalDateTime().toLocalDate().toString()
+                : "—";
         Label lblFecha = new Label("Fecha: " + fechaStr);
         lblFecha.setStyle("-fx-font-size: 11px; -fx-text-fill: #4a3a2a;");
 
         String colorBadge = switch (p.getEstado()) {
-            case LISTO      -> "#4caf50";
-            case PENDIENTE  -> "#2196f3";
-            case ENTREGADO  -> "#9e9e9e";
-            case CANCELADO  -> "#e05a5a";
-            default         -> "#757575";
+            case LISTO -> "#4caf50";
+            case PENDIENTE -> "#2196f3";
+            case ENTREGADO -> "#9e9e9e";
+            case CANCELADO -> "#e05a5a";
+            default -> "#757575";
         };
         Label badge = new Label(p.getEstado().getDescripcion());
         badge.setStyle("-fx-background-color: " + colorBadge + "; -fx-text-fill: white;"
@@ -156,11 +161,11 @@ public class PedidosEmpleadoController {
 
     private void entregarPedido(int idPedido, Button btnCobrar, Label badge) {
         try {
-            if (pedidoBO.marcarComoListo(idPedido)) {
-                pedidoBO.entregarPedido(idPedido, "EFECTIVO");
-            } else {
-                pedidoBO.entregarPedido(idPedido, "EFECTIVO");
+            try {
+                pedidoBO.marcarComoListo(idPedido);
+            } catch (NegocioException e) {
             }
+            pedidoBO.entregarPedido(idPedido, "EFECTIVO");
             btnCobrar.setText("✓ Entregado");
             btnCobrar.setStyle("-fx-background-color: #4caf50; -fx-text-fill: white;"
                     + " -fx-font-size: 12px; -fx-font-weight: bold;"
@@ -194,7 +199,9 @@ public class PedidosEmpleadoController {
 
     private void mostrarError(String msg) {
         Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Error"); alert.setHeaderText(null);
-        alert.setContentText(msg); alert.showAndWait();
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(msg);
+        alert.showAndWait();
     }
 }
