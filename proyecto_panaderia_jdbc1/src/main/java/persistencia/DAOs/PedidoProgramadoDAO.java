@@ -6,14 +6,33 @@ import persistencia.dominio.PedidoProgramado;
 import persistencia.dominio.DetallePedido;
 import persistencia.excepciones.PersistenciaException;
 
+/**
+ * Implementación de persistencia para Pedidos Programados asociados a clientes registrados.
+ * <p>
+ * Esta clase gestiona el almacenamiento atómico de pedidos que requieren una fecha de entrega
+ * futura, permitiendo la asociación con cupones de descuento y el registro detallado de productos.
+ * </p>
+ */
 public class PedidoProgramadoDAO implements IPedidoProgramadoDAO {
 
     private IConexionBD conexion;
-
+    /**
+     * Constructor que inicializa la conexión para el acceso a datos.
+     * * @param conexion Implementación de la interfaz de conexión a la base de datos.
+     */
     public PedidoProgramadoDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
-
+    /**
+     * Registra un nuevo pedido programado en la base de datos de manera transaccional.
+     * <p>
+     * El método asegura que el registro en las tablas PEDIDOS, PEDIDOS_PROGRAMADOS 
+     * y DETALLE_PEDIDOS se realice con éxito total; de lo contrario, se aplica un rollback.
+     * </p>
+     * * @param pedido El objeto {@code PedidoProgramado} con la información del cliente y productos.
+     * @return El objeto {@code PedidoProgramado} con su ID generado por la base de datos.
+     * @throws PersistenciaException Si ocurre un error de SQL durante la inserción o el volcado de lotes.
+     */
     @Override
     public PedidoProgramado crear(PedidoProgramado pedido) throws PersistenciaException {
         try (Connection conn = conexion.crearConexion()) {
@@ -82,7 +101,11 @@ public class PedidoProgramadoDAO implements IPedidoProgramadoDAO {
             throw new PersistenciaException("Error al crear pedido programado", ex);
         }
     }
-
+    /**
+     * Recupera el valor máximo de la columna NUM_PEDIDO para asignar el siguiente folio correlativo.
+     * * @return El siguiente número de pedido disponible; devuelve 1 si no hay registros previos.
+     * @throws PersistenciaException Si falla la consulta a la tabla PEDIDOS.
+     */
     @Override
     public int generarNumPedido() throws PersistenciaException {
         String sql = "SELECT MAX(NUM_PEDIDO) FROM PEDIDOS";
@@ -101,7 +124,16 @@ public class PedidoProgramadoDAO implements IPedidoProgramadoDAO {
             throw new PersistenciaException("Error al generar número de pedido", ex);
         }
     }
-
+    /**
+     * Valida que la fecha de entrega solicitada cumpla con las políticas de la empresa.
+     * <p>
+     * Actualmente verifica que la entrega sea programada con al menos 2 horas de 
+     * anticipación respecto al tiempo actual del sistema.
+     * </p>
+     * * @param fechaEntrega {@code Timestamp} de la fecha y hora de entrega deseada.
+     * @return {@code true} si la fecha es válida (futura + 2 horas); {@code false} en caso contrario.
+     * @throws PersistenciaException Si hay problemas con el manejo de tiempos o nulos.
+     */
     @Override
     public boolean validarFechaEntrega(Timestamp fechaEntrega) throws PersistenciaException {
         Timestamp ahora = new Timestamp(System.currentTimeMillis());

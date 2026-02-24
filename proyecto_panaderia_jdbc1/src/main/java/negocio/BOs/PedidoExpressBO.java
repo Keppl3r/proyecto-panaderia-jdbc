@@ -15,7 +15,12 @@ import persistencia.dominio.Producto;
 import persistencia.excepciones.PersistenciaException;
 
 /**
- * @author Jazmin
+ * Implementación de la lógica de negocio para la creación de pedidos en modalidad Express.
+ * <p>
+ * Esta clase coordina la validación de disponibilidad de productos, el cálculo de costos,
+ * la generación segura de PINs y la persistencia de órdenes para clientes no registrados.
+ * </p>
+ * * @author Jazmin
  * @author Adrian Mendoza
  */
 public class PedidoExpressBO implements IPedidoExpressBO {
@@ -23,12 +28,32 @@ public class PedidoExpressBO implements IPedidoExpressBO {
     private IPedidoExpressDAO pedidoDAO;
     private IProductoDAO productoDAO;
     private static final Logger LOG = Logger.getLogger(PedidoExpressBO.class.getName());
-
+    /**
+     * Constructor que inyecta los DAOs necesarios para el procesamiento de pedidos.
+     * @param pedidoDAO Componente de persistencia para órdenes express.
+     * @param productoDAO Componente de acceso a datos para validación de catálogo.
+     */
     public PedidoExpressBO(IPedidoExpressDAO pedidoDAO, IProductoDAO productoDAO) {
         this.pedidoDAO = pedidoDAO;
         this.productoDAO = productoDAO;
     }
-
+    /**
+     * Procesa la creación de un nuevo pedido Express bajo reglas estrictas de negocio.
+     * <p>
+     * El flujo de trabajo incluye:
+     * <ol>
+     * <li>Validación de integridad del DTO.</li>
+     * <li>Verificación de disponibilidad de cada producto en tiempo real.</li>
+     * <li>Cálculo de subtotales y totales basado en el precio vigente en DB.</li>
+     * <li>Generación de un PIN de 8 dígitos mediante {@link SecureRandom}.</li>
+     * <li>Encriptación del PIN antes de la persistencia para protección de datos.</li>
+     * </ol>
+     * </p>
+     * * @param pedidoDTO Contenedor de datos con los productos solicitados.
+     * @return {@link PedidoExpress} con folio, PIN y totales generados.
+     * @throws NegocioException Si algún producto no existe, no está disponible, 
+     * o si ocurre un fallo en la persistencia.
+     */
     @Override
     public PedidoExpress crearPedidoExpress(PedidoExpressNuevoDTO pedidoDTO) throws NegocioException {
         try {

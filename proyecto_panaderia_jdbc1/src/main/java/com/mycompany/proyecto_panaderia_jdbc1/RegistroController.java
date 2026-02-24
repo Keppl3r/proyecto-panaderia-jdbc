@@ -13,6 +13,14 @@ import negocio.excepciones.NegocioException;
 import negocio.fabrica.FabricaBOs;
 import persistencia.dominio.Cliente;
 
+/**
+ * Controlador para la gestión de registro de nuevos usuarios en la interfaz JavaFX.
+ * <p>
+ * Se encarga de capturar la información personal desde la vista, validar la 
+ * obligatoriedad de los campos y procesar el alta mediante la capa de negocio.
+ * </p>
+ * @author Adrian Mendoza
+ */
 public class RegistroController {
 
     @FXML
@@ -34,6 +42,23 @@ public class RegistroController {
     @FXML
     private Button btnVolver;
 
+    /**
+     * Inicializa la vista configurando efectos visuales y prompts de ayuda.
+     */
+    @FXML
+    private void initialize() {
+        addHoverEffect(btnEntrar);
+        addHoverEffect(btnVolver);
+        dateFechaNacimiento.setPromptText("dd/mm/aaaa");
+    }
+
+    /**
+     * Procesa el formulario de registro.
+     * <p>
+     * Realiza una validación visual previa para asegurar que los campos críticos 
+     * no estén vacíos. Si la validación pasa, delega el registro al objeto de negocio.
+     * </p>
+     */
     @FXML
     private void handleEntrar() {
         if (txtNombres.getText().trim().isEmpty() ||
@@ -69,26 +94,29 @@ public class RegistroController {
         } catch (NegocioException ex) {
             mostrarAlerta(AlertType.ERROR, "Error en registro", ex.getMessage());
         } catch (IOException ex) {
-            mostrarAlerta(AlertType.ERROR, "Error", "No se pudo cargar la pantalla principal.");
+            mostrarAlerta(AlertType.ERROR, "Error de Navegación", "No se pudo cargar la pantalla principal.");
         }
     }
 
+    /**
+     * Gestiona el retorno a la pantalla principal.
+     */
     @FXML
     private void handleVolver() {
         try {
             App.setRoot("main_panaderia");
         } catch (IOException e) {
+            mostrarAlerta(AlertType.ERROR, "Error", "Fallo al intentar volver al menú.");
             e.printStackTrace();
         }
     }
 
-    @FXML
-    private void initialize() {
-        addHoverEffect(btnEntrar);
-        addHoverEffect(btnVolver);
-        dateFechaNacimiento.setPromptText("dd/mm/aaaa");
-    }
-
+    /**
+     * Despliega un cuadro de diálogo configurable para interactuar con el usuario.
+     * * @param tipo     Tipo de alerta (ERROR, INFORMATION, WARNING, etc).
+     * @param titulo   Título de la ventana de diálogo.
+     * @param contenido Mensaje descriptivo del error o notificación.
+     */
     private void mostrarAlerta(AlertType tipo, String titulo, String contenido) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);
@@ -97,6 +125,14 @@ public class RegistroController {
         alert.showAndWait();
     }
 
+    /**
+     * Aplica efectos visuales dinámicos a los botones cuando el cursor entra o sale.
+     * <p>
+     * Utiliza expresiones lambda para gestionar los eventos de mouse, permitiendo
+     * una interfaz reactiva sin dependencia estricta de CSS externo.
+     * </p>
+     * @param button El componente Button al que se le aplicará la lógica.
+     */
     private void addHoverEffect(Button button) {
         String originalStyle = button.getStyle();
         button.setOnMouseEntered(e -> {

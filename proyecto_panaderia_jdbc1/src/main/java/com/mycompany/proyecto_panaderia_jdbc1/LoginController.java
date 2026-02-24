@@ -14,6 +14,11 @@ import negocio.fabrica.FabricaBOs;
 import persistencia.dominio.Cliente;
 import persistencia.dominio.Usuario;
 
+/**
+ * Controlador para la pantalla de inicio de sesión.
+ * Gestiona la autenticación de usuarios, la persistencia de la sesión actual
+ * y la redirección basada en roles (RBAC - Role-Based Access Control).
+ */
 public class LoginController {
 
     @FXML
@@ -27,7 +32,11 @@ public class LoginController {
 
     @FXML
     private Button btnVolver;
-
+    /**
+     * Procesa el intento de inicio de sesión.
+     * Valida campos vacíos, autentica contra la lógica de negocio y
+     * establece la SesionActual antes de redirigir al usuario.
+     */
     @FXML
     private void handleEntrar() {
         String username = txtNombre.getText().trim();
@@ -74,7 +83,14 @@ public class LoginController {
                     ex.getMessage());
         }
     }
-
+    /**
+     * Gestiona el evento del botón "Volver".
+     * Redirige al usuario desde la interfaz de Login hacia la pantalla principal 
+     * (main_panaderia), permitiendo que un usuario que no desea iniciar sesión 
+     * regrese al menú de inicio o al modo de navegación limitada.
+     * * @throws IOException Si el archivo FXML "main_panaderia" no se encuentra 
+     * o no puede ser cargado por el FXMLLoader.
+     */
     @FXML
     private void handleVolver() {
         try {
@@ -83,7 +99,10 @@ public class LoginController {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Configura el estado inicial de la vista.
+     * Añade efectos visuales a los botones y define el flujo del foco con la tecla Enter.
+     */
     @FXML
     private void initialize() {
         addHoverEffect(btnEntrar);
@@ -91,7 +110,14 @@ public class LoginController {
         txtNombre.setOnAction(e -> txtPassword.requestFocus());
         txtPassword.setOnAction(e -> handleEntrar());
     }
-
+    /**
+     * Despliega una interfaz de diálogo modal con estructura completa (Título, Encabezado y Cuerpo).
+     * Se utiliza específicamente en el flujo de Login para separar el contexto del error 
+     * * @param tipo       El nivel de severidad de la alerta (ERROR, WARNING, INFORMATION).
+     * @param titulo     Texto de la ventana a nivel de sistema operativo.
+     * @param encabezado Texto destacado en la parte superior del diálogo que resume el problema.
+     * @param contenido  Descripción detallada o sugerencia de acción para el usuario.
+     */
     private void mostrarAlerta(AlertType tipo, String titulo, String encabezado, String contenido) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);
@@ -99,7 +125,10 @@ public class LoginController {
         alert.setContentText(contenido);
         alert.showAndWait();
     }
-
+    /**
+     * Aplica efectos de transformación y opacidad mediante programación.
+     * Proporciona feedback visual al usuario al pasar el puntero sobre los botones.
+     */
     private void addHoverEffect(Button button) {
         String originalStyle = button.getStyle();
         button.setOnMouseEntered(e -> {

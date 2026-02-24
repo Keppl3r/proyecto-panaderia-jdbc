@@ -22,32 +22,31 @@ import negocio.fabrica.FabricaBOs;
 import persistencia.dominio.Cliente;
 import persistencia.dominio.Telefono;
 
+/**
+ * Controlador para la edición del perfil de usuario. Gestiona la carga de datos
+ * del cliente desde la sesión activa, la validación de campos personales
+ * (dirección, teléfonos, edad) y la actualización de la cuenta.
+ */
 public class EditarPerfilController {
 
-    @FXML
-    private TextField txtNombreCompleto;
-    @FXML
-    private DatePicker dateFechaNacimiento;
-    @FXML
-    private TextField txtEdad;
-    @FXML
-    private TextField txtCalle;
-    @FXML
-    private TextField txtNumero;
-    @FXML
-    private TextField txtColonia;
-    @FXML
-    private TextField txtTelefonoCasa;
-    @FXML
-    private TextField txtTelefonoTrabajo;
-    @FXML
-    private PasswordField txtContrasena;
-    @FXML
-    private CheckBox chkMostrarContrasena;
+    @FXML private TextField txtNombreCompleto;
+    @FXML private DatePicker dateFechaNacimiento;
+    @FXML private TextField txtEdad;
+    @FXML private TextField txtCalle;
+    @FXML private TextField txtNumero;
+    @FXML private TextField txtColonia;
+    @FXML private TextField txtTelefonoCasa;
+    @FXML private TextField txtTelefonoTrabajo;
+    @FXML private PasswordField txtContrasena;
+    @FXML private CheckBox chkMostrarContrasena;
 
     private IClienteBO clienteBO;
     private IUsuarioBO usuarioBO;
 
+    /**
+     * Inicializa el controlador cargando la información del cliente almacenada
+     * en SesionActual.
+     */
     @FXML
     private void initialize() {
         clienteBO = FabricaBOs.obtenerClienteBO();
@@ -55,6 +54,11 @@ public class EditarPerfilController {
         cargarDatosCliente();
     }
 
+    /**
+     * Recupera el objeto Cliente de la sesión y rellena los campos del
+     * formulario. Calcula automáticamente la edad basada en la fecha de
+     * nacimiento y concatena el nombre completo para su visualización.
+     */
     private void cargarDatosCliente() {
         Cliente cliente = SesionActual.getCliente();
         if (cliente == null) {
@@ -74,16 +78,23 @@ public class EditarPerfilController {
             txtEdad.setText(String.valueOf(edad));
         }
 
-        if (cliente.getCalle() != null)
+        if (cliente.getCalle() != null) {
             txtCalle.setText(cliente.getCalle());
-        if (cliente.getNumero() != null)
+        }
+        if (cliente.getNumero() != null) {
             txtNumero.setText(cliente.getNumero());
-        if (cliente.getColonia() != null)
+        }
+        if (cliente.getColonia() != null) {
             txtColonia.setText(cliente.getColonia());
+        }
 
         cargarTelefonos(cliente.getIdUsuario());
     }
 
+    /**
+     * Carga los teléfonos del cliente desde la base de datos y los muestra en los campos correspondientes.
+     * @param idUsuario ID del cliente cuyos teléfonos se cargarán.
+     */
     private void cargarTelefonos(int idUsuario) {
         try {
             List<Telefono> telefonos = clienteBO.obtenerTelefonos(idUsuario);
@@ -99,6 +110,10 @@ public class EditarPerfilController {
         }
     }
 
+    /**
+     * Lógica para la visibilidad de la contraseña.
+     * El PasswordField de JavaFX siempre oculta el texto, por lo que este método no requiere acción.
+     */
     @FXML
     private void handleMostrarContrasena() {
         // No hay acción especial necesaria; el campo PasswordField siempre oculta el texto
@@ -119,6 +134,11 @@ public class EditarPerfilController {
         }
     }
 
+    /**
+     * Valida y procesa la actualización de los datos del perfil. Muestra un
+     * diálogo de confirmación antes de proceder y redirige a la pantalla de
+     * bienvenida tras el éxito.
+     */
     @FXML
     private void handleConfirmarCambios() {
         if (txtNombreCompleto.getText().isBlank()) {
@@ -131,14 +151,12 @@ public class EditarPerfilController {
         confirm.setHeaderText(null);
         confirm.setContentText("¿Deseas guardar los cambios realizados?");
 
-        javafx.scene.control.Button btnAceptar = (javafx.scene.control.Button) confirm.getDialogPane()
-                .lookupButton(ButtonType.OK);
+        // Estilización de botones de confirmación
+        javafx.scene.control.Button btnAceptar = (javafx.scene.control.Button) confirm.getDialogPane().lookupButton(ButtonType.OK);
         btnAceptar.setText("Aceptar");
-        btnAceptar.setStyle("-fx-background-color: #3a2a1a; -fx-text-fill: white;"
-                + " -fx-font-weight: bold; -fx-background-radius: 6;");
+        btnAceptar.setStyle("-fx-background-color: #3a2a1a; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;");
 
-        javafx.scene.control.Button btnCancelar = (javafx.scene.control.Button) confirm.getDialogPane()
-                .lookupButton(ButtonType.CANCEL);
+        javafx.scene.control.Button btnCancelar = (javafx.scene.control.Button) confirm.getDialogPane().lookupButton(ButtonType.CANCEL);
         btnCancelar.setText("Cancelar");
         btnCancelar.setStyle("-fx-background-radius: 6;");
 
@@ -151,6 +169,7 @@ public class EditarPerfilController {
                     return;
                 }
 
+                // Parseo simple del nombre completo
                 String[] partes = txtNombreCompleto.getText().trim().split("\\s+");
                 cliente.setNombres(partes.length > 0 ? partes[0] : "");
                 cliente.setApellidoPaterno(partes.length > 1 ? partes[1] : "");
@@ -194,6 +213,10 @@ public class EditarPerfilController {
         }
     }
 
+    /**
+     * Permite al usuario desactivar su cuenta de forma lógica. Redirige al
+     * inicio de la aplicación (Modo Express/Main).
+     */
     @FXML
     private void handleDesactivarCuenta() {
         Alert confirm = new Alert(AlertType.CONFIRMATION);
@@ -201,8 +224,7 @@ public class EditarPerfilController {
         confirm.setHeaderText("¿Estás seguro?");
         confirm.setContentText("Tu cuenta será desactivada. ¿Deseas continuar?");
 
-        javafx.scene.control.Button btnAceptar = (javafx.scene.control.Button) confirm.getDialogPane()
-                .lookupButton(ButtonType.OK);
+        javafx.scene.control.Button btnAceptar = (javafx.scene.control.Button) confirm.getDialogPane().lookupButton(ButtonType.OK);
         btnAceptar.setText("Desactivar");
         btnAceptar.setStyle("-fx-background-color: #e05a8a; -fx-text-fill: white;"
                 + " -fx-font-weight: bold; -fx-background-radius: 6;");
@@ -229,6 +251,12 @@ public class EditarPerfilController {
         }
     }
 
+    /**
+     * Despliega una alerta genérica configurable.
+     * @param tipo Tipo de alerta (Error, Warning, Info).
+     * @param titulo Título de la ventana.
+     * @param contenido Mensaje detallado.
+     */
     private void mostrarAlerta(AlertType tipo, String titulo, String contenido) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);

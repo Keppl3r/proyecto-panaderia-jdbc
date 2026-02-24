@@ -9,8 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Prueba simple de PedidoProgramadoBO
- * @author Adrian Mendoza
+ * Clase de prueba integral para la lógica de Pedidos Programados.
+ * <p>
+ * Esta prueba valida el ciclo de vida de creación de un pedido para clientes registrados,
+ * verificando componentes críticos del sistema:
+ * <ul>
+ * <li>Uso de la capa de servicios a través de {@code IPedidoProgramadoBO}.</li>
+ * <li>Persistencia de detalles específicos del producto, incluyendo notas de personalización.</li>
+ * <li>Validación de la regla de tiempo mínimo de entrega (configurado a +3 horas).</li>
+ * <li>Cálculo automático del monto total y asignación del estado inicial del pedido.</li>
+ * <li>Manejo opcional de cupones (verificación de valor {@code null}).</li>
+ * </ul>
+ * </p>
  */
 public class PruebaPedidoProgramadoBO {
     

@@ -20,6 +20,12 @@ import negocio.excepciones.NegocioException;
 import negocio.fabrica.FabricaBOs;
 import persistencia.dominio.Producto;
 
+/**
+ * Controlador para la gestión del inventario de productos.
+ * Permite a los empleados visualizar el catálogo completo, realizar búsquedas
+ * filtradas por nombre y activar/desactivar la disponibilidad de productos
+ * de manera inmediata.
+ */
 public class InventarioController {
 
     @FXML private TextField txtBuscar;
@@ -27,7 +33,11 @@ public class InventarioController {
 
     private List<Producto> todosLosProductos;
     private IProductoBO productoBO;
-
+    
+    /**
+     * Inicializa el controlador, establece la conexión con la capa de negocio
+     * y configura el Listener para la búsqueda reactiva.
+     */
     @FXML
     private void initialize() {
         productoBO = FabricaBOs.obtenerProductoBO();
@@ -45,7 +55,10 @@ public class InventarioController {
             }
         });
     }
-
+    /**
+     * Recupera la lista completa de productos desde la base de datos
+     * y los muestra en la interfaz.
+     */
     private void cargarProductos() {
         try {
             todosLosProductos = productoBO.obtenerTodos();
@@ -56,14 +69,23 @@ public class InventarioController {
             todosLosProductos = List.of();
         }
     }
-
+    /**
+     * Limpia el contenedor visual y genera una fila por cada producto en la lista.
+     * @param lista Lista de productos a mostrar.
+     */
     private void renderizar(List<Producto> lista) {
         vboxProductos.getChildren().clear();
         for (Producto p : lista) {
             vboxProductos.getChildren().add(crearFilaProducto(p));
         }
     }
-
+    /**
+     * Construye dinámicamente un componente HBox para representar un producto.
+     * Incluye nombre, precio, una etiqueta de tipo con color (Badge) y 
+     * un interruptor (Toggle) de disponibilidad.
+     * @param p El producto a representar.
+     * @return El nodo visual configurado.
+     */
     private HBox crearFilaProducto(Producto p) {
         HBox fila = new HBox(14);
         fila.setAlignment(Pos.CENTER_LEFT);
@@ -108,7 +130,9 @@ public class InventarioController {
         fila.getChildren().addAll(lblNombre, lblTipo, lblPrecio, spacer, lblDisp, toggle);
         return fila;
     }
-
+    /**
+     * Define el color hexadecimal según el tipo de producto.
+     */
     private String tipoBadgeColor(String tipo) {
         return switch (tipo) {
             case "DULCE"    -> "#e87722";
@@ -117,7 +141,10 @@ public class InventarioController {
             default         -> "#9e9e9e";
         };
     }
-
+    /**
+     * Aplica estilos CSS personalizados para simular un "Switch" moderno
+     * basado en el estado del ToggleButton.
+     */
     private void actualizarEstiloToggle(ToggleButton t) {
         if (t.isSelected()) {
             t.setText("●");
@@ -133,7 +160,9 @@ public class InventarioController {
                     + " -fx-padding: 0 0 0 4;");
         }
     }
-
+    /**
+     * Regresa al usuario al menú principal de empleados.
+     */
     @FXML
     private void handleInicio() {
         try {
@@ -142,7 +171,13 @@ public class InventarioController {
             mostrarError("No se pudo volver al menú.");
         }
     }
-
+    /**
+     * Despliega una ventana emergente de error (Modal).
+     * Este método centraliza la notificación de excepciones de la capa de negocio
+     * o persistencia, asegurando que el usuario reciba retroalimentación clara
+     * ante fallos críticos.
+     * * @param msg Mensaje descriptivo del error que se mostrará en el cuerpo de la alerta.
+     */
     private void mostrarError(String msg) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Error"); alert.setHeaderText(null);

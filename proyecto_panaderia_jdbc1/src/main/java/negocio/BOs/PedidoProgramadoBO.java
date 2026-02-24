@@ -15,7 +15,14 @@ import persistencia.dominio.Producto;
 import persistencia.excepciones.PersistenciaException;
 
 /**
- * @author Adrian Mendoza
+ * Implementación de la lógica de negocio para Pedidos Programados.
+ * <p>
+ * Esta clase orquestra el flujo de creación de pedidos diferidos, aplicando 
+ * reglas de negocio restrictivas como el límite de pedidos por cliente, 
+ * validación de anticipación de tiempo, disponibilidad de stock y 
+ * aplicación de beneficios por cupones.
+ * </p>
+ * * @author Adrian Mendoza
  */
 public class PedidoProgramadoBO implements IPedidoProgramadoBO {
 
@@ -26,6 +33,14 @@ public class PedidoProgramadoBO implements IPedidoProgramadoBO {
     private ICuponDAO cuponDAO;
     private static final Logger LOG = Logger.getLogger(PedidoProgramadoBO.class.getName());
 
+    /**
+     * Constructor con inyección de dependencias para la gestión integral de pedidos.
+     * * @param pedidoDAO DAO específico para la persistencia de pedidos programados.
+     * @param productoDAO DAO para consultar precios y disponibilidad real.
+     * @param clienteBO BO para validar el estado del cliente.
+     * @param pedidoBusquedaDAO DAO para consultar límites de pedidos activos.
+     * @param cuponDAO DAO para la gestión y validación de descuentos.
+     */
     public PedidoProgramadoBO(IPedidoProgramadoDAO pedidoDAO, IProductoDAO productoDAO,
             IClienteBO clienteBO, IPedidoDAO pedidoBusquedaDAO, ICuponDAO cuponDAO) {
         this.pedidoDAO = pedidoDAO;
@@ -34,7 +49,23 @@ public class PedidoProgramadoBO implements IPedidoProgramadoBO {
         this.pedidoBusquedaDAO = pedidoBusquedaDAO;
         this.cuponDAO = cuponDAO;
     }
-
+    
+    /**
+     * Registra un nuevo pedido programado tras validar un conjunto de reglas de negocio.
+     * <p>
+     * <b>Reglas aplicadas:</b>
+     * <ul>
+     * <li>El cliente debe existir y estar activo en el sistema.</li>
+     * <li>Un cliente no puede tener más de 3 pedidos en estado "activo" simultáneamente.</li>
+     * <li>La fecha de entrega debe cumplir con el tiempo mínimo de anticipación (2 horas).</li>
+     * <li>Los productos deben estar marcados como disponibles en el catálogo.</li>
+     * <li>Si se incluye un cupón, este debe ser válido y estar vigente.</li>
+     * </ul>
+     * </p>
+     * * @param pedidoDTO DTO con la información de la orden y el cliente.
+     * @return {@link PedidoProgramado} persistido con cálculos de total y descuentos aplicados.
+     * @throws NegocioException Si se infringe alguna regla de validación o falla la persistencia.
+     */
     @Override
     public PedidoProgramado programarPedido(PedidoProgramadoNuevoDTO pedidoDTO) throws NegocioException {
         try {

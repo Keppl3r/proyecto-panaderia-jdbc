@@ -8,8 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Prueba simple de PedidoExpressBO
- * @author Jazmin
+ * Clase de prueba funcional para la gestión de Pedidos Express.
+ * <p>
+ * Esta clase verifica la correcta ejecución del proceso de creación de pedidos rápidos 
+ * (sin cliente registrado). Valida los siguientes puntos clave:
+ * <ul>
+ * <li>Funcionamiento de la {@code FabricaBOs} para obtener la instancia de negocio.</li>
+ * <li>Correcto mapeo y transferencia de datos mediante el DTO {@code PedidoExpressNuevoDTO}.</li>
+ * <li>Generación automática de atributos de seguridad (Folio y PIN).</li>
+ * <li>Cálculo del tiempo límite de recolección por parte de la capa de negocio.</li>
+ * </ul>
+ * </p>
+ * * Nota: La salida de consola recorta el PIN para verificar que el hash se generó 
+ * correctamente sin comprometer la visualización completa.
  */
 public class PruebaPedidoExpressBO {
     

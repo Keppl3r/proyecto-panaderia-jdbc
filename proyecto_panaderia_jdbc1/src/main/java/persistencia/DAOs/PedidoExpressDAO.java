@@ -8,17 +8,34 @@ import persistencia.dominio.PedidoExpress;
 import persistencia.excepciones.PersistenciaException;
 
 /**
+ * Implementación de persistencia para Pedidos Express.
+ * Maneja la inserción atómica en las tablas PEDIDOS, PEDIDOS_EXPRESS y DETALLE_PEDIDOS.
  * @author Jazmin
  * @author Adrian Mendoza
  */
 public class PedidoExpressDAO implements IPedidoExpressDAO {
 
     private IConexionBD conexion;
-
+    /**
+     * Constructor que inicializa la conexión para el acceso a datos.
+     * * @param conexion Implementación de la interfaz de conexión a la base de datos.
+     */
     public PedidoExpressDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
-
+    /**
+     * Registra un nuevo pedido express en la base de datos de forma transaccional.
+     * <p>
+     * El proceso sigue este orden:
+     * 1. Inserta en la tabla base PEDIDOS y recupera el ID generado.
+     * 2. Inserta la extensión en PEDIDOS_EXPRESS (Folio y PIN).
+     * 3. Inserta todos los artículos en DETALLE_PEDIDOS usando procesamiento por lotes (batch).
+     * </p>
+     *
+     * @param pedido El objeto {@code PedidoExpress} con toda la información y detalles.
+     * @return El mismo objeto con el {@code idPedido} actualizado.
+     * @throws PersistenciaException Si ocurre un error en SQL; se realiza un rollback automático.
+     */
     @Override
     public PedidoExpress crear(PedidoExpress pedido) throws PersistenciaException {
         try (Connection conn = conexion.crearConexion()) {
@@ -79,7 +96,13 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
             throw new PersistenciaException("Error al crear pedido Express", ex);
         }
     }
-
+    /**
+     * Calcula el siguiente número correlativo para un pedido.
+     * Utiliza la función {@code COALESCE} para manejar el caso de una tabla vacía.
+     *
+     * @return El siguiente número de pedido disponible.
+     * @throws PersistenciaException Si falla la consulta al servidor.
+     */
     @Override
     public int generarNumPedido() throws PersistenciaException {
         String sql = "SELECT COALESCE(MAX(NUM_PEDIDO), 0) FROM PEDIDOS";
@@ -94,7 +117,14 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
             throw new PersistenciaException("Error al generar número de pedido", ex);
         }
     }
-
+    /**
+     * Recupera un pedido express mediante su folio único de seguimiento.
+     * Realiza un {@code INNER JOIN} entre la tabla general de pedidos y la tabla express.
+     *
+     * @param folio El folio alfanumérico del pedido.
+     * @return El objeto {@code PedidoExpress} poblado, o {@code null} si no se encuentra.
+     * @throws PersistenciaException Si hay errores en el mapeo de datos o conexión.
+     */
     @Override
     public PedidoExpress buscarPorFolio(String folio) throws PersistenciaException {
         String sql = """

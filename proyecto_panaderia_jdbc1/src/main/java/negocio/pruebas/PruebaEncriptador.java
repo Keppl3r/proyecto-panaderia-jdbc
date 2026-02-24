@@ -2,6 +2,19 @@ package negocio.pruebas;
 
 import negocio.encriptacion.EncriptadorPIN;
 
+/**
+ * Clase de prueba para validar el funcionamiento del algoritmo de cifrado.
+ * <p>
+ * Esta clase ejecuta un test de caja blanca sobre la utilidad {@code EncriptadorPIN}, 
+ * asegurando que:
+ * <ul>
+ * <li>El proceso de hashing sea determinista o verificable.</li>
+ * <li>La longitud del hash generado sea compatible con el almacenamiento en la BD.</li>
+ * <li>El método de verificación distinga correctamente entre credenciales válidas e inválidas.</li>
+ * <li>El algoritmo soporte tanto cadenas alfanuméricas como PINs numéricos.</li>
+ * </ul>
+ * </p>
+ */
 public class PruebaEncriptador {
 
     public static void main(String[] args) {

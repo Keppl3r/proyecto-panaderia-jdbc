@@ -26,6 +26,11 @@ import negocio.fabrica.FabricaBOs;
 import persistencia.dominio.DetallePedido;
 import persistencia.dominio.Pedido;
 
+/**
+ * Controlador para la vista de historial de pedidos del cliente.
+ * Gestiona la carga dinámica de tarjetas de pedido, el filtrado por estado
+ * y la lógica de cancelación de pedidos pendientes.
+ */
 public class MisPedidosController {
 
     @FXML private GridPane gridPedidos;
@@ -36,6 +41,10 @@ public class MisPedidosController {
     private List<Pedido> pedidosBD;
     private IPedidoBO pedidoBO;
 
+    /**
+     * Inicializa los componentes de la vista, configura el ComboBox de estados
+     * y dispara la carga inicial de datos desde la base de datos.
+     */
     @FXML
     private void initialize() {
         cmbTipoPedido.getItems().addAll("Todos", "Listo", "Pendiente", "Entregado", "Cancelado");
@@ -45,6 +54,10 @@ public class MisPedidosController {
         cargarPedidos();
     }
 
+    /**
+     * Recupera el historial de pedidos del cliente en sesión.
+     * Valida la existencia de una sesión activa antes de realizar la consulta al BO.
+     */
     private void cargarPedidos() {
         if (!SesionActual.isLogeado() || SesionActual.getCliente() == null) {
             mostrarError("No hay sesión activa de cliente.");
@@ -60,7 +73,12 @@ public class MisPedidosController {
             mostrarError("No se pudieron cargar los pedidos: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * Construye la interfaz visual en un formato de cuadrícula (Grid).
+     * Si la lista está vacía, muestra un mensaje informativo de cortesía.
+     * @param lista Lista de pedidos a transformar en componentes visuales.
+     */
     private void renderizarPedidos(List<Pedido> lista) {
         gridPedidos.getChildren().clear();
         if (lista == null || lista.isEmpty()) {
@@ -77,7 +95,13 @@ public class MisPedidosController {
             if (col >= 2) { col = 0; row++; }
         }
     }
-
+    /**
+     * Genera un componente VBox personalizado (Tarjeta) para cada pedido.
+     * Incluye lógica condicional para mostrar el botón de cancelación solo 
+     * en pedidos con estado "PENDIENTE".
+     * @param p Objeto Pedido con la información a mostrar.
+     * @return El nodo visual de la tarjeta configurado.
+     */
     private VBox crearTarjetaPedido(Pedido p) {
         VBox tarjeta = new VBox(8);
         tarjeta.setPrefWidth(310.0);
@@ -150,7 +174,14 @@ public class MisPedidosController {
 
         return tarjeta;
     }
-
+    
+    /**
+     * Consulta los ítems específicos de un pedido.
+     * Se utiliza durante la construcción de la interfaz para desglosar qué productos 
+     * componen cada orden en el historial.
+     * * @param idPedido Identificador único de la orden.
+     * @return Lista de objetos DetallePedido o una lista vacía en caso de error.
+     */
     private List<DetallePedido> cargarDetalles(int idPedido) {
         try {
             return pedidoBO.obtenerDetallesPorPedido(idPedido);
@@ -158,7 +189,14 @@ public class MisPedidosController {
             return List.of();
         }
     }
-
+    
+    /**
+     * Crea un componente visual (Badge) basado en el estado del pedido.
+     * Utiliza estilos CSS de JavaFX para generar una etiqueta redondeada 
+     * con colores que facilitan la lectura rápida del estado actual.
+     * * @param estado El texto descriptivo del estado (ej. "Listo", "Pendiente").
+     * @return Un objeto Label configurado estéticamente.
+     */
     private Label crearBadge(String estado) {
         Label badge = new Label(estado);
         badge.setStyle("-fx-font-size: 11px; -fx-font-weight: bold;"
@@ -166,7 +204,12 @@ public class MisPedidosController {
                 + " -fx-background-color: " + colorEstado(estado) + ";");
         return badge;
     }
-
+    /**
+     * Define la paleta de colores semántica según el flujo de vida del pedido.
+     * Implementa una estructura switch moderna para mapear estados a valores hexadecimales.
+     * * @param estado Cadena de texto que representa el estado.
+     * @return Código de color hexadecimal (String).
+     */
     private String colorEstado(String estado) {
         return switch (estado) {
             case "Listo"        -> "#4caf50";
@@ -177,7 +220,12 @@ public class MisPedidosController {
             default             -> "#757575";
         };
     }
-
+    /**
+     * Gestiona el proceso de cancelación de una orden.
+     * Incluye una confirmación modal para evitar cancelaciones accidentales y
+     * estiliza el botón de acción para denotar una operación de "peligro" o crítica.
+     * * @param p El objeto Pedido a cancelar.
+     */
     private void confirmarCancelacion(Pedido p) {
         Alert confirm = new Alert(AlertType.CONFIRMATION);
         confirm.setTitle("Cancelar pedido");
@@ -198,7 +246,10 @@ public class MisPedidosController {
             }
         }
     }
-
+    /**
+     * Aplica el filtrado de la lista en memoria (Stream API) basado en la selección
+     * del ComboBox, evitando nuevas peticiones a la base de datos.
+     */
     @FXML
     private void handleAplicarFiltros() {
         if (pedidosBD == null) return;
@@ -236,7 +287,11 @@ public class MisPedidosController {
         dateHasta.setValue(null);
         if (pedidosBD != null) renderizarPedidos(pedidosBD);
     }
-
+    /**
+     * Gestiona el retorno a la pantalla de bienvenida del cliente.
+     * Este método permite al usuario salir de la vista de historial y volver 
+     * a su panel de control principal.
+     */
     @FXML
     private void handleRegresar() {
         try {
@@ -245,7 +300,12 @@ public class MisPedidosController {
             mostrarError("No se pudo volver.");
         }
     }
-
+    /**
+     * Centraliza la visualización de mensajes de error de tipo modal.
+     * Utiliza el componente Alert de JavaFX para detener el flujo de la aplicación
+     * hasta que el usuario reconozca el fallo (ej. errores de conexión o sesión).
+     * * @param msg Mensaje descriptivo del error a mostrar en el cuerpo de la alerta.
+     */
     private void mostrarError(String msg) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Error"); alert.setHeaderText(null);
