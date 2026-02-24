@@ -11,6 +11,12 @@ import persistencia.dominio.Producto;
 import persistencia.excepciones.PersistenciaException;
 
 /**
+ * Implementación JDBC para la gestión integral de pedidos.
+ * <p>
+ * Esta clase centraliza las consultas complejas que involucran filtros por folio, 
+ * teléfono, fechas y estados. Además, gestiona la recuperación de los detalles 
+ * de cada orden (productos y cantidades).
+ * </p>
  * @author Adrian Mendoza
  */
 public class PedidoDAO implements IPedidoDAO {
@@ -20,7 +26,12 @@ public class PedidoDAO implements IPedidoDAO {
     public PedidoDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
-
+    /**
+     * Actualiza el estado de una orden. Vital para el flujo de trabajo en cocina.
+     * @param idPedido Identificador de la orden.
+     * @param nuevoEstado Texto que coincide con los valores del Enum EstadoPedido.
+     * @return true si se actualizó correctamente.
+     */
     @Override
     public boolean cambiarEstado(int idPedido, String nuevoEstado) throws PersistenciaException {
         String sql = "UPDATE PEDIDOS SET ESTADO = ? WHERE ID_PEDIDO = ?";
@@ -33,7 +44,7 @@ public class PedidoDAO implements IPedidoDAO {
             throw new PersistenciaException("Error al cambiar estado del pedido", ex);
         }
     }
-
+    
     @Override
     public int contarPedidosActivos(int idCliente) throws PersistenciaException {
         String sql = "SELECT COUNT(*) FROM PEDIDOS WHERE ID_USUARIO = ? AND ESTADO IN ('PENDIENTE', 'LISTO')";
@@ -136,7 +147,12 @@ public class PedidoDAO implements IPedidoDAO {
         }
         return null;
     }
-
+    /**
+     * Recupera el desglose de productos de un pedido mediante un INNER JOIN 
+     * con la tabla PRODUCTOS para obtener los nombres actualizados.
+     * @param idPedido ID de la orden.
+     * @return Lista de {@link DetallePedido} con objetos Producto anidados.
+     */
     @Override
     public List<DetallePedido> obtenerDetallesPorPedido(int idPedido) throws PersistenciaException {
         List<DetallePedido> detalles = new ArrayList<>();

@@ -11,7 +11,13 @@ import persistencia.conexion.IConexionBD;
 import persistencia.conexion.ConexionBD;
 import persistencia.dominio.Producto;
 /**
- *
+ ** Clase de prueba técnica para validar la conectividad con la base de datos.
+ * <p>
+ * Esta clase verifica que el túnel de comunicación entre la aplicación y el DBMS 
+ * esté correctamente configurado. Realiza una prueba de lectura directa sobre 
+ * el catálogo de productos para asegurar que el mapeo de {@link Producto} 
+ * sea consistente con los registros de la base de datos.
+ * </p>
  * @author Adrian Mendoza
  */
 public class PruebaConexion {

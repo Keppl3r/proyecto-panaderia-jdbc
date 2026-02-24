@@ -20,16 +20,33 @@ import persistencia.dominio.DetallePedido;
 import persistencia.dominio.Pedido;
 import persistencia.dominio.Pedido.EstadoPedido;
 
+/**
+ * Controlador versátil para la gestión de pedidos por parte del personal.
+ * Adapta su comportamiento para funcionar como monitor de cocina, terminal de
+ * punto de venta (Caja) o consulta de historial administrativo.
+ */
 public class PedidosEmpleadoController {
 
-    @FXML private Label lblTitulo;
-    @FXML private VBox  vboxPedidos;
+    @FXML
+    private Label lblTitulo;
+    @FXML
+    private VBox vboxPedidos;
 
-    private static String modo = "Caja y Entregas";
+    private static String modo = "Caja y Entregas"; // Estado persistente entre cambios de vista
     private IPedidoBO pedidoBO;
 
-    public static void setModo(String m) { modo = m; }
+    /**
+     * Inyecta el modo de operación antes de cargar la pantalla. Permite que el
+     * menú principal defina qué tipo de pedidos se deben gestionar.
+     */
+    public static void setModo(String m) {
+        modo = m;
+    }
 
+    /**
+     * Inyecta el modo de operación antes de cargar la pantalla. Permite que el
+     * menú principal defina qué tipo de pedidos se deben gestionar.
+     */
     @FXML
     private void initialize() {
         lblTitulo.setText(modo);
@@ -37,6 +54,11 @@ public class PedidosEmpleadoController {
         cargarPedidos();
     }
 
+    /**
+     * Recupera y filtra los pedidos desde la base de datos según el modo
+     * actual. - Historial: Muestra solo estados finales (Entregado, Cancelado).
+     * - Operativo: Muestra pedidos activos (Pendientes y Listos).
+     */
     private void cargarPedidos() {
         try {
             List<Pedido> pedidos;
@@ -44,8 +66,8 @@ public class PedidosEmpleadoController {
                 pedidos = pedidoBO.obtenerHistorialEmpleado();
                 pedidos = pedidos.stream()
                         .filter(p -> p.getEstado() == EstadoPedido.ENTREGADO
-                                || p.getEstado() == EstadoPedido.CANCELADO
-                                || p.getEstado() == EstadoPedido.NO_ENTREGADO)
+                        || p.getEstado() == EstadoPedido.CANCELADO
+                        || p.getEstado() == EstadoPedido.NO_ENTREGADO)
                         .toList();
             } else {
                 pedidos = pedidoBO.obtenerPendientesYListos();
@@ -67,6 +89,11 @@ public class PedidosEmpleadoController {
         }
     }
 
+    /**
+     * Construye tarjetas visuales personalizadas para cada orden. Identifica
+     * visualmente pedidos 'Express' y aplica colores semánticos a los badges de
+     * estado.
+     */
     private VBox crearTarjetaPedido(Pedido p) {
         VBox tarjeta = new VBox(10);
         tarjeta.setPadding(new Insets(14, 16, 14, 16));
@@ -99,11 +126,16 @@ public class PedidosEmpleadoController {
         lblFecha.setStyle("-fx-font-size: 11px; -fx-text-fill: #4a3a2a;");
 
         String colorBadge = switch (p.getEstado()) {
-            case LISTO      -> "#4caf50";
-            case PENDIENTE  -> "#2196f3";
-            case ENTREGADO  -> "#9e9e9e";
-            case CANCELADO  -> "#e05a5a";
-            default         -> "#757575";
+            case LISTO ->
+                "#4caf50";
+            case PENDIENTE ->
+                "#2196f3";
+            case ENTREGADO ->
+                "#9e9e9e";
+            case CANCELADO ->
+                "#e05a5a";
+            default ->
+                "#757575";
         };
         Label badge = new Label(p.getEstado().getDescripcion());
         badge.setStyle("-fx-background-color: " + colorBadge + "; -fx-text-fill: white;"
@@ -154,14 +186,22 @@ public class PedidosEmpleadoController {
         return tarjeta;
     }
 
+    /**
+     * Finaliza la transacción del pedido. Realiza una doble operación en el BO:
+     * asegura que el pedido esté 'Listo' y registra la entrega con el método de
+     * pago especificado.
+     */
     private void entregarPedido(int idPedido, Button btnCobrar, Label badge) {
         try {
-            if (pedidoBO.marcarComoListo(idPedido)) {
-                pedidoBO.entregarPedido(idPedido, "EFECTIVO");
-            } else {
-                pedidoBO.entregarPedido(idPedido, "EFECTIVO");
+
+            try {
+                pedidoBO.marcarComoListo(idPedido);
+            } catch (NegocioException e) {
+
             }
-            btnCobrar.setText("✓ Entregado");
+            // Entregar y registrar pago
+            pedidoBO.entregarPedido(idPedido, "EFECTIVO");
+            btnCobrar.setText(" Entregado");
             btnCobrar.setStyle("-fx-background-color: #4caf50; -fx-text-fill: white;"
                     + " -fx-font-size: 12px; -fx-font-weight: bold;"
                     + " -fx-background-radius: 20; -fx-padding: 7 18;");
@@ -175,6 +215,14 @@ public class PedidosEmpleadoController {
         }
     }
 
+    /**
+     * Recupera el desglose de productos de un pedido específico. Es fundamental
+     * para que el empleado vea qué panes y cantidades debe preparar o entregar.
+     *
+     * * @param idPedido Identificador de la orden.
+     * @return Lista de DetallePedido o una lista vacía (List.of()) si ocurre un
+     * error, evitando que la interfaz falle al renderizar.
+     */
     private List<DetallePedido> cargarDetalles(int idPedido) {
         try {
             return pedidoBO.obtenerDetallesPorPedido(idPedido);
@@ -183,6 +231,10 @@ public class PedidosEmpleadoController {
         }
     }
 
+    /**
+     * Gestiona el retorno al panel principal de empleados. Cambia la raíz de la
+     * escena al menú de selección de área (Cocina, Caja, Inventario).
+     */
     @FXML
     private void handleVolver() {
         try {
@@ -192,9 +244,17 @@ public class PedidosEmpleadoController {
         }
     }
 
+    /**
+     * Despliega un diálogo de alerta modal para informar errores críticos al
+     * empleado.
+     *
+     * @param msg Descripción del error.
+     */
     private void mostrarError(String msg) {
         Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Error"); alert.setHeaderText(null);
-        alert.setContentText(msg); alert.showAndWait();
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(msg);
+        alert.showAndWait();
     }
 }

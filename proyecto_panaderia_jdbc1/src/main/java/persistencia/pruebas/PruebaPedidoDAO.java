@@ -8,6 +8,15 @@ import persistencia.conexion.ConexionBD;
 import persistencia.conexion.IConexionBD;
 import persistencia.dominio.Pedido;
 
+/**
+ * Clase de prueba funcional para validar las operaciones de consulta del PedidoDAO.
+ * <p>
+ * Esta suite de pruebas verifica la capacidad del sistema para filtrar y recuperar 
+ * información crítica de ventas bajo distintos criterios de negocio, asegurando 
+ * que el motor de persistencia responda correctamente a las necesidades del panel 
+ * de administración y del historial del cliente.
+ * </p>
+ */
 public class PruebaPedidoDAO {
 
     public static void main(String[] args) {

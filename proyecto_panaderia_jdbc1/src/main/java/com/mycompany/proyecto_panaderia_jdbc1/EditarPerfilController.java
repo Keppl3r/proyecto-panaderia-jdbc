@@ -11,6 +11,11 @@ import javafx.scene.control.TextField;
 import java.io.IOException;
 import java.util.Optional;
 
+/**
+ * Controlador para la edición del perfil de usuario. Gestiona la carga de datos
+ * del cliente desde la sesión activa, la validación de campos personales
+ * (dirección, teléfonos, edad) y la actualización de la cuenta.
+ */
 public class EditarPerfilController {
 
     @FXML
@@ -45,11 +50,20 @@ public class EditarPerfilController {
 
     private String contrasenaTexto = "";
 
+    /**
+     * Inicializa el controlador cargando la información del cliente almacenada
+     * en SesionActual.
+     */
     @FXML
     private void initialize() {
         cargarDatosCliente();
     }
 
+    /**
+     * Recupera el objeto Cliente de la sesión y rellena los campos del
+     * formulario. Calcula automáticamente la edad basada en la fecha de
+     * nacimiento y concatena el nombre completo para su visualización.
+     */
     private void cargarDatosCliente() {
         persistencia.dominio.Cliente cliente = SesionActual.getCliente();
         if (cliente == null) {
@@ -68,9 +82,15 @@ public class EditarPerfilController {
             txtEdad.setText(String.valueOf(edad));
         }
 
-        if (cliente.getCalle() != null) txtCalle.setText(cliente.getCalle());
-        if (cliente.getNumero() != null) txtNumero.setText(cliente.getNumero());
-        if (cliente.getColonia() != null) txtColonia.setText(cliente.getColonia());
+        if (cliente.getCalle() != null) {
+            txtCalle.setText(cliente.getCalle());
+        }
+        if (cliente.getNumero() != null) {
+            txtNumero.setText(cliente.getNumero());
+        }
+        if (cliente.getColonia() != null) {
+            txtColonia.setText(cliente.getColonia());
+        }
     }
 
     @FXML
@@ -80,6 +100,10 @@ public class EditarPerfilController {
         }
     }
 
+    /**
+     * Lógica para alternar la visibilidad de la contraseña. Nota: En esta
+     * versión se captura el texto para una posible transición a TextField.
+     */
     @FXML
     private void handleAnadirTelefono() {
         Alert alert = new Alert(AlertType.INFORMATION);
@@ -89,6 +113,11 @@ public class EditarPerfilController {
         alert.showAndWait();
     }
 
+    /**
+     * Valida y procesa la actualización de los datos del perfil. Muestra un
+     * diálogo de confirmación antes de proceder y redirige a la pantalla de
+     * bienvenida tras el éxito.
+     */
     @FXML
     private void handleConfirmarCambios() {
         if (txtNombreCompleto.getText().isBlank()) {
@@ -105,14 +134,11 @@ public class EditarPerfilController {
         confirm.setHeaderText(null);
         confirm.setContentText("¿Deseas guardar los cambios realizados?");
 
-        javafx.scene.control.Button btnAceptar =
-                (javafx.scene.control.Button) confirm.getDialogPane().lookupButton(ButtonType.OK);
+        javafx.scene.control.Button btnAceptar = (javafx.scene.control.Button) confirm.getDialogPane().lookupButton(ButtonType.OK);
         btnAceptar.setText("Aceptar");
-        btnAceptar.setStyle("-fx-background-color: #3a2a1a; -fx-text-fill: white;"
-                + " -fx-font-weight: bold; -fx-background-radius: 6;");
+        btnAceptar.setStyle("-fx-background-color: #3a2a1a; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;");
 
-        javafx.scene.control.Button btnCancelar =
-                (javafx.scene.control.Button) confirm.getDialogPane().lookupButton(ButtonType.CANCEL);
+        javafx.scene.control.Button btnCancelar = (javafx.scene.control.Button) confirm.getDialogPane().lookupButton(ButtonType.CANCEL);
         btnCancelar.setText("Cancelar");
         btnCancelar.setStyle("-fx-background-radius: 6;");
 
@@ -132,6 +158,10 @@ public class EditarPerfilController {
         }
     }
 
+    /**
+     * Permite al usuario desactivar su cuenta de forma lógica. Redirige al
+     * inicio de la aplicación (Modo Express/Main).
+     */
     @FXML
     private void handleDesactivarCuenta() {
         Alert confirm = new Alert(AlertType.CONFIRMATION);
@@ -139,8 +169,8 @@ public class EditarPerfilController {
         confirm.setHeaderText("¿Estás seguro?");
         confirm.setContentText("Esta acción desactivará tu cuenta. Podrás reactivarla iniciando sesión nuevamente.");
 
-        javafx.scene.control.Button btnAceptar =
-                (javafx.scene.control.Button) confirm.getDialogPane().lookupButton(ButtonType.OK);
+        javafx.scene.control.Button btnAceptar
+                = (javafx.scene.control.Button) confirm.getDialogPane().lookupButton(ButtonType.OK);
         btnAceptar.setText("Desactivar");
         btnAceptar.setStyle("-fx-background-color: #e05a8a; -fx-text-fill: white;"
                 + " -fx-font-weight: bold; -fx-background-radius: 6;");

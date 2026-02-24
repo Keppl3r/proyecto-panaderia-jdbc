@@ -8,6 +8,18 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Clase de prueba para validar el flujo completo de registro de nuevos clientes.
+ * <p>
+ * Esta prueba de integración verifica la capacidad del sistema para persistir un 
+ * perfil de cliente completo, evaluando:
+ * <ul>
+ * <li>El uso de la {@code FabricaBOs} para la obtención de servicios de negocio.</li>
+ * <li>La correcta asignación de datos personales, credenciales y domicilio.</li>
+ * <li>La persistencia de colecciones relacionadas (asociación {@code Telefono} - {@code Cliente}).</li>
+ * <li>La conversión de formatos de fecha mediante {@code Date.valueOf}.</li>
+ * <li>El retorno del objeto persistido con su ID generado por la base de datos.</li>
+ */
 public class PruebaRegistroCliente {
 
     public static void main(String[] args) {

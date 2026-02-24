@@ -9,6 +9,11 @@ import javafx.scene.control.Alert.AlertType;
 import java.io.IOException;
 import java.time.LocalDate;
 
+/**
+ * Controlador para la gestión de registro de nuevos usuarios.
+ * Se encarga de capturar la información personal, validar la obligatoriedad 
+ * de los campos y procesar el alta en el sistema.
+ */
 public class RegistroController {
 
     @FXML
@@ -37,7 +42,11 @@ public class RegistroController {
 
     @FXML
     private Button btnVolver;
-
+    /**
+     * Procesa el formulario de registro.
+     * Realiza una validación previa para asegurar que los campos críticos 
+     * (Nombres, Apellido Paterno, Domicilio y Fecha) no estén vacíos.
+     */
     @FXML
     private void handleEntrar() {
         // Validar campos
@@ -82,7 +91,12 @@ public class RegistroController {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Gestiona el retorno a la pantalla principal desde el formulario de registro.
+     * Intenta reasignar la raíz de la escena al FXML "main_panaderia".
+     * * En caso de un fallo en la carga del archivo (IOException), despliega una 
+     * alerta de tipo ERROR para notificar al usuario sobre la inconsistencia.
+     */
     @FXML
     private void handleVolver() {
         try {
@@ -96,7 +110,9 @@ public class RegistroController {
             alert.showAndWait();
         }
     }
-
+    /**
+     * Inicializa la vista configurando efectos visuales y prompts.
+     */
     @FXML
     private void initialize() {
         System.out.println("Pantalla de Registro cargada");
@@ -108,7 +124,12 @@ public class RegistroController {
         // Configurar el formato de fecha
         dateFechaNacimiento.setPromptText("dd/mm/aaaa");
     }
-
+    /**
+     * Aplica efectos visuales dinámicos a los botones cuando el cursor entra o sale.
+     * Utiliza expresiones lambda para gestionar los eventos de mouse, permitiendo
+     * una interfaz más viva y reactiva sin necesidad de archivos CSS externos.
+     * * @param button El componente Button al que se le aplicará la lógica de hover.
+     */
     private void addHoverEffect(Button button) {
         String originalStyle = button.getStyle();
         

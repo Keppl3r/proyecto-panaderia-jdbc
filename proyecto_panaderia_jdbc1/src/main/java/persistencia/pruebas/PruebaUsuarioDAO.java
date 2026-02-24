@@ -7,6 +7,14 @@ import persistencia.conexion.IConexionBD;
 import persistencia.dominio.Usuario;
 import negocio.encriptacion.EncriptadorPIN;
 
+/**
+ * Clase de prueba funcional para validar la capa de seguridad y acceso de usuarios.
+ * <p>
+ * Esta suite de pruebas verifica la correcta integración entre el motor de persistencia 
+ * y la lógica de seguridad, incluyendo el manejo de credenciales encriptadas y la 
+ * validación de nombres de usuario únicos en la base de datos.
+ * </p>
+ */
 public class PruebaUsuarioDAO {
 
     public static void main(String[] args) {

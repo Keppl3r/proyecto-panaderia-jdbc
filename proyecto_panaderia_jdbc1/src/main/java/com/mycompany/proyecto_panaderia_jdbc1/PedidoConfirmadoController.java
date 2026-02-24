@@ -11,6 +11,12 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import java.io.IOException;
 
+/**
+ * Controlador para la pantalla de confirmación de pedido.
+ * Esta vista informa al usuario sobre el éxito de su transacción y proporciona
+ * herramientas de seguimiento: un temporizador para clientes express o acceso 
+ * al historial para clientes registrados.
+ */
 public class PedidoConfirmadoController {
 
     @FXML private Label  lblNumeroPedido;
@@ -28,19 +34,27 @@ public class PedidoConfirmadoController {
 
     @FXML private Label lblFolioPin;
 
-    private Timeline timeline;
-
+    private Timeline timeline; // Motor del temporizador
+    
+    /**
+     * Configura los datos básicos del pedido antes de cargar la vista.
+     */
     public static void setDatosPedido(String numero, String estado, boolean express) {
         numeroPedido  = numero;
         estadoPedido  = estado;
         pedidoExpress = express;
     }
-
+    /**
+     * Inyecta credenciales temporales para pedidos sin cuenta (Modo Express).
+     */
     public static void setInfoExpress(String folio, String pin) {
         folioExpress = folio;
         pinExpress   = pin;
     }
-
+    /**
+     * Inicializa la vista y alterna entre el diseño "Express" (Temporizador y PIN)
+     * y el diseño "Cliente" (Mensaje de éxito y acceso a historial).
+     */
     @FXML
     private void initialize() {
         lblNumeroPedido.setText(numeroPedido);
@@ -79,7 +93,11 @@ public class PedidoConfirmadoController {
             btnVerPedidos.setManaged(true);
         }
     }
-
+    
+    /**
+     * Implementa un contador regresivo reactivo usando la clase Timeline.
+     * @param segundosTotales Duración del contador.
+     */
     private void iniciarTimer(int segundosTotales) {
         final int[] segundos = {segundosTotales};
         actualizarLabelTimer(segundos[0]);
@@ -99,13 +117,21 @@ public class PedidoConfirmadoController {
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
-
+    /**
+     * Formatea y actualiza la visualización del tiempo restante.
+     * Convierte los segundos brutos a un formato de reloj mm:ss.
+     * @param segundos Cantidad de segundos a formatear.
+     */
     private void actualizarLabelTimer(int segundos) {
         int min = segundos / 60;
         int seg = segundos % 60;
         lblTimer.setText(String.format("%02d:%02d", min, seg));
     }
-
+    /**
+    * activo (como el temporizador de entrega) para liberar recursos.
+     * * @throws IOException Si el cargador de FXML no logra localizar o parsear 
+     * el archivo "mis_pedidos.fxml".
+     */
     @FXML
     private void handleVerPedidos() {
         detenerTimer();
@@ -115,7 +141,11 @@ public class PedidoConfirmadoController {
             mostrarError("No se pudo cargar Mis Pedidos.");
         }
     }
-
+    /**
+     * Gestiona el retorno a la navegación principal.
+     * Si el usuario era "Express", limpia el estado global de la aplicación
+     * antes de enviarlo al menú raíz.
+     */
     @FXML
     private void handleVolverInicio() {
         detenerTimer();
@@ -130,11 +160,21 @@ public class PedidoConfirmadoController {
             mostrarError("No se pudo volver al inicio.");
         }
     }
-
+    /**
+     * Detiene el proceso del temporizador.
+     * Es crucial invocar este método antes de cualquier cambio de escena para
+     * evitar fugas de memoria y procesos huérfanos en el JavaFX Application Thread.
+     */
     private void detenerTimer() {
         if (timeline != null) timeline.stop();
     }
-
+    /**
+     * Despliega una ventana emergente de error (Modal).
+     * Este método estandariza la comunicación de fallos críticos, como errores de 
+     * lectura de archivos FXML o excepciones de la base de datos, asegurando que 
+     * el hilo de la interfaz de usuario permanezca estable.
+     * * @param msg Mensaje descriptivo del error que se presentará al usuario.
+     */
     private void mostrarError(String msg) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Error");
