@@ -59,7 +59,8 @@ CREATE TABLE PRODUCTOS (
     TIPO ENUM('DULCE', 'SALADO', 'INTEGRAL') NOT NULL,
     DESCRIPCION TEXT NOT NULL,
     PRECIO DECIMAL(10,2) NOT NULL,
-    DISPONIBLE BOOLEAN NOT NULL DEFAULT TRUE
+    DISPONIBLE BOOLEAN NOT NULL DEFAULT TRUE,
+    IMAGEN VARCHAR(100) NULL DEFAULT NULL    -- nombre del archivo en /com/imagenes/
 );
 
 
@@ -267,18 +268,18 @@ INSERT INTO TELEFONOS(ID_USUARIO, ETIQUETA, NUMERO) VALUES
 (5, 'CELULAR', '6452222222');
 
 -- PRODUCTOS
-INSERT INTO PRODUCTOS(NOMBRE, TIPO, DESCRIPCION, PRECIO, DISPONIBLE) VALUES
-('PAN BLANCO',       'SALADO',   'Pan blanco tradicional de masa suave',            15.00, TRUE),
-('DONAS CHOCOLATE',  'DULCE',    'Donas cubiertas de chocolate con chispas',        20.00, TRUE),
-('PAN INTEGRAL',     'INTEGRAL', 'Pan integral saludable con semillas',             18.00, TRUE),
-('CROISSANT',        'DULCE',    'Croissant danés crujiente con mantequilla',       25.00, TRUE),
-('PIZZA SALADA',     'SALADO',   'Pizza artesanal con queso y jamón',               35.00, TRUE),
-('GALLETAS AVENA',   'INTEGRAL', 'Galletas integrales de avena y miel',             12.00, TRUE),
-('PASTEL CHOCOLATE', 'DULCE',    'Pastel casero de chocolate con cobertura',        45.00, TRUE),
-('PAN DE AJO',       'SALADO',   'Pan tostado con ajo y mantequilla de hierbas',    22.00, TRUE),
-('ROLES DE CANELA',  'DULCE',    'Roles suaves con canela y glaseado',              28.00, TRUE),
-('PAN MULTIGRANO',   'INTEGRAL', 'Pan con mezcla de granos y cereales',             20.00, TRUE),
-('EMPANADA JAMON',   'SALADO',   'Empanada rellena de jamón y queso',               30.00, FALSE);
+INSERT INTO PRODUCTOS(NOMBRE, TIPO, DESCRIPCION, PRECIO, DISPONIBLE, IMAGEN) VALUES
+('PAN BLANCO',       'SALADO',   'Pan blanco tradicional de masa suave',            15.00, TRUE,  'panblanco.jpg'),
+('DONAS CHOCOLATE',  'DULCE',    'Donas cubiertas de chocolate con chispas',        20.00, TRUE,  'dona.jpg'),
+('PAN INTEGRAL',     'INTEGRAL', 'Pan integral saludable con semillas',             18.00, TRUE,  'panintegral.jpg'),
+('CROISSANT',        'DULCE',    'Croissant danés crujiente con mantequilla',       25.00, TRUE,  'croissant.jpg'),
+('PIZZA SALADA',     'SALADO',   'Pizza artesanal con queso y jamón',               35.00, TRUE,  'pizzasalada.png'),
+('GALLETAS AVENA',   'INTEGRAL', 'Galletas integrales de avena y miel',             12.00, TRUE,  'galletasavena.jpg'),
+('PASTEL CHOCOLATE', 'DULCE',    'Pastel casero de chocolate con cobertura',        45.00, TRUE,  'pastelchocolate.jpg'),
+('PAN DE AJO',       'SALADO',   'Pan tostado con ajo y mantequilla de hierbas',    22.00, TRUE,  'pandeajo.jpg'),
+('ROLES DE CANELA',  'DULCE',    'Roles suaves con canela y glaseado',              28.00, TRUE,  'rolesdecanela.jpg'),
+('PAN MULTIGRANO',   'INTEGRAL', 'Pan con mezcla de granos y cereales',             20.00, TRUE,  'panmultigrano.jpg'),
+('EMPANADA JAMON',   'SALADO',   'Empanada rellena de jamón y queso',               30.00, FALSE, NULL);
 
 -- CUPONES
 INSERT INTO CUPONES(PORCENTAJE_DESCUENTO, FECHA_INICIO, FECHA_FIN, VIGENCIA, NUMERO_USOS, MAXIMO_USOS) VALUES

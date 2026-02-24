@@ -13,6 +13,7 @@ public class Producto {
     private String descripcion;
     private Double precio;
     private boolean disponible;
+    private String imagen;
 
     public Producto() {
     }
@@ -72,6 +73,14 @@ public class Producto {
 
     public void setDisponible(boolean disponible) {
         this.disponible = disponible;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
     }
 
     @Override

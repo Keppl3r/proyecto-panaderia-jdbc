@@ -23,52 +23,47 @@ public class ProductoDAO implements IProductoDAO {
         this.conexion = conexion;
     }
 
+    private Producto mapearProducto(ResultSet rs) throws SQLException {
+        Producto p = new Producto();
+        p.setIdProducto(rs.getInt("ID_PRODUCTO"));
+        p.setNombre(rs.getString("NOMBRE"));
+        p.setTipo(rs.getString("TIPO"));
+        p.setDescripcion(rs.getString("DESCRIPCION"));
+        p.setPrecio(rs.getDouble("PRECIO"));
+        p.setDisponible(rs.getBoolean("DISPONIBLE"));
+        p.setImagen(rs.getString("IMAGEN"));
+        return p;
+    }
+
     @Override
     public List<Producto> obtenerProductosDisponibles() throws PersistenciaException {
         List<Producto> productos = new ArrayList<>();
         String sql = """
-                          SELECT ID_PRODUCTO, NOMBRE, TIPO, DESCRIPCION, PRECIO, DISPONIBLE 
+                          SELECT ID_PRODUCTO, NOMBRE, TIPO, DESCRIPCION, PRECIO, DISPONIBLE, IMAGEN
                           FROM PRODUCTOS 
                           WHERE DISPONIBLE = TRUE
                      """;
         try (Connection conn = conexion.crearConexion(); 
                 PreparedStatement ps = conn.prepareStatement(sql); 
                 ResultSet rs = ps.executeQuery()) {
-
             while (rs.next()) {
-                Producto p = new Producto();
-                p.setIdProducto(rs.getInt("ID_PRODUCTO"));
-                p.setNombre(rs.getString("NOMBRE"));
-                p.setTipo(rs.getString("TIPO"));
-                p.setDescripcion(rs.getString("DESCRIPCION"));
-                p.setPrecio(rs.getDouble("PRECIO"));
-                p.setDisponible(rs.getBoolean("DISPONIBLE"));
-                productos.add(p);
+                productos.add(mapearProducto(rs));
             }
-
         } catch (SQLException error) {
             throw new PersistenciaException("Error al obtener productos", error);
         }
-
         return productos;
     }
 
     @Override
     public List<Producto> obtenerTodos() throws PersistenciaException {
         List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT ID_PRODUCTO, NOMBRE, TIPO, DESCRIPCION, PRECIO, DISPONIBLE FROM PRODUCTOS ORDER BY NOMBRE";
+        String sql = "SELECT ID_PRODUCTO, NOMBRE, TIPO, DESCRIPCION, PRECIO, DISPONIBLE, IMAGEN FROM PRODUCTOS ORDER BY NOMBRE";
         try (Connection conn = conexion.crearConexion();
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                Producto p = new Producto();
-                p.setIdProducto(rs.getInt("ID_PRODUCTO"));
-                p.setNombre(rs.getString("NOMBRE"));
-                p.setTipo(rs.getString("TIPO"));
-                p.setDescripcion(rs.getString("DESCRIPCION"));
-                p.setPrecio(rs.getDouble("PRECIO"));
-                p.setDisponible(rs.getBoolean("DISPONIBLE"));
-                productos.add(p);
+                productos.add(mapearProducto(rs));
             }
         } catch (SQLException e) {
             throw new PersistenciaException("Error al obtener todos los productos", e);
@@ -92,31 +87,18 @@ public class ProductoDAO implements IProductoDAO {
     @Override
     public Producto obtenerPorId(int idProducto) throws PersistenciaException {
         String sql = """
-                     SELECT ID_PRODUCTO, NOMBRE, TIPO, DESCRIPCION, PRECIO, DISPONIBLE FROM PRODUCTOS WHERE ID_PRODUCTO = ?
+                     SELECT ID_PRODUCTO, NOMBRE, TIPO, DESCRIPCION, PRECIO, DISPONIBLE, IMAGEN
+                     FROM PRODUCTOS WHERE ID_PRODUCTO = ?
                      """;
-
         try (Connection conn = conexion.crearConexion(); 
                 PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, idProducto);
-
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Producto producto = new Producto();
-                    producto.setIdProducto(rs.getInt("ID_PRODUCTO"));
-                    producto.setNombre(rs.getString("NOMBRE"));
-                    producto.setTipo(rs.getString("TIPO"));
-                    producto.setDescripcion(rs.getString("DESCRIPCION"));
-                    producto.setPrecio(rs.getDouble("PRECIO"));
-                    producto.setDisponible(rs.getBoolean("DISPONIBLE"));
-                    return producto;
-                }
+                if (rs.next()) return mapearProducto(rs);
             }
-
         } catch (SQLException e) {
             throw new PersistenciaException("Error al obtener producto por ID", e);
         }
-
         return null;
     }
 }

@@ -44,4 +44,21 @@ public class UsuarioBO implements IUsuarioBO {
             throw new NegocioException("Error al iniciar sesión", ex);
         }
     }
+
+    @Override
+    public boolean actualizarPassword(int idUsuario, String nuevaPassword) throws NegocioException {
+        if (nuevaPassword == null || nuevaPassword.isBlank()) {
+            throw new NegocioException("La contraseña no puede estar vacía");
+        }
+        if (nuevaPassword.length() < 6) {
+            throw new NegocioException("La contraseña debe tener al menos 6 caracteres");
+        }
+        try {
+            String encriptada = EncriptadorPIN.encriptar(nuevaPassword);
+            return usuarioDAO.actualizarPassword(idUsuario, encriptada);
+        } catch (PersistenciaException ex) {
+            LOG.log(Level.SEVERE, "Error al actualizar contraseña", ex);
+            throw new NegocioException("Error al actualizar la contraseña", ex);
+        }
+    }
 }

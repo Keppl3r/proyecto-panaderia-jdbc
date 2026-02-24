@@ -6,4 +6,6 @@ import persistencia.dominio.Usuario;
 public interface IUsuarioBO {
 
     Usuario autenticar(String username, String password) throws NegocioException;
+
+    boolean actualizarPassword(int idUsuario, String nuevaPassword) throws NegocioException;
 }

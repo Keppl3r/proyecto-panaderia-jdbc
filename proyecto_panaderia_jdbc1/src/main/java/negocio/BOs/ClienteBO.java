@@ -1,5 +1,6 @@
 package negocio.BOs;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import negocio.encriptacion.EncriptadorPIN;
@@ -123,6 +124,33 @@ public class ClienteBO implements IClienteBO {
         } catch (PersistenciaException ex) {
             LOG.log(Level.SEVERE, "Error al desactivar cliente", ex);
             throw new NegocioException("Error al desactivar la cuenta", ex);
+        }
+    }
+
+    @Override
+    public List<Telefono> obtenerTelefonos(int idUsuario) throws NegocioException {
+        try {
+            return telefonoDAO.obtenerPorCliente(idUsuario);
+        } catch (PersistenciaException ex) {
+            LOG.log(Level.SEVERE, "Error al obtener teléfonos", ex);
+            throw new NegocioException("Error al obtener los teléfonos del cliente", ex);
+        }
+    }
+
+    @Override
+    public void actualizarTelefonos(int idUsuario, List<Telefono> telefonos) throws NegocioException {
+        try {
+            List<Telefono> existentes = telefonoDAO.obtenerPorCliente(idUsuario);
+            for (Telefono t : existentes) {
+                telefonoDAO.eliminar(t.getIdTelefono());
+            }
+            for (Telefono t : telefonos) {
+                t.setIdUsuario(idUsuario);
+                telefonoDAO.agregar(t);
+            }
+        } catch (PersistenciaException ex) {
+            LOG.log(Level.SEVERE, "Error al actualizar teléfonos", ex);
+            throw new NegocioException("Error al actualizar los teléfonos del cliente", ex);
         }
     }
 }

@@ -8,6 +8,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -15,6 +16,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,6 +30,8 @@ public class MisPedidosController {
 
     @FXML private GridPane gridPedidos;
     @FXML private ComboBox<String> cmbTipoPedido;
+    @FXML private DatePicker dateDesde;
+    @FXML private DatePicker dateHasta;
 
     private List<Pedido> pedidosBD;
     private IPedidoBO pedidoBO;
@@ -198,15 +202,39 @@ public class MisPedidosController {
     @FXML
     private void handleAplicarFiltros() {
         if (pedidosBD == null) return;
-        String filtro = cmbTipoPedido.getValue();
-        if (filtro == null || "Todos".equals(filtro)) {
-            renderizarPedidos(pedidosBD);
-        } else {
-            List<Pedido> filtrados = pedidosBD.stream()
-                    .filter(p -> p.getEstado().getDescripcion().equals(filtro))
-                    .collect(Collectors.toList());
-            renderizarPedidos(filtrados);
+
+        String filtroEstado = cmbTipoPedido.getValue();
+        LocalDate desde = dateDesde.getValue();
+        LocalDate hasta = dateHasta.getValue();
+
+        if (desde != null && hasta != null && desde.isAfter(hasta)) {
+            mostrarError("La fecha 'Desde' no puede ser mayor que la fecha 'Hasta'.");
+            return;
         }
+
+        List<Pedido> filtrados = pedidosBD.stream()
+                .filter(p -> {
+                    if (filtroEstado != null && !"Todos".equals(filtroEstado)) {
+                        if (!p.getEstado().getDescripcion().equals(filtroEstado)) return false;
+                    }
+                    if (p.getFechaRegistro() != null) {
+                        LocalDate fechaPedido = p.getFechaRegistro().toLocalDateTime().toLocalDate();
+                        if (desde != null && fechaPedido.isBefore(desde)) return false;
+                        if (hasta != null && fechaPedido.isAfter(hasta)) return false;
+                    }
+                    return true;
+                })
+                .collect(Collectors.toList());
+
+        renderizarPedidos(filtrados);
+    }
+
+    @FXML
+    private void handleLimpiarFiltros() {
+        cmbTipoPedido.setValue("Todos");
+        dateDesde.setValue(null);
+        dateHasta.setValue(null);
+        if (pedidosBD != null) renderizarPedidos(pedidosBD);
     }
 
     @FXML

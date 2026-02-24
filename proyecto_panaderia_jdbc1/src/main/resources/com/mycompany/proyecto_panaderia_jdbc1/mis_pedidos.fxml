@@ -20,22 +20,36 @@
                text="Mis Pedidos"/>
 
         <!-- Barra de filtros -->
-        <HBox alignment="CENTER_LEFT" spacing="12.0">
+        <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-padding: 0 0 4 0;">
             <HBox alignment="CENTER_LEFT" spacing="8.0"
                   style="-fx-background-color: white; -fx-background-radius: 8;
                          -fx-padding: 6 12;">
                 <Label style="-fx-font-size: 12px; -fx-text-fill: #4a3a2a; -fx-font-weight: bold;"
-                       text="Tipo de pedido:"/>
-                <ComboBox fx:id="cmbTipoPedido" prefWidth="100.0"
+                       text="Estado:"/>
+                <ComboBox fx:id="cmbTipoPedido" prefWidth="110.0"
                           style="-fx-background-color: transparent; -fx-font-size: 12px;"/>
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="8.0"
                   style="-fx-background-color: white; -fx-background-radius: 8;
                          -fx-padding: 6 12;">
                 <Label style="-fx-font-size: 12px; -fx-text-fill: #4a3a2a; -fx-font-weight: bold;"
-                       text="Rango de fechas"/>
-                <Label style="-fx-font-size: 14px;" text="📅"/>
+                       text="📅 Desde:"/>
+                <DatePicker fx:id="dateDesde" prefWidth="130.0"
+                            style="-fx-background-color: transparent; -fx-font-size: 12px;"/>
             </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="8.0"
+                  style="-fx-background-color: white; -fx-background-radius: 8;
+                         -fx-padding: 6 12;">
+                <Label style="-fx-font-size: 12px; -fx-text-fill: #4a3a2a; -fx-font-weight: bold;"
+                       text="Hasta:"/>
+                <DatePicker fx:id="dateHasta" prefWidth="130.0"
+                            style="-fx-background-color: transparent; -fx-font-size: 12px;"/>
+            </HBox>
+            <Button onAction="#handleLimpiarFiltros"
+                    style="-fx-background-color: #9e9e9e; -fx-text-fill: white;
+                           -fx-font-size: 12px; -fx-font-weight: bold;
+                           -fx-background-radius: 8; -fx-padding: 6 12; -fx-cursor: hand;"
+                    text="Limpiar"/>
             <Button onAction="#handleAplicarFiltros"
                     style="-fx-background-color: #e87722; -fx-text-fill: white;
                            -fx-font-size: 12px; -fx-font-weight: bold;

@@ -8,9 +8,12 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 import negocio.BOs.IProductoBO;
@@ -61,15 +64,12 @@ public class CatalogoController {
         VBox tarjeta = new VBox(8);
         tarjeta.setAlignment(Pos.CENTER);
         tarjeta.setPrefWidth(160.0);
-        tarjeta.setPrefHeight(170.0);
+        tarjeta.setPrefHeight(190.0);
         tarjeta.setPadding(new Insets(12));
         tarjeta.setStyle("-fx-background-color: white; -fx-background-radius: 12;"
                 + " -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 6, 0, 0, 2);");
 
-        String emoji = "DULCE".equals(producto.getTipo()) ? "🍰"
-                : "INTEGRAL".equals(producto.getTipo()) ? "🌾" : "🍞";
-        Label icono = new Label(emoji);
-        icono.setStyle("-fx-font-size: 36px;");
+        javafx.scene.Node vistaImagen = cargarImagenProducto(producto.getImagen(), producto.getTipo());
 
         Label lblNombre = new Label(producto.getNombre());
         lblNombre.setStyle("-fx-font-size: 11px; -fx-text-fill: #3a2a1a;"
@@ -85,7 +85,6 @@ public class CatalogoController {
                 + " -fx-font-size: 11px; -fx-font-weight: bold;"
                 + " -fx-background-radius: 20; -fx-cursor: hand; -fx-padding: 5 12;");
 
-        // Marcar como ya agregado si ya está en el carrito
         boolean yaEnCarrito = App.carrito.stream()
                 .anyMatch(i -> i.idProducto() == producto.getIdProducto());
         if (yaEnCarrito) {
@@ -104,8 +103,26 @@ public class CatalogoController {
                     + " -fx-background-radius: 20; -fx-cursor: hand; -fx-padding: 5 12;");
         });
 
-        tarjeta.getChildren().addAll(icono, lblNombre, lblPrecio, btnAgregar);
+        tarjeta.getChildren().addAll(vistaImagen, lblNombre, lblPrecio, btnAgregar);
         return tarjeta;
+    }
+
+    private javafx.scene.Node cargarImagenProducto(String nombreArchivo, String tipo) {
+        if (nombreArchivo != null && !nombreArchivo.isBlank()) {
+            InputStream is = getClass().getResourceAsStream("/com/imagenes/" + nombreArchivo);
+            if (is != null) {
+                ImageView iv = new ImageView(new Image(is));
+                iv.setFitWidth(90);
+                iv.setFitHeight(75);
+                iv.setPreserveRatio(true);
+                iv.setSmooth(true);
+                return iv;
+            }
+        }
+        String emoji = "DULCE".equals(tipo) ? "🍰" : "INTEGRAL".equals(tipo) ? "🌾" : "🍞";
+        Label lbl = new Label(emoji);
+        lbl.setStyle("-fx-font-size: 36px;");
+        return lbl;
     }
 
     @FXML private void handleTabInicio() {

@@ -12,11 +12,15 @@ import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import negocio.BOs.IClienteBO;
+import negocio.BOs.IUsuarioBO;
 import negocio.excepciones.NegocioException;
 import negocio.fabrica.FabricaBOs;
 import persistencia.dominio.Cliente;
+import persistencia.dominio.Telefono;
 
 public class EditarPerfilController {
 
@@ -41,10 +45,13 @@ public class EditarPerfilController {
     @FXML
     private CheckBox chkMostrarContrasena;
 
-    private String contrasenaTexto = "";
+    private IClienteBO clienteBO;
+    private IUsuarioBO usuarioBO;
 
     @FXML
     private void initialize() {
+        clienteBO = FabricaBOs.obtenerClienteBO();
+        usuarioBO = FabricaBOs.obtenerUsuarioBO();
         cargarDatosCliente();
     }
 
@@ -73,22 +80,43 @@ public class EditarPerfilController {
             txtNumero.setText(cliente.getNumero());
         if (cliente.getColonia() != null)
             txtColonia.setText(cliente.getColonia());
+
+        cargarTelefonos(cliente.getIdUsuario());
     }
 
-    @FXML
-    private void handleMostrarContrasena() {
-        if (chkMostrarContrasena.isSelected()) {
-            contrasenaTexto = txtContrasena.getText().isEmpty() ? contrasenaTexto : txtContrasena.getText();
+    private void cargarTelefonos(int idUsuario) {
+        try {
+            List<Telefono> telefonos = clienteBO.obtenerTelefonos(idUsuario);
+            for (Telefono t : telefonos) {
+                String etiqueta = t.getEtiqueta() != null ? t.getEtiqueta().toUpperCase() : "";
+                switch (etiqueta) {
+                    case "CASA"    -> txtTelefonoCasa.setText(t.getNumero());
+                    case "TRABAJO" -> txtTelefonoTrabajo.setText(t.getNumero());
+                }
+            }
+        } catch (NegocioException e) {
+            mostrarAlerta(AlertType.WARNING, "Teléfonos", "No se pudieron cargar los teléfonos: " + e.getMessage());
         }
     }
 
     @FXML
+    private void handleMostrarContrasena() {
+        // No hay acción especial necesaria; el campo PasswordField siempre oculta el texto
+    }
+
+    @FXML
     private void handleAnadirTelefono() {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Añadir teléfono");
-        alert.setHeaderText(null);
-        alert.setContentText("Funcionalidad para agregar un teléfono adicional.");
-        alert.showAndWait();
+        mostrarAlerta(AlertType.INFORMATION, "Añadir teléfono",
+                "Edita los campos de teléfono (Casa / Trabajo) y presiona 'Confirmar cambios'.");
+    }
+
+    @FXML
+    private void handleRegresar() {
+        try {
+            App.setRoot("bienvenida");
+        } catch (IOException e) {
+            mostrarAlerta(AlertType.ERROR, "Error", "No se pudo volver a la pantalla anterior.");
+        }
     }
 
     @FXML
@@ -135,8 +163,23 @@ public class EditarPerfilController {
                 cliente.setNumero(txtNumero.getText().trim());
                 cliente.setColonia(txtColonia.getText().trim());
 
-                IClienteBO clienteBO = FabricaBOs.obtenerClienteBO();
                 clienteBO.actualizarCliente(cliente);
+
+                List<Telefono> telefonos = new ArrayList<>();
+                String numCasa = txtTelefonoCasa.getText().trim();
+                String numTrabajo = txtTelefonoTrabajo.getText().trim();
+                if (!numCasa.isBlank()) {
+                    telefonos.add(new Telefono(cliente.getIdUsuario(), "CASA", numCasa));
+                }
+                if (!numTrabajo.isBlank()) {
+                    telefonos.add(new Telefono(cliente.getIdUsuario(), "TRABAJO", numTrabajo));
+                }
+                clienteBO.actualizarTelefonos(cliente.getIdUsuario(), telefonos);
+
+                String nuevaContrasena = txtContrasena.getText();
+                if (!nuevaContrasena.isBlank()) {
+                    usuarioBO.actualizarPassword(SesionActual.getIdUsuario(), nuevaContrasena);
+                }
 
                 mostrarAlerta(AlertType.INFORMATION, "Cambios guardados",
                         "Tu perfil ha sido actualizado correctamente.");
@@ -173,7 +216,6 @@ public class EditarPerfilController {
                     return;
                 }
 
-                IClienteBO clienteBO = FabricaBOs.obtenerClienteBO();
                 clienteBO.desactivarCliente(cliente.getIdUsuario());
 
                 SesionActual.cerrarSesion();

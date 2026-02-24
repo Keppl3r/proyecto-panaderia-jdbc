@@ -3,8 +3,10 @@ package com.mycompany.proyecto_panaderia_jdbc1;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import java.io.IOException;
+import java.util.Optional;
 
 public class BienvenidaController {
 
@@ -60,6 +62,30 @@ public class BienvenidaController {
             App.setRoot("editar_perfil");
         } catch (IOException e) {
             mostrarError("No se pudo cargar la pantalla de perfil.");
+        }
+    }
+
+    @FXML
+    private void handleCerrarSesion() {
+        Alert confirm = new Alert(AlertType.CONFIRMATION);
+        confirm.setTitle("Cerrar sesión");
+        confirm.setHeaderText(null);
+        confirm.setContentText("¿Estás seguro de que deseas cerrar la sesión?");
+
+        javafx.scene.control.Button btnAceptar = (javafx.scene.control.Button) confirm.getDialogPane()
+                .lookupButton(ButtonType.OK);
+        btnAceptar.setText("Cerrar sesión");
+        btnAceptar.setStyle("-fx-background-color: #e05a5a; -fx-text-fill: white; -fx-font-weight: bold;");
+
+        Optional<ButtonType> result = confirm.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            SesionActual.cerrarSesion();
+            App.limpiarCarrito();
+            try {
+                App.setRoot("main_panaderia");
+            } catch (IOException e) {
+                mostrarError("No se pudo volver a la pantalla principal.");
+            }
         }
     }
 

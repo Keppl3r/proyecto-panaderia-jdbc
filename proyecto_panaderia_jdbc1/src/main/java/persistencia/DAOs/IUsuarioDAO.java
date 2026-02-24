@@ -15,4 +15,6 @@ public interface IUsuarioDAO {
     Usuario registrar(Usuario usuario) throws PersistenciaException;
 
     boolean existeUsername(String username) throws PersistenciaException;
+
+    boolean actualizarPassword(int idUsuario, String passwordEncriptado) throws PersistenciaException;
 }

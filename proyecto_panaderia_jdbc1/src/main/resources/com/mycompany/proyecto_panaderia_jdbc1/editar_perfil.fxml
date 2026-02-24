@@ -138,8 +138,14 @@
 
     </VBox>
 
-    <!-- Botón confirmar cambios -->
-    <HBox alignment="CENTER" style="-fx-background-color: #f4c430; -fx-padding: 10 28 16 28;">
+    <!-- Barra inferior: Regresar + Confirmar cambios -->
+    <HBox alignment="CENTER" spacing="16.0"
+          style="-fx-background-color: #f4c430; -fx-padding: 10 28 16 28;">
+        <Button onAction="#handleRegresar"
+                style="-fx-background-color: #6b5644; -fx-text-fill: white;
+                       -fx-font-size: 13px; -fx-font-weight: bold;
+                       -fx-background-radius: 20; -fx-padding: 9 30; -fx-cursor: hand;"
+                text="Regresar"/>
         <Button onAction="#handleConfirmarCambios"
                 style="-fx-background-color: #f39c12; -fx-text-fill: white;
                        -fx-font-size: 14px; -fx-font-weight: bold;

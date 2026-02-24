@@ -73,4 +73,17 @@ public class UsuarioDAO implements IUsuarioDAO {
         }
         return false;
     }
+
+    @Override
+    public boolean actualizarPassword(int idUsuario, String passwordEncriptado) throws PersistenciaException {
+        String sql = "UPDATE USUARIOS SET PASSWORD = ? WHERE ID_USUARIO = ?";
+        try (Connection conn = conexion.crearConexion();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, passwordEncriptado);
+            ps.setInt(2, idUsuario);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error al actualizar contraseña", ex);
+        }
+    }
 }
