@@ -31,6 +31,26 @@ public class ProductoBO implements IProductoBO {
     }
 
     @Override
+    public List<Producto> obtenerTodos() throws NegocioException {
+        try {
+            return productoDAO.obtenerTodos();
+        } catch (PersistenciaException e) {
+            LOG.log(Level.SEVERE, "Error al obtener todos los productos", e);
+            throw new NegocioException("Error al obtener los productos");
+        }
+    }
+
+    @Override
+    public boolean actualizarDisponibilidad(int idProducto, boolean disponible) throws NegocioException {
+        try {
+            return productoDAO.actualizarDisponibilidad(idProducto, disponible);
+        } catch (PersistenciaException e) {
+            LOG.log(Level.SEVERE, "Error al actualizar disponibilidad del producto " + idProducto, e);
+            throw new NegocioException("Error al actualizar la disponibilidad");
+        }
+    }
+
+    @Override
     public Producto obtenerPorId(int idProducto) throws NegocioException {
         if (idProducto <= 0) {
             LOG.warning("ID del producto inválido: " + idProducto);

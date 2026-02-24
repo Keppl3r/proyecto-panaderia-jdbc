@@ -10,4 +10,6 @@ public interface IClienteBO {
     boolean existeCliente(int idCliente) throws NegocioException;
 
     Cliente registrarCliente(Cliente cliente) throws NegocioException;
+
+    Cliente obtenerClientePorId(int idUsuario) throws NegocioException;
 }

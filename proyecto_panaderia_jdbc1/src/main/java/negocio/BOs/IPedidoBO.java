@@ -3,6 +3,7 @@ package negocio.BOs;
 import java.sql.Timestamp;
 import java.util.List;
 import negocio.excepciones.NegocioException;
+import persistencia.dominio.DetallePedido;
 import persistencia.dominio.Pedido;
 
 public interface IPedidoBO {
@@ -24,4 +25,8 @@ public interface IPedidoBO {
     List<Pedido> obtenerPendientesYListos() throws NegocioException;
 
     List<Pedido> obtenerHistorial(int idCliente) throws NegocioException;
+
+    List<DetallePedido> obtenerDetallesPorPedido(int idPedido) throws NegocioException;
+
+    List<Pedido> obtenerHistorialEmpleado() throws NegocioException;
 }

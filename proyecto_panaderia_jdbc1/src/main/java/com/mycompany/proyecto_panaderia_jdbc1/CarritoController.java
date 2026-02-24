@@ -12,30 +12,43 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import negocio.BOs.IPedidoExpressBO;
+import negocio.BOs.IPedidoProgramadoBO;
+import negocio.DTOs.PedidoExpressNuevoDTO;
+import negocio.DTOs.PedidoProgramadoNuevoDTO;
+import negocio.excepciones.NegocioException;
+import negocio.fabrica.FabricaBOs;
+import persistencia.DAOs.ICuponDAO;
+import persistencia.dominio.Cupon;
+import persistencia.dominio.DetallePedido;
+import persistencia.dominio.PedidoExpress;
+import persistencia.dominio.PedidoProgramado;
+import persistencia.excepciones.PersistenciaException;
+import persistencia.fabrica.FabricaDAOs;
 
 public class CarritoController {
 
     @FXML private VBox      vboxItems;
     @FXML private VBox      vboxCupon;
     @FXML private TextField txtCupon;
-    @FXML private Label    lblSubtotal;
-    @FXML private Label    lblDescuento;
-    @FXML private Label    lblTotal;
-    @FXML private VBox     vboxResumen;
-    @FXML private CheckBox chkProgramado;
-    @FXML private CheckBox chkExpress;
-    @FXML private Label    lblTotalResumen;
-    @FXML private Button   btnTarjeta;
-    @FXML private Button   btnEfectivo;
-
-    private static final String CUPON_VALIDO   = "DESCUENTO10";
-    private static final double DESCUENTO_PCT  = 0.10;
+    @FXML private Label     lblSubtotal;
+    @FXML private Label     lblDescuento;
+    @FXML private Label     lblTotal;
+    @FXML private VBox      vboxResumen;
+    @FXML private CheckBox  chkProgramado;
+    @FXML private CheckBox  chkExpress;
+    @FXML private Label     lblTotalResumen;
+    @FXML private Button    btnTarjeta;
+    @FXML private Button    btnEfectivo;
 
     private double descuentoAplicado = 0.0;
-    private String metodoPago = "Tarjeta";
+    private Cupon cuponActivo = null;
+    private String metodoPago = "TARJETA";
 
     private static final String BTN_PAGO_NORMAL =
             "-fx-background-color: white; -fx-background-radius: 10;"
@@ -49,25 +62,12 @@ public class CarritoController {
     @FXML
     private void initialize() {
         boolean express = App.modoExpress;
-
-        // Modo de pago: checkboxes del resumen
         chkProgramado.setSelected(!express);
         chkExpress.setSelected(express);
-
-        // Sección cupón solo en modo programado
         vboxCupon.setVisible(!express);
         vboxCupon.setManaged(!express);
-
-        // Selección inicial: Tarjeta
         btnTarjeta.setStyle(BTN_PAGO_SELEC);
         btnEfectivo.setStyle(BTN_PAGO_NORMAL);
-
-        // Ítems de ejemplo si el carrito está vacío
-        if (App.carrito.isEmpty()) {
-            App.agregarAlCarrito("Concha de Vainilla", "Sin relleno, espolvoreada con azúcar", 15.00);
-            App.agregarAlCarrito("Dona de Chocolate", "Clásica, sin relleno", 15.00);
-        }
-
         renderizarItems();
         actualizarTotales();
     }
@@ -75,11 +75,9 @@ public class CarritoController {
     private void renderizarItems() {
         vboxItems.getChildren().clear();
         vboxResumen.getChildren().clear();
-
         for (int i = 0; i < App.carrito.size(); i++) {
             App.ItemCarrito item = App.carrito.get(i);
             vboxItems.getChildren().add(crearFilaItem(item, i));
-
             Label resItem = new Label("• " + item.nombre() + " x" + item.cantidad());
             resItem.setStyle("-fx-font-size: 11px; -fx-text-fill: #4a3a2a;");
             vboxResumen.getChildren().add(resItem);
@@ -91,12 +89,10 @@ public class CarritoController {
         fila.setAlignment(Pos.CENTER_LEFT);
         fila.setStyle("-fx-background-color: #fdf5e6; -fx-background-radius: 10; -fx-padding: 10;");
 
-        // Ícono producto
         Label icono = new Label(item.nombre().toLowerCase().contains("dona")
                 || item.nombre().toLowerCase().contains("pastel") ? "🍩" : "🍞");
         icono.setStyle("-fx-font-size: 26px; -fx-min-width: 36;");
 
-        // Info
         VBox info = new VBox(2);
         Label lblNombre = new Label(item.nombre());
         lblNombre.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;");
@@ -107,7 +103,6 @@ public class CarritoController {
         info.getChildren().addAll(lblNombre, lblDesc, lblPrecio);
         HBox.setHgrow(info, Priority.ALWAYS);
 
-        // Controles cantidad
         HBox controles = new HBox(6);
         controles.setAlignment(Pos.CENTER);
         Button btnMenos = new Button("−");
@@ -119,18 +114,16 @@ public class CarritoController {
         Button btnMas = new Button("+");
         btnMas.setStyle("-fx-background-color: #e0d0b0; -fx-background-radius: 6;"
                 + " -fx-font-size: 14px; -fx-cursor: hand; -fx-padding: 2 8;");
-
         btnMenos.setOnAction(e -> cambiarCantidad(index, -1));
         btnMas.setOnAction(e -> cambiarCantidad(index, +1));
         controles.getChildren().addAll(btnMenos, lblCantidad, btnMas);
 
-        // Botón eliminar
         Button btnEliminar = new Button("🗑");
-        btnEliminar.setStyle("-fx-background-color: transparent; -fx-cursor: hand;"
-                + " -fx-font-size: 16px;");
+        btnEliminar.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-font-size: 16px;");
         btnEliminar.setOnAction(e -> {
             App.carrito.remove(index);
             descuentoAplicado = 0;
+            cuponActivo = null;
             renderizarItems();
             actualizarTotales();
         });
@@ -147,19 +140,16 @@ public class CarritoController {
             App.carrito.remove(index);
         } else {
             App.carrito.set(index, new App.ItemCarrito(
-                    item.nombre(), item.descripcion(), item.precio(), nueva));
+                    item.idProducto(), item.nombre(), item.descripcion(), item.precio(), nueva));
         }
         renderizarItems();
         actualizarTotales();
     }
 
     private void actualizarTotales() {
-        double subtotal = App.carrito.stream()
-                .mapToDouble(i -> i.precio() * i.cantidad())
-                .sum();
+        double subtotal = App.carrito.stream().mapToDouble(i -> i.precio() * i.cantidad()).sum();
         double descuento = subtotal * descuentoAplicado;
         double total = subtotal - descuento;
-
         lblSubtotal.setText(String.format("$%.2f", subtotal));
         lblDescuento.setText(String.format("- $%.2f", descuento));
         lblTotal.setText(String.format("$%.2f", total));
@@ -168,54 +158,56 @@ public class CarritoController {
 
     @FXML
     private void handleAplicarCupon() {
-        String codigo = txtCupon.getText().trim().toUpperCase();
+        String codigoStr = txtCupon.getText().trim();
+        if (codigoStr.isEmpty()) {
+            mostrarAlerta(AlertType.WARNING, "Cupón vacío", "Ingresa el número del cupón.");
+            return;
+        }
 
-        if (CUPON_VALIDO.equals(codigo)) {
-            descuentoAplicado = DESCUENTO_PCT;
-            actualizarTotales();
-            mostrarDialogoCupon(true);
-        } else {
+        int idCupon;
+        try {
+            idCupon = Integer.parseInt(codigoStr);
+        } catch (NumberFormatException e) {
+            mostrarAlerta(AlertType.ERROR, "Cupón inválido", "Ingresa el número de ID del cupón (ej: 1, 2, 4).");
+            return;
+        }
+
+        try {
+            ICuponDAO cuponDAO = FabricaDAOs.obtenerCuponDAO();
+            Cupon cupon = cuponDAO.buscarPorId(idCupon);
+
+            if (cupon == null) {
+                mostrarAlerta(AlertType.ERROR, "Cupón no encontrado", "No existe un cupón con ese ID.");
+                descuentoAplicado = 0;
+                cuponActivo = null;
+            } else if (!cupon.estaVigente()) {
+                mostrarAlerta(AlertType.ERROR, "Cupón inválido", "El cupón ya no está vigente o ha expirado.");
+                descuentoAplicado = 0;
+                cuponActivo = null;
+            } else {
+                cuponActivo = cupon;
+                descuentoAplicado = cupon.getPorcentajeDescuento() / 100.0;
+                mostrarAlertaOK(String.format("✅ Cupón válido\nSe aplicó un %.0f%% de descuento.",
+                        cupon.getPorcentajeDescuento()));
+            }
+        } catch (PersistenciaException ex) {
+            ex.printStackTrace();
+            mostrarAlerta(AlertType.ERROR, "Error", "No se pudo validar el cupón: " + ex.getMessage());
             descuentoAplicado = 0;
-            actualizarTotales();
-            mostrarDialogoCupon(false);
+            cuponActivo = null;
         }
+
+        actualizarTotales();
     }
 
-    private void mostrarDialogoCupon(boolean valido) {
-        Alert alert = new Alert(valido ? AlertType.INFORMATION : AlertType.ERROR);
-        alert.setTitle("Validación del cupón");
-        alert.setHeaderText(null);
-
-        if (valido) {
-            alert.setContentText("✅  Cupón Válido\nSe aplicó un 10% de descuento.");
-            Button btnAceptar = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-            if (btnAceptar != null) {
-                btnAceptar.setText("Aceptar");
-                btnAceptar.setStyle("-fx-background-color: #4caf50; -fx-text-fill: white;"
-                        + " -fx-font-weight: bold; -fx-background-radius: 6;");
-            }
-        } else {
-            alert.setContentText("❌  El cupón ingresado no es válido o ha expirado.");
-            Button btnAceptar = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-            if (btnAceptar != null) {
-                btnAceptar.setText("Aceptar");
-                btnAceptar.setStyle("-fx-background-color: #e05a5a; -fx-text-fill: white;"
-                        + " -fx-font-weight: bold; -fx-background-radius: 6;");
-            }
-        }
-        alert.showAndWait();
-    }
-
-    @FXML
-    private void handleSeleccionarTarjeta() {
-        metodoPago = "Tarjeta";
+    @FXML private void handleSeleccionarTarjeta() {
+        metodoPago = "TARJETA";
         btnTarjeta.setStyle(BTN_PAGO_SELEC);
         btnEfectivo.setStyle(BTN_PAGO_NORMAL);
     }
 
-    @FXML
-    private void handleSeleccionarEfectivo() {
-        metodoPago = "Efectivo";
+    @FXML private void handleSeleccionarEfectivo() {
+        metodoPago = "EFECTIVO";
         btnEfectivo.setStyle(BTN_PAGO_SELEC);
         btnTarjeta.setStyle(BTN_PAGO_NORMAL);
     }
@@ -223,23 +215,83 @@ public class CarritoController {
     @FXML
     private void handleConfirmar() {
         if (App.carrito.isEmpty()) {
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Carrito vacío");
-            alert.setHeaderText(null);
-            alert.setContentText("Agrega al menos un producto antes de confirmar.");
-            alert.showAndWait();
+            mostrarAlerta(AlertType.WARNING, "Carrito vacío", "Agrega al menos un producto.");
             return;
         }
+
+        try {
+            List<DetallePedido> detalles = construirDetalles();
+
+            if (App.modoExpress) {
+                crearPedidoExpress(detalles);
+            } else {
+                crearPedidoProgramado(detalles);
+            }
+
+        } catch (NegocioException ex) {
+            ex.printStackTrace();
+            mostrarAlerta(AlertType.ERROR, "Error al crear pedido", ex.getMessage());
+        }
+    }
+
+    private List<DetallePedido> construirDetalles() {
+        List<DetallePedido> detalles = new ArrayList<>();
+        for (App.ItemCarrito item : App.carrito) {
+            DetallePedido d = new DetallePedido();
+            d.setIdProducto(item.idProducto());
+            d.setCantidad(item.cantidad());
+            detalles.add(d);
+        }
+        return detalles;
+    }
+
+    private void crearPedidoExpress(List<DetallePedido> detalles) throws NegocioException {
+        IPedidoExpressBO bo = FabricaBOs.obtenerPedidoExpressBO();
+        PedidoExpressNuevoDTO dto = new PedidoExpressNuevoDTO(detalles);
+        PedidoExpress pedido = bo.crearPedidoExpress(dto);
+
         PedidoConfirmadoController.setDatosPedido(
-                "#00" + (int)(Math.random() * 900 + 100),
-                App.modoExpress ? "Express" : "Pendiente",
-                App.modoExpress
+                "#" + pedido.getNumPedido(),
+                pedido.getEstado().getDescripcion(),
+                true
         );
+        PedidoConfirmadoController.setInfoExpress(pedido.getFolio(), pedido.getPinTextoPlano());
+
         App.limpiarCarrito();
         try {
             App.setRoot("pedido_confirmado");
         } catch (IOException e) {
-            mostrarError("No se pudo cargar la pantalla de confirmación.");
+            mostrarAlerta(AlertType.ERROR, "Error", "No se pudo cargar la confirmación.");
+        }
+    }
+
+    private void crearPedidoProgramado(List<DetallePedido> detalles) throws NegocioException {
+        if (!SesionActual.isLogeado() || SesionActual.getCliente() == null) {
+            mostrarAlerta(AlertType.ERROR, "Sin sesión", "Debes iniciar sesión para hacer un pedido programado.");
+            return;
+        }
+
+        // Fecha de entrega: 2 horas desde ahora (mínimo requerido)
+        Timestamp fechaEntrega = new Timestamp(System.currentTimeMillis() + 2L * 60 * 60 * 1000);
+        Integer idCupon = cuponActivo != null ? cuponActivo.getIdCupon() : null;
+
+        IPedidoProgramadoBO bo = FabricaBOs.obtenerPedidoProgramadoBO();
+        PedidoProgramadoNuevoDTO dto = new PedidoProgramadoNuevoDTO(
+                SesionActual.getCliente().getIdUsuario(), fechaEntrega, idCupon, detalles);
+        PedidoProgramado pedido = bo.programarPedido(dto);
+
+        PedidoConfirmadoController.setDatosPedido(
+                "#" + pedido.getNumPedido(),
+                pedido.getEstado().getDescripcion(),
+                false
+        );
+        PedidoConfirmadoController.setInfoExpress(null, null);
+
+        App.limpiarCarrito();
+        try {
+            App.setRoot("pedido_confirmado");
+        } catch (IOException e) {
+            mostrarAlerta(AlertType.ERROR, "Error", "No se pudo cargar la confirmación.");
         }
     }
 
@@ -248,15 +300,28 @@ public class CarritoController {
         try {
             App.setRoot("catalogo");
         } catch (IOException e) {
-            mostrarError("No se pudo volver al catálogo.");
+            mostrarAlerta(AlertType.ERROR, "Error", "No se pudo volver al catálogo.");
         }
     }
 
-    private void mostrarError(String msg) {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Error");
+    private void mostrarAlerta(AlertType tipo, String titulo, String contenido) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
         alert.setHeaderText(null);
-        alert.setContentText(msg);
+        alert.setContentText(contenido);
+        alert.showAndWait();
+    }
+
+    private void mostrarAlertaOK(String contenido) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Cupón aplicado");
+        alert.setHeaderText(null);
+        alert.setContentText(contenido);
+        Button btn = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+        if (btn != null) {
+            btn.setText("Aceptar");
+            btn.setStyle("-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-weight: bold;");
+        }
         alert.showAndWait();
     }
 }

@@ -53,6 +53,13 @@
             </HBox>
         </VBox>
 
+        <!-- Folio y PIN (solo Express, se rellena programáticamente) -->
+        <Label fx:id="lblFolioPin"
+               style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #e87722;
+                      -fx-background-color: #fff3e0; -fx-background-radius: 8; -fx-padding: 6 16;"
+               text=""
+               visible="false" managed="false"/>
+
         <!-- Timer (solo Express) -->
         <VBox fx:id="vboxTimer" alignment="CENTER" spacing="6.0" visible="false" managed="false">
             <Label style="-fx-font-size: 13px; -fx-text-fill: #6b5644;"

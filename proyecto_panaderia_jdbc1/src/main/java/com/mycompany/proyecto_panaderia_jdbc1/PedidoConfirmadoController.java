@@ -20,17 +20,25 @@ public class PedidoConfirmadoController {
     @FXML private VBox   vboxMensaje;
     @FXML private Button btnVerPedidos;
 
-    private static String  numeroPedido  = "#00124";
+    private static String  numeroPedido  = "#001";
     private static String  estadoPedido  = "Pendiente";
     private static boolean pedidoExpress = false;
+    private static String  folioExpress  = null;
+    private static String  pinExpress    = null;
+
+    @FXML private Label lblFolioPin;
 
     private Timeline timeline;
 
-    /** Llamado desde CarritoController antes de navegar */
     public static void setDatosPedido(String numero, String estado, boolean express) {
         numeroPedido  = numero;
         estadoPedido  = estado;
         pedidoExpress = express;
+    }
+
+    public static void setInfoExpress(String folio, String pin) {
+        folioExpress = folio;
+        pinExpress   = pin;
     }
 
     @FXML
@@ -39,12 +47,10 @@ public class PedidoConfirmadoController {
         lblEstadoPedido.setText(estadoPedido);
 
         if (pedidoExpress) {
-            // Badge naranja para Express
             lblEstadoPedido.setStyle("-fx-font-size: 13px; -fx-font-weight: bold;"
                     + " -fx-text-fill: white; -fx-background-color: #f39c12;"
                     + " -fx-background-radius: 20; -fx-padding: 5 18;");
 
-            // Mostrar timer, ocultar mensaje de mis pedidos
             vboxTimer.setVisible(true);
             vboxTimer.setManaged(true);
             vboxMensaje.setVisible(false);
@@ -52,7 +58,13 @@ public class PedidoConfirmadoController {
             btnVerPedidos.setVisible(false);
             btnVerPedidos.setManaged(false);
 
-            iniciarTimer(20 * 60); // 20 minutos
+            if (lblFolioPin != null && folioExpress != null) {
+                lblFolioPin.setText("Folio: " + folioExpress + "  |  PIN: " + pinExpress);
+                lblFolioPin.setVisible(true);
+                lblFolioPin.setManaged(true);
+            }
+
+            iniciarTimer(20 * 60);
         } else {
             // Badge amarillo para Pendiente
             lblEstadoPedido.setStyle("-fx-font-size: 13px; -fx-font-weight: bold;"

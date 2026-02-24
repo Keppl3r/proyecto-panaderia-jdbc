@@ -47,14 +47,30 @@ public class EditarPerfilController {
 
     @FXML
     private void initialize() {
-        // Datos de ejemplo precargados
-        txtNombreCompleto.setText("Juan García López");
-        txtEdad.setText("28");
-        txtCalle.setText("Av. Juárez");
-        txtNumero.setText("142");
-        txtColonia.setText("Centro");
-        txtTelefonoCasa.setText("555-1234");
-        txtTelefonoTrabajo.setText("555-5678");
+        cargarDatosCliente();
+    }
+
+    private void cargarDatosCliente() {
+        persistencia.dominio.Cliente cliente = SesionActual.getCliente();
+        if (cliente == null) {
+            txtNombreCompleto.setText("Sin sesión");
+            return;
+        }
+
+        String nombreCompleto = cliente.getNombres() + " "
+                + cliente.getApellidoPaterno() + " "
+                + cliente.getApellidoMaterno();
+        txtNombreCompleto.setText(nombreCompleto.trim());
+
+        if (cliente.getFechaNacimiento() != null) {
+            dateFechaNacimiento.setValue(cliente.getFechaNacimiento().toLocalDate());
+            int edad = java.time.LocalDate.now().getYear() - cliente.getFechaNacimiento().toLocalDate().getYear();
+            txtEdad.setText(String.valueOf(edad));
+        }
+
+        if (cliente.getCalle() != null) txtCalle.setText(cliente.getCalle());
+        if (cliente.getNumero() != null) txtNumero.setText(cliente.getNumero());
+        if (cliente.getColonia() != null) txtColonia.setText(cliente.getColonia());
     }
 
     @FXML
@@ -102,7 +118,6 @@ public class EditarPerfilController {
 
         Optional<ButtonType> result = confirm.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            BienvenidaController.setNombreUsuario(txtNombreCompleto.getText().split(" ")[0]);
             Alert exito = new Alert(AlertType.INFORMATION);
             exito.setTitle("Cambios guardados");
             exito.setHeaderText(null);

@@ -14,7 +14,9 @@ import persistencia.dominio.Producto;
  */
 public interface IProductoBO {
     
-    public List<Producto> obtenerProductoDisponibles()throws NegocioException;
-    public Producto obtenerPorId(int idProducto)throws NegocioException;
+    public List<Producto> obtenerProductoDisponibles() throws NegocioException;
+    public List<Producto> obtenerTodos() throws NegocioException;
+    public Producto obtenerPorId(int idProducto) throws NegocioException;
+    public boolean actualizarDisponibilidad(int idProducto, boolean disponible) throws NegocioException;
     
 }

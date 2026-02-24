@@ -4,8 +4,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import persistencia.conexion.IConexionBD;
+import persistencia.dominio.DetallePedido;
 import persistencia.dominio.Pedido;
 import persistencia.dominio.Pedido.EstadoPedido;
+import persistencia.dominio.Producto;
 import persistencia.excepciones.PersistenciaException;
 
 /**
@@ -133,6 +135,59 @@ public class PedidoDAO implements IPedidoDAO {
             throw new PersistenciaException("Error al obtener pedido por ID", ex);
         }
         return null;
+    }
+
+    @Override
+    public List<DetallePedido> obtenerDetallesPorPedido(int idPedido) throws PersistenciaException {
+        List<DetallePedido> detalles = new ArrayList<>();
+        String sql = """
+                    SELECT dp.ID_DETALLE_PEDIDO, dp.ID_PEDIDO, dp.ID_PRODUCTO,
+                           dp.CANTIDAD, dp.PRECIO, dp.SUBTOTAL, dp.NOTAS,
+                           p.NOMBRE AS NOMBRE_PRODUCTO
+                    FROM DETALLE_PEDIDOS dp
+                    INNER JOIN PRODUCTOS p ON dp.ID_PRODUCTO = p.ID_PRODUCTO
+                    WHERE dp.ID_PEDIDO = ?
+                """;
+        try (Connection conn = conexion.crearConexion();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idPedido);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    DetallePedido d = new DetallePedido();
+                    d.setIdDetallePedido(rs.getInt("ID_DETALLE_PEDIDO"));
+                    d.setIdPedido(rs.getInt("ID_PEDIDO"));
+                    d.setIdProducto(rs.getInt("ID_PRODUCTO"));
+                    d.setCantidad(rs.getInt("CANTIDAD"));
+                    d.setPrecio(rs.getDouble("PRECIO"));
+                    d.setSubtotal(rs.getDouble("SUBTOTAL"));
+                    d.setNotas(rs.getString("NOTAS"));
+                    Producto prod = new Producto();
+                    prod.setIdProducto(rs.getInt("ID_PRODUCTO"));
+                    prod.setNombre(rs.getString("NOMBRE_PRODUCTO"));
+                    d.setProducto(prod);
+                    detalles.add(d);
+                }
+            }
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error al obtener detalles del pedido", ex);
+        }
+        return detalles;
+    }
+
+    @Override
+    public List<Pedido> obtenerHistorialEmpleado() throws PersistenciaException {
+        String sql = "SELECT * FROM PEDIDOS ORDER BY FECHA_REGISTRO DESC LIMIT 100";
+        List<Pedido> pedidos = new ArrayList<>();
+        try (Connection conn = conexion.crearConexion();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                pedidos.add(extraerPedido(rs));
+            }
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error al obtener historial empleado", ex);
+        }
+        return pedidos;
     }
 
     // --- Métodos auxiliares ---

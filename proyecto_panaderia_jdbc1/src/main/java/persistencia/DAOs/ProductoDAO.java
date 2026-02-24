@@ -54,6 +54,42 @@ public class ProductoDAO implements IProductoDAO {
     }
 
     @Override
+    public List<Producto> obtenerTodos() throws PersistenciaException {
+        List<Producto> productos = new ArrayList<>();
+        String sql = "SELECT ID_PRODUCTO, NOMBRE, TIPO, DESCRIPCION, PRECIO, DISPONIBLE FROM PRODUCTOS ORDER BY NOMBRE";
+        try (Connection conn = conexion.crearConexion();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Producto p = new Producto();
+                p.setIdProducto(rs.getInt("ID_PRODUCTO"));
+                p.setNombre(rs.getString("NOMBRE"));
+                p.setTipo(rs.getString("TIPO"));
+                p.setDescripcion(rs.getString("DESCRIPCION"));
+                p.setPrecio(rs.getDouble("PRECIO"));
+                p.setDisponible(rs.getBoolean("DISPONIBLE"));
+                productos.add(p);
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al obtener todos los productos", e);
+        }
+        return productos;
+    }
+
+    @Override
+    public boolean actualizarDisponibilidad(int idProducto, boolean disponible) throws PersistenciaException {
+        String sql = "UPDATE PRODUCTOS SET DISPONIBLE = ? WHERE ID_PRODUCTO = ?";
+        try (Connection conn = conexion.crearConexion();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, disponible);
+            ps.setInt(2, idProducto);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al actualizar disponibilidad", e);
+        }
+    }
+
+    @Override
     public Producto obtenerPorId(int idProducto) throws PersistenciaException {
         String sql = """
                      SELECT ID_PRODUCTO, NOMBRE, TIPO, DESCRIPCION, PRECIO, DISPONIBLE FROM PRODUCTOS WHERE ID_PRODUCTO = ?

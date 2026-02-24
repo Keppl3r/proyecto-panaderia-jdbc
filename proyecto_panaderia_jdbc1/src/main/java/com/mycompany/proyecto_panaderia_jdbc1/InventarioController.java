@@ -13,56 +13,54 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import negocio.BOs.IProductoBO;
+import negocio.excepciones.NegocioException;
+import negocio.fabrica.FabricaBOs;
+import persistencia.dominio.Producto;
 
 public class InventarioController {
 
     @FXML private TextField txtBuscar;
     @FXML private VBox      vboxProductos;
 
-    private record Producto(String nombre, double precio, boolean disponible) {}
-
-    private final List<Producto> todos = new ArrayList<>(List.of(
-        new Producto("Concha de Vainilla",        15.00,  true),
-        new Producto("Concha de Chocolate",       15.00,  true),
-        new Producto("Croissant",                 20.00,  true),
-        new Producto("Cuernito",                  10.00,  true),
-        new Producto("Telera",                     8.00,  true),
-        new Producto("Bolillo",                    5.00,  false),
-        new Producto("Pan de Muerto",             25.00,  true),
-        new Producto("Orejas",                    12.00,  true),
-        new Producto("Donas",                     18.00,  true),
-        new Producto("Pastel de Chocolate",      200.00,  true),
-        new Producto("Pastel de Zanahoria",      250.00,  true),
-        new Producto("Pastel Fresa sin azúcar",  445.00,  false),
-        new Producto("Pastel 3 Leches",          235.00,  true),
-        new Producto("Pastel Red Velvet",        235.00,  true),
-        new Producto("Pastel de Limón",          350.00,  true),
-        new Producto("Pastel de Almendra",       295.00,  true)
-    ));
+    private List<Producto> todosLosProductos;
+    private IProductoBO productoBO;
 
     @FXML
     private void initialize() {
-        renderizar(todos);
+        productoBO = FabricaBOs.obtenerProductoBO();
+        cargarProductos();
 
         txtBuscar.textProperty().addListener((obs, old, nuevo) -> {
             String filtro = nuevo.trim().toLowerCase();
             if (filtro.isBlank()) {
-                renderizar(todos);
+                renderizar(todosLosProductos);
             } else {
-                List<Producto> filtrados = todos.stream()
-                        .filter(p -> p.nombre().toLowerCase().contains(filtro))
-                        .toList();
+                List<Producto> filtrados = todosLosProductos.stream()
+                        .filter(p -> p.getNombre().toLowerCase().contains(filtro))
+                        .collect(Collectors.toList());
                 renderizar(filtrados);
             }
         });
     }
 
+    private void cargarProductos() {
+        try {
+            todosLosProductos = productoBO.obtenerTodos();
+            renderizar(todosLosProductos);
+        } catch (NegocioException e) {
+            e.printStackTrace();
+            mostrarError("No se pudieron cargar los productos: " + e.getMessage());
+            todosLosProductos = List.of();
+        }
+    }
+
     private void renderizar(List<Producto> lista) {
         vboxProductos.getChildren().clear();
-        for (int i = 0; i < lista.size(); i++) {
-            vboxProductos.getChildren().add(crearFilaProducto(lista.get(i)));
+        for (Producto p : lista) {
+            vboxProductos.getChildren().add(crearFilaProducto(p));
         }
     }
 
@@ -73,12 +71,17 @@ public class InventarioController {
         fila.setStyle("-fx-background-color: #fdf5e6; -fx-background-radius: 10;"
                 + " -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 4, 0, 0, 1);");
 
-        Label lblNombre = new Label(p.nombre());
+        Label lblNombre = new Label(p.getNombre());
         lblNombre.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #3a2a1a;"
                 + " -fx-min-width: 200;");
 
-        Label lblPrecio = new Label(String.format("$%.2f", p.precio()));
-        lblPrecio.setStyle("-fx-font-size: 13px; -fx-text-fill: #4a3a2a;");
+        Label lblTipo = new Label(p.getTipo());
+        lblTipo.setStyle("-fx-font-size: 11px; -fx-text-fill: white; -fx-background-radius: 10;"
+                + " -fx-padding: 2 8; -fx-background-color: "
+                + tipoBadgeColor(p.getTipo()) + ";");
+
+        Label lblPrecio = new Label(String.format("$%.2f", p.getPrecio()));
+        lblPrecio.setStyle("-fx-font-size: 13px; -fx-text-fill: #4a3a2a; -fx-min-width: 60;");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -86,14 +89,33 @@ public class InventarioController {
         Label lblDisp = new Label("Disponible");
         lblDisp.setStyle("-fx-font-size: 12px; -fx-text-fill: #4a3a2a; -fx-padding: 0 10 0 0;");
 
-        // Toggle switch estilizado
         ToggleButton toggle = new ToggleButton();
-        toggle.setSelected(p.disponible());
+        toggle.setSelected(p.isDisponible());
         actualizarEstiloToggle(toggle);
-        toggle.setOnAction(e -> actualizarEstiloToggle(toggle));
+        toggle.setOnAction(e -> {
+            boolean nuevoEstado = toggle.isSelected();
+            try {
+                productoBO.actualizarDisponibilidad(p.getIdProducto(), nuevoEstado);
+                p.setDisponible(nuevoEstado);
+                actualizarEstiloToggle(toggle);
+            } catch (NegocioException ex) {
+                toggle.setSelected(!nuevoEstado);
+                actualizarEstiloToggle(toggle);
+                mostrarError("No se pudo actualizar: " + ex.getMessage());
+            }
+        });
 
-        fila.getChildren().addAll(lblNombre, lblPrecio, spacer, lblDisp, toggle);
+        fila.getChildren().addAll(lblNombre, lblTipo, lblPrecio, spacer, lblDisp, toggle);
         return fila;
+    }
+
+    private String tipoBadgeColor(String tipo) {
+        return switch (tipo) {
+            case "DULCE"    -> "#e87722";
+            case "SALADO"   -> "#4a7a3a";
+            case "INTEGRAL" -> "#8b6f47";
+            default         -> "#9e9e9e";
+        };
     }
 
     private void actualizarEstiloToggle(ToggleButton t) {
@@ -117,11 +139,13 @@ public class InventarioController {
         try {
             App.setRoot("menu_empleado");
         } catch (IOException e) {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("No se pudo volver al menú.");
-            alert.showAndWait();
+            mostrarError("No se pudo volver al menú.");
         }
+    }
+
+    private void mostrarError(String msg) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Error"); alert.setHeaderText(null);
+        alert.setContentText(msg); alert.showAndWait();
     }
 }

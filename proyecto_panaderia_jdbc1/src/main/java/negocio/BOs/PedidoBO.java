@@ -9,6 +9,7 @@ import negocio.excepciones.NegocioException;
 import persistencia.DAOs.IPagoDAO;
 import persistencia.DAOs.IPedidoDAO;
 import persistencia.DAOs.IPedidoExpressDAO;
+import persistencia.dominio.DetallePedido;
 import persistencia.dominio.Pedido;
 import persistencia.dominio.Pedido.EstadoPedido;
 import persistencia.dominio.PedidoExpress;
@@ -147,6 +148,24 @@ public class PedidoBO implements IPedidoBO {
             return pedidoDAO.obtenerHistorialCliente(idCliente);
         } catch (PersistenciaException ex) {
             throw new NegocioException("Error al obtener historial", ex);
+        }
+    }
+
+    @Override
+    public List<DetallePedido> obtenerDetallesPorPedido(int idPedido) throws NegocioException {
+        try {
+            return pedidoDAO.obtenerDetallesPorPedido(idPedido);
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al obtener detalles del pedido", ex);
+        }
+    }
+
+    @Override
+    public List<Pedido> obtenerHistorialEmpleado() throws NegocioException {
+        try {
+            return pedidoDAO.obtenerHistorialEmpleado();
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al obtener historial de empleado", ex);
         }
     }
 }

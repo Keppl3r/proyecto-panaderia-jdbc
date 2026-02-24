@@ -2,6 +2,7 @@ package persistencia.DAOs;
 
 import java.sql.Timestamp;
 import java.util.List;
+import persistencia.dominio.DetallePedido;
 import persistencia.dominio.Pedido;
 import persistencia.excepciones.PersistenciaException;
 
@@ -27,4 +28,8 @@ public interface IPedidoDAO {
     List<Pedido> obtenerHistorialCliente(int idCliente) throws PersistenciaException;
 
     Pedido obtenerPorId(int idPedido) throws PersistenciaException;
+
+    List<DetallePedido> obtenerDetallesPorPedido(int idPedido) throws PersistenciaException;
+
+    List<Pedido> obtenerHistorialEmpleado() throws PersistenciaException;
 }

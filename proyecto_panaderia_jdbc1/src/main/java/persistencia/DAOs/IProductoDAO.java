@@ -13,5 +13,9 @@ public interface IProductoDAO {
 
     List<Producto> obtenerProductosDisponibles() throws PersistenciaException;
 
+    List<Producto> obtenerTodos() throws PersistenciaException;
+
     Producto obtenerPorId(int idProducto) throws PersistenciaException;
+
+    boolean actualizarDisponibilidad(int idProducto, boolean disponible) throws PersistenciaException;
 }

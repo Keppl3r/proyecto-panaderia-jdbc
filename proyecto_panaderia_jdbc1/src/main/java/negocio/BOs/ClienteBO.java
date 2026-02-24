@@ -45,6 +45,20 @@ public class ClienteBO implements IClienteBO {
     }
 
     @Override
+    public Cliente obtenerClientePorId(int idUsuario) throws NegocioException {
+        try {
+            Cliente cliente = clienteDAO.buscarPorId(idUsuario);
+            if (cliente == null) {
+                throw new NegocioException("No se encontró el cliente con ID: " + idUsuario);
+            }
+            return cliente;
+        } catch (PersistenciaException ex) {
+            LOG.log(Level.SEVERE, "Error al obtener cliente por ID", ex);
+            throw new NegocioException("Error al obtener los datos del cliente");
+        }
+    }
+
+    @Override
     public Cliente registrarCliente(Cliente cliente) throws NegocioException {
         if (cliente.getUsername() == null || cliente.getUsername().isBlank()) {
             throw new NegocioException("El username es obligatorio");

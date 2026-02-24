@@ -11,15 +11,9 @@ public class BienvenidaController {
     @FXML
     private Label lblNombreUsuario;
 
-    private static String nombreUsuario = "Juan";
-
-    public static void setNombreUsuario(String nombre) {
-        nombreUsuario = nombre;
-    }
-
     @FXML
     private void initialize() {
-        lblNombreUsuario.setText(nombreUsuario);
+        lblNombreUsuario.setText(SesionActual.getNombreDisplay());
     }
 
     @FXML
