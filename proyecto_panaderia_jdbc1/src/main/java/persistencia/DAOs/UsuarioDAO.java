@@ -37,7 +37,7 @@ public class UsuarioDAO implements IUsuarioDAO {
      */
     @Override
     public Usuario login(String username, String passwordEncriptado) throws PersistenciaException {
-        String sql = "SELECT ID_USUARIO, USERNAME, PASSWORD, ROL, ESTADO FROM USUARIOS WHERE USERNAME = ? AND PASSWORD = ? AND ESTADO = 'ACTIVO'";
+        String sql = "SELECT ID_USUARIO, USERNAME, PASSWORD, ROL FROM USUARIOS WHERE USERNAME = ? AND PASSWORD = ?";
         try (Connection conn = conexion.crearConexion();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
